@@ -1,0 +1,46 @@
+Windows Registry Editor Version 5.00
+
+;note : there is 16 max entry limitation in MUIVerb, more entry will be not shown.
+;       there is max string length limitation for SubCommands. so it is best to short command name length within 16 total entry number.
+;       use ExtendedSubCommandsKey , instead of SubCommands , the advantage :
+;       many command can be grouped together, it is easy to maintain. 
+;       the menu path can be customered , instead of fix path :  HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell
+;       recommend to use path : HKEY_CLASSES_ROOT\._myMenus , because it lists the top position of registry.
+;       can NOT add HKEY_CLASSES_ROOT before path , else will fail to import to registry (MUST under same root key)
+
+[HKEY_CLASSES_ROOT\.pdb]
+@="pdbfile"
+
+[HKEY_CLASSES_ROOT\pdbfile\Shell\windbg]
+"MUIVerb"="windbg"
+"ExtendedSubCommandsKey"="._myMenus\\windbg\\pdbFileNode"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\01_readPdb]
+@="read source code info"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\01_readPdb\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  readPdb  \"%V\""
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\02_writePdb]
+@="write source code info"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\02_writePdb\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  writePdb \"%V\""
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\03_rawInfo]
+@="read pdb raw info"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\03_rawInfo\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  pdbInfo \"%V\"  raw"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\04_extractSrc]
+@="extract src file"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\04_extractSrc\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  pdbInfo \"%V\" src"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\05_dbhTool]
+@="investigate pdb file by dbh.exe"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\05_dbhTool\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dbhCheck \"%V\""

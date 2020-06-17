@@ -1,0 +1,6 @@
+$ .shell -ci "!heap 0 0 " find /i "Segment at"
+$ !mex.strings addr1 addr2
+$ find string address X
+$ search address X in all modules by command # : # X modBase modTail
+$ got instruction address Y
+$ ln Y to got function info and line info

@@ -1,0 +1,150 @@
+0:005> !mex.help -allByCat
+General
+============================================
+!mex.backtrace              (!bt) Displays the stack backtrace for the specified index into ntdll!RtlpStackTraceDatabase
+!mex.base64                (!b64) Displays or saves base64 data
+!mex.classtype              (!ct) Tries to determine the C++ class type of a pointer
+!mex.clusdisk                     Shows all the disk cluster is aware of for W2k3 - W28R2
+!mex.commandline            (!cl) Prints out the command line of a process
+!mex.context                 (!w) Prints out the current implicit process and thread context (e.g. where am I)
+!mex.criticalsection        (!cs) CS - Displays details for a critical section
+!mex.decodeoplockstate    (!dols) Decode an OpLockState to human readable values
+!mex.dr                           Displays registers showing volatile registers highlighted with (*)
+!mex.fileserver             (!fs) Displays thread running the SRV.sys or SRV2.sys drivers, excluding threads waiting on inbound work
+!mex.handlefind             (!hf) Find handles for a given kernel object
+!mex.help                         Help
+!mex.interpretrawstack     (!irs) This command dumps the raw stack and interprets the values as symbols, and as unicode and ansi strings. It will also highlight start and end of frames
+!mex.irpbyfilename        (!ibfn) Dump any IRP containing the specified text in filename
+!mex.ndao                         Native Dump ALL Objects - Potentially very slow
+!mex.ndro                         Native Dump Register Objects
+!mex.phandles               (!ph) Shows a list of currently open printer handles
+!mex.runaway2                     Runaway2.. Replacement for !runaway
+!mex.services          (!service) Displays details about services. Requires access to the usermode address space of services.exe (userdump of services.exe or complete memory dump)
+!mex.svcreg                       Dumps the passed in service/driver registry key
+!mex.x                            Wrapper for x that adds some DML
+!mex.xx                     (!x2) Replacement for !x
+
+Binaries (dll's and drivers)
+============================================
+!mex.chkall               Shortcut for !chkimg against all modules
+!mex.diffimg              Compares the process' loaded module list with a scan of memory and displays any differences
+!mex.foreachmodule (!fem) An implementation of !for_each_module that supports filtering
+!mex.imports              Displays the import table for a module
+!mex.mods                 Displays modules loaded in a process
+!mex.writemodule          Writes a module to your temp directory
+
+Threads & Stacks
+============================================
+!mex.deferredready          (!dfr) Shows the current deferredready threads
+!mex.dumpstackstrings       (!dss) Displays all the strings on the stack
+!mex.executive                     Displays details on threads waiting on the executive
+!mex.foreachframe           (!fef) An implementation of !for_each_frame that supports filtering and sets the context before executing
+!mex.foreachmatchingstack  (!fems) Run a command against identical stacks
+!mex.foreachthread          (!fet) An implementation of .for_each_thread that works in user and kernel mode
+!mex.gatewait                      Shows threads with a state of GateWait
+!mex.initialized           (!init) Shows the current threads in the initialized state
+!mex.listthreads             (!lt) Displays a list of threads
+!mex.ndso                          Native Dump Stack Objects
+!mex.ready                  (!rdy) Shows the currently ready threads
+!mex.running                (!cpu) (Kernel mode only) A brief overview of currently executing threads
+!mex.searchthreadstacks     (!sts) Searches thread stacks for a value
+!mex.standby                (!sby) Shows the current standby threads
+!mex.suspended                     Displays details on suspended threads
+!mex.t                             A new implementation of !thread for user & kernel mode
+!mex.threadpool              (!tp) Displays information regarding NTDLL thread pools
+!mex.threadreport          (!trep) Displays a thread report.
+!mex.transition           (!trans) Shows the current threads in the transition state
+!mex.uniquestacks            (!us) Like the built-in !uniqstacks except it associates thread IDs with the stack traces
+!mex.userrequest                   Displays details on threads with a wait reason of UserRequest
+!mex.wrcpuratecontrol              Displays details on threads with a wait reason of WrCpuRateControl
+!mex.wrexecutive                   Displays details on threads waiting on the executive
+!mex.wrfastmutex                   Displays details on threads waiting for a Fast Mutex
+!mex.wrfreepage                    Displays details on threads with a wait reason of WrFreePage
+!mex.wrlpcreceive          (!lpcs) Displays details on LPC/ALPC server threads
+!mex.wrresource                    Displays details on threads with a wait reason of WrResource
+
+Utilities
+============================================
+!mex.atom                     Dumps user mode atom table
+!mex.beep                     Beeps
+!mex.bin                      Displays binary information located at the given address
+!mex.bits2              (!b2) Executes a command with all possible values of a single bit flip
+!mex.bl                       Replaces the built in breakpoint list (bl) command with DML'd version
+!mex.bp                       Replaces the built in breakpoint (bp) command with a DML'd version
+!mex.cache               (!c) Cache the output of a command to replay later
+!mex.clipboard2               Gets/Sets text on the clipboard, or enable/disable clipboard access
+!mex.comment                  Displays the comments for the dump
+!mex.computername       (!cn) Computer Name Command Help
+!mex.count                    Counts the number of lines returned by a command
+!mex.cut                      Filters output, removing unwanted areas
+!mex.da                       Displays an ANSI string
+!mex.ddt                      Wrapper for dt that adds some DML
+!mex.du                       Displays a Unicode string
+!mex.dumpinfo           (!di) Display dump information
+!mex.dumptime                 Time Information
+!mex.exec                     Runs a series of commands. Use this instead of using semicolons
+!mex.foreachitem       (!fei) Iterates through a list, executing a command for each item.
+!mex.foreachline       (!fel) Runs a command against every line of data
+!mex.grep                     Search the output of a command for a specific string or pattern
+!mex.head                     Displays the first X lines of a command's output
+!mex.if                (!mif) Condition detection based on command output
+!mex.loop                     Loops either forwards or backwards through a series of numbers with variable replacement
+!mex.more                     Runs a command in paged mode, asking for input every X lines
+!mex.mrmsg             (!msg) Interprets a Windows message
+!mex.outline            (!ol) Outlines the calls inside a given function
+!mex.readfile                 Read a file from the filesystem and display the output in the debugger
+!mex.rollup             (!ru) Takes an input value and rolls it up to the appropriate bucket (e.g. bytes to GB)
+!mex.sort                     Sort command
+!mex.strings                  Prints out readable strings in an address range
+!mex.sum               (!sum) Sums the output returned by a command
+!mex.tac                      Writes input to console, last line first.
+!mex.tail                     Displays the final X lines of a command's output
+!mex.time                     Time how long a command takes to execute
+!mex.tr            (!replace) Search and Replace. Translate a char/string into another char/string.
+!mex.udescan      (!manalyze) Scans dump for known issues and displays them in human-readable format.
+!mex.uniqlines          (!ul) Prints each line of output and a count of how many times they appeared
+!mex.ver                      Displays OS version info
+!mex.writefile                Runs a command and writes the data to a file
+
+Mex Helpers
+============================================
+!mex.fixthis  Preface a broken command with this one to open an email and send it to the Mex team (e.g. !fixthis !otherMexCommandThatDidNotWork
+!mex.settings Mex Settings
+
+Process Specific
+============================================
+!mex.conhost          (!con) Displays console host (conhost.exe) info
+!mex.ldap                    Displays LDAP client or server details
+!mex.mappeddrives (!mdrives) Displays mapped drives
+!mex.mheap                   A DML'd version of !heap.
+!mex.p                       Displays process details
+
+!mex.Networking
+============================================
+!mex.afd               Afd Command Help
+!mex.dhcp              Displays information for the DHCP server process
+!mex.dnsclient (!dnsc) Displays the DNS client cache, and includes many other features for the DNS Client service.
+!mex.ip                Converts an address into an IP address format
+!mex.mup               Displays info for the Multiple UNC Provider (MUP)
+!mex.ncsi              Displays Network Connectivity Status Indicator (NCSI) configuration
+!mex.net               Net Command Help
+!mex.pingtrack         Pingtrack command
+!mex.rasmans           Displays the rasmans!ConnectionBlockList
+!mex.srvnet            Displays info on SRVNET
+!mex.tcpip      (!tcp) TCP/IP - Gets TCP and UDP ports from Kernel Memory
+!mex.winnsi            winnsi Command Help
+
+System Center
+============================================
+!mex.sccm       SCCM
+!mex.scom (!om) Utilities for SC Operations Manager.
+!mex.scsm (!sm) Utilities for SC Service Manager
+
+PowerShell
+============================================
+!mex.dumpdotsourcedfiles Outputs any dot sourced Powershell files optionally with their accompanying script blocks
+!mex.dumppsvariables     Outputs the Powershell Variables of the currently running script on the current thread
+!mex.dumpstackpscommands Outputs the commands, cmdlets, etc. found on the current thread including those referenced by other objects on the thread.
+!mex.dumpstackpsobjects  Outputs the PSObjects found on the current thread including those referenced by other objects on the thread.
+!mex.psrunspace          Outputs the runspaces in the process.
+!mex.psscriptblock       Outputs the script blocks in the process.

@@ -1,0 +1,80 @@
+Windows Registry Editor Version 5.00
+
+;note : there is 16 max entry limitation in MUIVerb, more entry will be not shown.
+;       there is max string length limitation for SubCommands. so it is best to short command name length within 16 total entry number.
+;       use ExtendedSubCommandsKey , instead of SubCommands , the advantage :
+;       many command can be grouped together, it is easy to maintain. 
+;       the menu path can be customered , instead of fix path :  HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell
+;       recommend to use path : HKEY_CLASSES_ROOT\._myMenus , because it lists the top position of registry.
+;       can NOT add HKEY_CLASSES_ROOT before path , else will fail to import to registry (MUST under same root key)
+
+[HKEY_CLASSES_ROOT\exefile\shell\windbg]
+"MUIVerb"="windbg"
+"ExtendedSubCommandsKey"="._myMenus\\windbg\\exefile"
+
+[HKEY_CLASSES_ROOT\Directory\Background\shell\windbg]
+"MUIVerb"="windbg"
+"ExtendedSubCommandsKey"="._myMenus\\windbg\\Directory"
+
+; -------------------------exefile---------------------------------
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\01_dbgAppName]
+@="debug running app by app name"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\01_dbgAppName\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dbgAppName \"%1\""
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\02_dbgNewInstance]
+@="debug new instance"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\02_dbgNewInstance\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dbgNewInstance \"%1\""
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\03_genDump]
+@="generate dump file (.dmp)"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\03_genDump\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  genDump \"%1\""
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\04_collectSymManifest]
+@="collect symbol list"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\04_collectSymManifest\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\collectOfflineSymbols\\tools\\tools_collectOfflineSymbols.bat  collectSymbolList \"%1\""
+
+; -------------------------Directory---------------------------------
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\00_windbgEnv]
+@="open windbg command environment"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\00_windbgEnv\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  loadEnvWindbg \"%V\" "
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\001_vsEnv]
+@="open visul studio command environment"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\001_vsEnv\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_vs.bat  loadEnvVsMenu \"%V\" "
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\01_dbgPid_UI]
+@="debug running app by PID"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\01_dbgPid_UI\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dbgPid"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\02_dbgAppName_UI]
+@="debug running app by app name"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\02_dbgAppName_UI\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dbgAppName"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\03_dbgNewInstance_UI]
+@="debug new instance from command line"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\03_dbgNewInstance_UI\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dbgNewInstance"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\04_reduceCache]
+@="reduce symbol cache"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\04_reduceCache\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\setup\\reduceSymCache.bat "

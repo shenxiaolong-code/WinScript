@@ -1,0 +1,23 @@
+.echo +++++++ loading ${$arg0}
+.echo
+
+$$ aS ${/v:natvisPath} C:\Program Files (x86)\Windows Kits\10\Debuggers\${targetMode}\Visualizers
+.foreach /pS 3 (val {.shell -ci "*" if exist "${natvisPath}" @echo yes}) {
+$$.nvload "${natvisPath}\atlmfc.natvis" ;
+.nvload "${natvisPath}\concurrency.natvis" ;
+$$.nvload "${natvisPath}\cpp_rest.natvis" ;
+$$ .nvload "${natvisPath}\stl.natvis" ;
+$$.nvload "${natvisPath}\Windows.Data.Json.natvis" ;
+$$.nvload "${natvisPath}\Windows.Devices.Geolocation.natvis" ;
+$$.nvload "${natvisPath}\Windows.Devices.Sensors.natvis" ;
+$$.nvload "${natvisPath}\Windows.Media.natvis" ;
+$$.nvload "${natvisPath}\windows.natvis" ;
+$$.nvload "${natvisPath}\chrome.natvis"
+.nvload "${natvisPath}\winrt.natvis" ;
+}
+
+.echo ;
+.echo current natvis list: ;
+.nvlist ;
+
+.echo ------- exiting ${$arg0}

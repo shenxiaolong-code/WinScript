@@ -1,0 +1,21 @@
+.echo +++++++ loading ${$arg0}
+
+$$ "set MFC source path of vs2008 or vs2015"
+$$ "supported parameter: VS2008 VS2015 , default value is VS2015"
+$$ .echo example : $$>a<${$arg0} VS2008
+
+.foreach /pS 3 (eVal {!homedir}) { .echo source cache path : ${eVal}\src } ;
+
+.echo
+.echo set visual info to variable vsVer
+$$>a<${WinScriptPath}\windbg\script\loadSetting\getVSVer.dbg
+
+.block {
+$$.echo ${WinScriptPath}
+.echo current application ${exeModuleName}.exe is built by visual studio ${vsVer};
+.if($scmp("${vsVer}","2008")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\LoadVSSrc_VS2008.dbg ; };
+.if($scmp("${vsVer}","2015")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\LoadVSSrc_VS2015.dbg ; };
+.if($scmp("${vsVer}","2017")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\LoadVSSrc_VS2017.dbg ; };
+}
+
+.echo ------- exiting ${$arg0}

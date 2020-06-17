@@ -1,0 +1,65 @@
+.echo +++++++ loading ${$arg0}
+$$ if wrong path is put on the front of extpath, debugger will load the wrong dll which is found firstly, it might cause windbg crash and exit sliently
+$$ extpath can be set by environment variable _NT_DEBUGGER_EXTENSION_PATH. if .load extDLL cause windbg exit slient, please check _NT_DEBUGGER_EXTENSION_PATH and .extpath
+.extpath+ "${WinScriptPath}\windbg\debugext\${targetMode}";
+.echo
+
+aS ${/v:.ext}     $$>a<${$arg0} ;
+
+.echo
+.echo if debug js, need to load js extension
+.echo https://github.com/MicrosoftEdge/JsDbg
+
+.echo
+.echo load windbg extension
+.echo
+.echo loading Microsoft Remote Procedure Call (RPC) extension[wow64exts.dll]
+.load wow64exts
+
+.echo
+.echo load Assembly Syntax Highlighting v0.087a [blwdbgue.dll]
+.echo modify file 'asm_config.hl' to customize your color.
+.load blwdbgue
+
+.if (${/d:$arg1}>=1) {
+.echo
+.echo loading Microsoft mex extension[mex.dll]
+.load mex.dll
+
+.echo
+.echo loading Microsoft mex extension[mex.dll]
+.load pykd.dll
+.echo installed python interpreters
+!pykd.info
+.echo select 3.x python interpreter
+.foreach /ps 99 ( var { .shell -ci "!pykd.info" find /i "3."  } )  { .echo !pykd.select -${var} }
+.foreach /ps 99 ( var { .shell -ci "!pykd.info" find /i "3."  } )  { !pykd.select -${var} }
+}
+
+.if (${/d:$arg1}>=2) {
+.echo
+.echo loading Microsoft Remote Procedure Call (RPC) extension[Rpcexts.dll]
+.load Rpcexts
+}
+
+.if (${/d:$arg1}>=3) {
+.echo
+.echo loading Kdexts.dll in kernal mode [Kdexts.dll]
+.load Kdexts
+
+.echo
+.echo loading WMI Tracing extension[wmitrace.dll]
+.load wmitrace
+}
+
+.echo
+.echo loaded windbg extension list:
+.chain
+
+.echo
+.echo current parameter is ${/d:$arg1}
+.echo 1 for additional mex.dll , pykd.dll
+.echo 2 for additional Rpcexts.dll
+.echo 3 for additional Kdexts.dll , wmitrace.dll
+
+.echo ------- exiting ${$arg0}

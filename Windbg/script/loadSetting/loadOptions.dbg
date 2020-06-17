@@ -1,0 +1,109 @@
+.echo +++++++ loading ${$arg0}
+.echo set common option
+
+.echo
+.echo enable dml, please .load sos.dll with full path [.prefer_dml 1]
+.prefer_dml 1
+
+.echo
+.echo set masm as default mode. $scmp operator is available only in masm mode [ .expr /s masm ]
+.expr /s masm
+
+.echo 
+.echo set Disassembly Display Options
+.echo displayed along with the standard disassembly information[.asm verbose]
+.asm verbose ;
+.echo use macro asm instruction , instead of display of raw bytes[.asm no_code_bytes]
+.asm- no_code_bytes ;
+.echo add source file line number before Disassembly instruction[.asm source_line]
+.asm source_line ;
+
+$$ .echo
+$$ .echo enable debuggers unwind stack solely based on frame pointer[.stkwalk_force_frame_pointer 1]
+$$ .echo when thread stacks are wrong, consider to switch this option and .reload modules.
+$$ .echo see document for this option affect.
+$$ .stkwalk_force_frame_pointer 1
+
+.echo
+.echo Symbol Option Settings(current symopt)
+.symopt
+.echo search symbol with case insensitive mode[.symopt+ SYMOPT_CASE_INSENSITIVE]
+.symopt+ 0x1
+.echo display undecorated symbol, instead of decorated C++ name. [.symopt+ SYMOPT_UNDNAME]
+.symopt+ 0x2
+.echo enable Deferred Symbol Loading to improve debugger startup performance[.symopt+ SYMOPT_DEFERRED_LOADS]
+.symopt+ 0x4
+.echo only search symbol in loaded modules to improve debugger performance (prevent from search mis-input wrong symbo)l[.symopt+ SYMOPT_NO_UNQUALIFIED_LOADS]
+.symopt+ 0x100
+.echo disable image search on disk for release debug [SYMOPT_NO_IMAGE_SEARCH]
+.symopt- 0x20000
+.echo allow authentication requests dialog boxes , else refuse all requests will cause failure to load symbol[SYMOPT_NO_PROMPTS]
+.symopt- 0x80000
+.echo to make change takes effect , run command [.reload].
+$$ .reload
+
+.echo
+.echo set processor mode (auto mode)
+.effmach .
+
+.if(${/d:dbgLive}) { $$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions_dbgLive.dbg; };
+.if(${/d:dbgDmp})  { $$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions_dmp.dbg; };
+
+.echo
+.echo enable inline function debuging [.inline 1]
+.inline 1
+
+.echo
+.echo allow net symbol paths[.netsyms 1]
+.netsyms 1
+
+.echo
+.echo set command prompt info mode [.prompt_allow +sym -dis +reg]
+.prompt_allow +sym -dis +reg
+
+.echo
+.echo only displays the basic integer registers when step [rm 2]
+rm 2
+
+.echo
+.echo .pcmd show nothing [x].
+$$.pcmd -s "dv /a /V /i";
+$$.pcmd -s "dv /t /i /A";
+.pcmd -c;
+
+.echo
+.echo enable soure line support [.lines -e -t]
+.lines -e -t
+
+.echo
+.echo set source display info [l+lst].
+l+l
+l+t
+l-o
+.echo don't List source code at prompt
+l-s
+
+.echo
+.echo prompt displays 5 source lines before and 10 after[lsp 5 10].
+lsp 5 10
+
+.echo
+.echo set call stack length to 40 [.kframes 40]
+.kframes 40;
+
+.echo
+.echo enable virtual memory read failures (.show_read_failures /v)
+.show_read_failures /v
+
+.echo
+.echo enable windbg flash if target break when windbg is minimized[.flash_on_break on]
+.echo [warning] .flash_on_break can't be set in script file.
+.printf /D "Click <link cmd=\".flash_on_break on\">.flash_on_break on</link> to enable this feature.\r\n"
+
+.echo
+.echo show injected calls from stepping in source mode [.hideinjectedcode off]
+.echo [warning] .hideinjectedcode can't be set in script file.
+.printf /D "Click <link cmd=\".hideinjectedcode off\">.hideinjectedcode off</link> to enable this feature.\r\n"
+
+.echo
+.echo ------- exiting ${$arg0}

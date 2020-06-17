@@ -1,0 +1,49 @@
+.echo Run as: $$>a<${$arg0}
+$$ syntax ;
+$$ $$>a<bpWhenStrMatch.dbg strAddr cmpStr =
+$$ $$>a<bpWhenStrMatch.dbg strAddr cmpStr !
+$$ example
+$$ $$>a<bpWhenStrMatch.dbg 0x77539d30 "expeted*" =
+$$ $$>a<bpWhenStrMatch.dbg 0x77539d30 "expeted*" !
+
+$$ debug info
+$$ .echo 1p=${$arg1}
+$$ .echo 2p=${$arg2}
+
+$$ for stl string , we need to get real char* pointer.
+.if(@@C++(${$arg1}->_Mypair._Myval2._Mysize)<16) {
+r @$t9=@@C++(${$arg1}->_Mypair._Myval2._Bx._Buf)
+} .else {
+r @$t9=@@C++(${$arg1}->_Mypair._Myval2._Bx._Ptr)
+}
+
+as /ma ${/v:msgVar} @$t9
+
+$$ debug info
+$$ .echo ${msgVar}
+$$ .echo .if($spat(@"${msgVar}","${$arg2}")
+$$ NOTE : unresolved bug in $spat
+$$ if value of "${msgVar}" include double quotes , the escape will fails although using @"${msgVar}" 
+
+.if($scmp("${$arg3}","=")!=0 and $scmp("${$arg3}","!")!=0) {
+.echo wrong parameter , usage example
+.echo $$>a<${$arg0} 0x77539d30 "expeted*" =
+.echo $$>a<${$arg0} 0x77539d30 "expeted*" !
+} .else {
+.echo test @"${msgVar}" ${$arg3}match "${$arg2}" ;
+.if($spat(@"${msgVar}","${$arg2}")${$arg3}=1) {
+.echo
+.echo [result] found "${$arg2}" in :
+.echo @"${msgVar}"
+.echo
+} .else { 
+.echo
+.echo [result] No match "${$arg2}"
+.echo
+gc;
+} ;
+}
+
+
+
+ 

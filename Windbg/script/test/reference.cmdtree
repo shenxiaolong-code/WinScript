@@ -1,0 +1,172 @@
+windbg ANSI Command Tree 1.0
+title {"Microshaoft Commands"}
+body
+{"cmdtree"}
+    {"Microshaoft.WinDbg.CmdTree.txt"} {".cmdtree microshaoft.windbg.cmdtree.txt"}
+{"SOS Commands"}
+    {"Load SOS and SOSEX"} {".loadby sos mscorwks;.load sosex"}
+    {"Microshaoft Load .NET v4.0+ sos.dll"} {".load C:\Windows\Microsoft.NET\Framework64\v4.0.30319\SOS.dll"}
+    {"Microshaoft Load .NET v4.0+ mscorwks.dll"} {".load C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorwks.dll"}
+    {"Microshaoft Load .NET v3.5- sos.dll"} {".load C:\Windows\Microsoft.NET\Framework64\v2.0.50727\SOS.dll"}
+    {"Microshaoft Load .NET v3.5- mscorwks.dll"} {".load C:\Windows\Microsoft.NET\Framework64\v2.0.50727\mscorwks.dll"}
+    {"PSSCOR"}
+        {"Microshaoft Load .NET v4.0+ AMD64 psscor4.dll"} {".load D:\WinDbg\Psscor\psscor4\amd64\psscor4.dll"}
+        {"Microshaoft Load .NET v3.5- AMD64 psscor2.dll"} {".load D:\WinDbg\Psscor\psscor2\amd64\psscor2.dll"}
+    {"Modules"}
+        {"All Modules"} {"lm D sm"}
+        {"Loaded Modules"} {"lmo D sm"}
+        {"Loaded Modules (verbose)"} {"lmvo D sm"}
+        {"Modules w/o symbols"} {"lme D sm"}
+    {"Threads"}
+        {"Managed Threads"} {"!threads"}
+        {"Native Threads"} {"~"}
+        {"Thread Pool Threads"} {"!threadpool"}
+        {"Sync Block Deadlocks"} {"!dlk"}
+    {"Stacks"}
+        {"Current Managed Stack"} {"!clrstack"}
+        {"DumpObj"} {"!do ###"}
+        {"Current Managed Stack Parameters and Locals"} {"!vars -w"}
+        {"Current Native Stack"} {"kP"}
+        {"Current Dump Stack"} {"!dumpstack"}
+        {"All Managed Stacks"} {"~*e!clrstack"}
+        {"All Managed Stack Parameters and Locals"} {"~*e!vars -w"}
+        {"All Native Stacks"} {"~*kP"}
+        {"All Dump Stacks"} {"!eestack"}
+    {"Memory"}
+        {"Stack Objects"} {"!dso"}
+        {"GC Heap"} {"!eeheap -gc"}
+        {"Heap Stats"} {"!dumpheap -stat"}
+        {"Objects > 500 bytes"} {"!dumpheap -min 500"}
+        {"Objects > 1000 bytes"} {"!dumpheap -min 1000"}
+        {"Gen 2 Objects"} {"!dumpgen -stat 2"}
+{"Common Commands"}
+    {"Information"}
+        {"Time of dump"} {".time"}
+        {"Process being debugged"} {"|"}
+        {"Dump Location"} {"||"}
+        {"Create server on port 9999"} {".server tcp:port=9999"}
+        {"Show remote connections"} {".clients"}
+        {"Process Environment Block"} {"!peb"}
+    {"Logging"}
+        {"Open Log"} {".logopen /t /u /d"}
+        {"Close Log"} {".logclose"}
+    {"Modules"}
+        {"All Modules"} {"lm D sm"}
+        {"Loaded Modules"} {"lmo D sm"}
+        {"Loaded Modules (verbose)"} {"lmvo D sm"}
+        {"Modules w/o symbols"} {"lme D sm"}
+    {"Stacks"}
+        {"Set frame length to 2000"} {".kframes 2000"}
+        {"Dump current stack w/ DML"} {"kpM 1000"}
+        {"Dump stacks without private info"} {"knL 1000"}
+        {"Dump stacks with all parameters"} {"kPn 1000"}
+        {"Dump stacks (distance from last frame)"} {"kf 1000"}
+        {"Dump stacks with Frame Pointer Omission"} {"kvn 1000"}
+        {"Dump all stack"} {"~*kbn 1000"}
+        {"Dump unique stacks"} {"!uniqstack -pn"}
+        {"Thread environment block"} {"!teb"}
+        {"Move to next frame"} {".f+"}
+        {"Move to previous frame"} {".f-"}
+    {"Memory"}
+        {"Dump heaps"} {"!heap -a"}
+    {"Automated Task"}
+        {"!analyze"} {"!analyze -v"}
+        {"Locks"} {"!ntsdexts.locks"}
+        {"CPU time for User and Kernel Mode"} {"!runaway 7"}
+    {"Managed"}
+        {"Load sos"} {".loadby sos mscorwks"}
+        {"Microshaoft Load .NET v4.0+ sos.dll"} {".load C:\Windows\Microsoft.NET\Framework64\v4.0.30319\SOS.dll"}
+        {"Microshaoft Load .NET v4.0+ mscorwks.dll"} {".load C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorwks.dll"}
+        {"Microshaoft Load .NET v3.5- sos.dll"} {".load C:\Windows\Microsoft.NET\Framework64\v2.0.50727\SOS.dll"}
+        {"Microshaoft Load .NET v3.5- mscorwks.dll"} {".load C:\Windows\Microsoft.NET\Framework64\v2.0.50727\mscorwks.dll"}
+        {"clrstack"} {"!clrstack"}
+        {"Threads"} {"!threads"}
+        {"Stack Objects"} {"!dso"}
+        {"Exceptions"} {"!dae"}
+{"Crash Dump Analysis Checklist (www.dumpanalysis.org)"}
+    {"General"}
+        {"Versions and locations"} {"version"}
+        {"Set longer stack trace"} {".kframes 100"}
+    {"Application crash or hang"}
+        {"Default analysis (crash)"} {"!analyze -v"}
+        {"Default analysis (hang)"} {"!analyze -v -hang"}
+        {"Switch to x86 architecture"} {".load wow64exts; .effmach x86"}
+        {"Critical sections (locked)"} {"!locks"}
+        {"Modules"} {"lmv"}
+        {"Threads (all)"} {"~*kv 250"}
+        {"Threads (unique)"} {"!uniqstack"}
+        {"Gflags"} {"!gflag"}
+        {"Time consumed by thread"} {"!runaway"}
+        {"PEB"} {"!peb"}
+        {"TEB"} {"!teb"}
+        {"Hooked functions (ntdll)"} {"!chkimg -lo 50 -d !ntdll -v"}
+        {"Hooked functions (kernel32)"} {"!chkimg -lo 50 -d !kernel32 -v"}
+        {"Hooked functions (user32)"} {"!chkimg -lo 50 -d !user32 -v"}
+        {"Hooked functions (ALL)"} {"!for_each_module !chkimg -lo 50 -d !${@#ModuleName} -v"}
+        {"Exception handlers"} {"!exchain"}
+        {"Computer name"} {"!envvar COMPUTERNAME"}
+        {"Stack of exception thread"} {"~#kv 250"}
+        {"Stack of current thread"} {"~.kv 250"}
+        {"Switch to thread"}
+            {"#0"} {"~0s"}
+            {"#1"} {"~1s"}
+            {"#2"} {"~2s"}
+            {"#3"} {"~3s"}
+            {"#4"} {"~4s"}
+            {"#5"} {"~5s"}
+            {"#6"} {"~6s"}
+            {"#7"} {"~7s"}
+            {"#8"} {"~8s"}
+            {"#9"} {"~9s"}
+    {"System hang"}
+        {"Default analysis"} {"!analyze -v -hang"}
+        {"ERESOURCE contention"} {"!locks"}
+        {"Processes and virtual memory"} {"!vm 4"}
+        {"Sorted pool consumption (paged)"} {"!poolused 4"}
+        {"Sorted pool consumption (nonpaged)"} {"!poolused 3"}
+        {"Waiting threads"} {"!stacks"}
+        {"Critical system queues"} {"!exqueue f"}
+        {"I/O"} {"!irpfind"}
+        {"The list of all thread stack traces"} {"!process 0 ff"}
+        {"Critical sections for current process"} {"!ntsdexts.locks"}
+        {"Sessions"} {"!session"}
+        {"Processes"} {"!process 0 0"}
+        {"Running threads"} {"!running"}
+        {"Ready threads"} {"!ready"}
+        {"DPC queues"} {"!dpcs"}
+        {"The list of APCs"} {"!apc"}
+        {"Internal queued spinlocks"} {"!qlocks"}
+        {"Computer name"} {"dS srv!srvcomputername"}
+        {"Switch to processor"}
+            {"#0"} {"~0s"}
+            {"#1"} {"~1s"}
+            {"#2"} {"~2s"}
+            {"#3"} {"~3s"}
+            {"#4"} {"~4s"}
+            {"#5"} {"~5s"}
+            {"#6"} {"~6s"}
+            {"#7"} {"~7s"}
+    {"BSOD"}
+        {"Default analysis"} {"!analyze -v"}
+        {"Processes and virtual memory"} {"!vm 4"}
+        {"Bugcheck callback data (prior to Windows XP SP1)"} {"!bugdump"}
+        {"Bugcheck secondary callback data"} {".enumtag"}
+        {"Computer name"} {"dS srv!srvcomputername"}
+{"Microshaoft .NET"}
+    {"show objects on current stack"} {"!dumpstackobjects"}
+    {"show ThreadPool running"} {"!threadpool"}
+    {"show all threads running time utilization"} {"!runaway"}
+    {"gc handles"} {"!gchandles"}
+    {"go to thread ~#s"} {"~1s"}
+    {"!DumpStack [-EE] [top stack [bottom stack]]"} {"!dumpstack"}
+    {"show class instance member value !DumpVC <MethodTable address> <address>"} {"!DumpVC"}
+    {"show managed heaps"} {"!eeheap -gc"}
+    {"show heaps memory statistic"} {"!dumpheap -min 200 -stat"}
+    {"show Byte array heap memory usage"} {"!dumpheap -type Byte[] -min 200"}
+    {"show managed heap's MethodTable objects !dumpheap -mt <MethodTable address>"} {"!dumpheap -mt"}
+    {"show object reference info !GCRoot [-nostacks] <Object address>"} {"!gcroot"}
+    {"show object detail !DumpObj [-nofields] <object address>"} {"!do"}
+    {"show data object detail !da <address>"} {"!da"}
+    {"show all objects in current stack !DumpStackObjects [-verify] [top stack [bottom stack]]"} {"!dso"}
+    {"show object size !ObjSize [<Object address>]"} {"!objsize"}
+    {"!PrintException [-nested] [<Exception object address>]"} {"!pe"}

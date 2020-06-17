@@ -1,0 +1,18 @@
+﻿https://www.cnblogs.com/zcc1414/p/3982334.html
+
+在cmd窗口输入一下命令来开启相应的调试功能。
+开启堆尾检查：gflags  /i calc.exe +htc
+开启释放检查：gflags /i calc.exe +hfc
+开启调用时验证：gflags /I calc.exe +hvc
+开启参数检查： gflags /I calc.exe +hpc
+
+开始启动附着调试： gflags -p /debug test.exe
+
+e.g :
+gflags -p /enable test.exe /full /unaligned
+same with :
+gflags /I test.exe +hpa
+
+
+
+开启用户态栈回溯：gflags /I calc.exe +ust

@@ -1,0 +1,5 @@
+.foreach /f ( place "${$arg1}") 
+{ 
+.echo x ${place}!${$arg2} ...
+x /D /1 /N ${place}!${$arg2}
+}

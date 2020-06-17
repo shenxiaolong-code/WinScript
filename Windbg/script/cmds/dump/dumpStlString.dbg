@@ -1,0 +1,60 @@
+$$ .echo usage example : (if need buffer address, use 2nd parameter) 
+$$ .echo $$>a<D:\${$arg0} str
+$$ .echo $$>a<D:\${$arg0} $!str
+$$ .echo $$>a<D:\${$arg0} str ${/v:myVar}
+$$ it is out-date script, it is replaced by C:\${VS2015}\Common7\Packages\Debugger\Visualizers\stl.natvis
+
+.push /r /q
+aS ${/v:dbgStr}       @$t0
+aS ${/v:dbgSize}      @$t1
+aS ${/v:dbgBuf}       @$t2
+
+.block
+{
+    r? ${dbgStr} = ${$arg1}
+    r? ${dbgSize} = ${dbgStr}._Mypair._Myval2._Mysize
+    
+    .if(${dbgSize}<16) 
+    {
+        r? dbgBuf = &(${dbgStr}._Mypair._Myval2._Bx._Buf)
+        aS ${/v:dbgBufPos} _Buf
+    } .else {
+        r? dbgBuf = ${dbgStr}._Mypair._Myval2._Bx._Ptr
+        aS ${/v:dbgBufPos} _Ptr
+    } 
+
+    .block
+    {
+        .printf "[${$arg1}]${dbgBufPos} : 0x%x [size:%d]\r\n" , ${dbgBuf} , ${dbgSize} ;
+        ?? ${dbgBuf}
+        
+        $$ if 2nd return parameter is provided:
+        .if($scmp(@"${/d:$arg2}","0")!=0)
+        {
+            .if($spat(@"${$arg2}","0x*")!=0) 
+            { 
+                .printf /oe "3rd input parameter[${$arg2}] is wrong.\r\n" 
+                .printf /oe "should be style : ${/v:myVar} to prevent from alias replace.\r\n"
+                .echo usage example:
+                .echo "$$>a<D:\${$arg0} str ${/v:myVar}"
+                .echo
+            }
+            aS ${/v:dbgRet} ${$arg2};
+            .block
+            {
+                .foreach /pS 2 /ps 5 ( var { ?? ${dbgBuf} } )  {;aS ${dbgRet} ${var}}
+                .printf "address 0x%x is stored to ${$arg2}\r\n" , ${dbgBuf} ;
+                ad ${/v:dbgRet}            
+            }            
+        }
+    }
+}
+
+.block
+{
+    ad ${/v:dbgStr}
+    ad ${/v:dbgSize}
+    ad ${/v:dbgBuf}
+    ad ${/v:dbgBufPos}
+}
+.pop /r /q

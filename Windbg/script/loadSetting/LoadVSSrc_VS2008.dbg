@@ -1,0 +1,37 @@
+.echo +++++++ loading ${$arg0}
+
+$$ "设置vs2008的MFC源文件路径"
+$$ as lss  $$>a<E:\personal\windbg\script\loadSetting\LoadVSSrc_VS2008.dbg
+
+.echo processing LoadVSSrc_VS2008.dbg ...
+.echo
+
+.if (${/d:VsSrc}!=0) {
+ad ${/v:VsSrc};
+}
+
+.echo
+.echo set Visual studio 2008 source path
+.foreach /pS 3 (val { .shell -ci "*" if not defined VS90COMNTOOLS @echo no } ) { .printf /D /oe "Fails to found VS2008 install path.";};
+
+$$ aS ${/v:VsSrc} C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC
+$$>a<${$arg0}\..\setPath2Var.dbg  "${/v:VsSrc}" "%VS90COMNTOOLS%..\..\VC"
+.foreach /pS 3 (val {.shell -ci "*" if exist "${VsSrc}" @echo yes}) {
+.printf /D /op "Found VS2008 install path : ${VsSrc}\r\n"
+.echo loading Visual studio source file [${VsSrc}]......
+$$ crt part
+.srcpath+ "${VsSrc}\crt\src\vccorlib";
+.srcpath+ "${VsSrc}\crt\src\stl";
+.srcpath+ "${VsSrc}\crt\src\concrt";
+
+$$ atlmfc part
+.srcpath+ "${VsSrc}\atlmfc\src\mfc";
+.srcpath+ "${VsSrc}\atlmfc\src\mfcm";
+.srcpath+ "${VsSrc}\atlmfc\src\atl";
+.srcpath+ "${VsSrc}\atlmfc\src\include";
+}
+
+$$ remove defined temporary environment variable
+ad ${/v:VsSrc} ;
+
+.echo ------- exiting ${$arg0}

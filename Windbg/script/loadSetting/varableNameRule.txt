@@ -1,0 +1,10 @@
+recommanded windbg & batch script variable name rule:
+xxxFullPath         :  c:\myProject\myApp.exe
+xxxFolderPath       :  c:\myProject
+xxxModuleName       :  myApp.exe
+exeModuleName       :  myApp
+
+the general suffix name:
+fullPath
+foldPath
+moduleName

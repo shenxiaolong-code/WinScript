@@ -1,0 +1,12 @@
+.echo ----------------------Loading exception setting script----------------------;
+
+.echo process ID
+| ;
+
+.echo
+.echo PEB structure:
+?? @$peb
+
+
+
+.echo ----------------------Finish Loading (exception setting)--------------------;

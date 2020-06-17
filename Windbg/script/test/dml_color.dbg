@@ -1,0 +1,57 @@
+*** Text Tag Examples ****
+
+<b>This is bold text</b>
+<u>This is underlined text</u>
+<i>This is italizized text</i>
+<b><u><i>This is bold, underlined and italizized text</i></u></b>
+
+<b>Color Tag Examples</b>
+<col fg="wfg" bg="wbg"> This is standard foreground / background text </col>
+<col fg="empfg" bg="empbg"> This is emphasis foreground / background text </col>
+<col fg="subfg" bg="subbg"> This is subdued foreground / background text </col>
+<col fg="clfg" bg="clbg"> Test Text - Current Line</col>
+
+<b>Other Tags Sets</b>
+<col fg="normfg" bg="normbg"> Test Text - Normal (normfg / normbg) </col>
+<col fg="warnfg" bg="warnbg"> Test Text - Warning (warnfg / warnbg) </col>
+<col fg="errfg" bg="errbg"> Test Text - Error (errfg / errbg) </col>
+<col fg="verbfg" bg="verbbg"> Test Text - Verbose (verbfg / verbbg) </col>
+
+<b>Changed Text Tag Examples</b>
+<col fg="changed" bg="wbg"> Test Text - Changed</col>
+
+<b>Source Tags - using wbg background</b>
+<col fg="srcnum" bg="wbg"> Test Text - srcnum  </col>
+<col fg="srcchar" bg="wbg"> Test Text - srcchar  </col>
+<col fg="srcstr" bg="wbg"> Test Text - srcstr  </col>
+<col fg="srcid " bg="wbg"> Test Text - srcid   </col>
+<col fg="srckw" bg="wbg"> Test Text - srckw </col>
+<col fg="srcpair" bg="empbbg"> Test Text - srcpair </col>
+<col fg="srccmnt" bg="wbg"> Test Text - srccmnt  </col>
+<col fg="srcdrct" bg="wbg"> Test Text - srcdrct </col>
+<col fg="srcspid" bg="wbg"> Test Text - srcspid </col>
+<col fg="srcannot" bg="wbg"> Test Text - srcannot </col>
+
+<b>Source Tags - using empbg background</b>
+<col fg="srcnum" bg="empbg"> Test Text - srcnum  </col>
+<col fg="srcchar" bg="empbg"> Test Text - srcchar  </col>
+<col fg="srcstr" bg="empbg"> Test Text - srcstr  </col>
+<col fg="srcid " bg="empbg"> Test Text - srcid   </col>
+<col fg="srckw" bg="empbg"> Test Text - srckw </col>
+<col fg="srcpair" bg="empbbg"> Test Text - srcpair </col>
+<col fg="srccmnt" bg="empbg"> Test Text - srccmnt  </col>
+<col fg="srcdrct" bg="empbg"> Test Text - srcdrct </col>
+<col fg="srcspid" bg="empbg"> Test Text - srcspid </col>
+<col fg="srcannot" bg="empbg"> Test Text - srcannot </col>
+
+<b>Source Tags - using subbg background</b>
+<col fg="srcnum" bg="subbg"> Test Text - srcnum  </col>
+<col fg="srcchar" bg="subbg"> Test Text - srcchar  </col>
+<col fg="srcstr" bg="subbg"> Test Text - srcstr  </col>
+<col fg="srcid " bg="subbg"> Test Text - srcid   </col>
+<col fg="srckw" bg="subbg"> Test Text - srckw </col>
+<col fg="srcpair" bg="subbg"> Test Text - srcpair </col>
+<col fg="srccmnt" bg="subbg"> Test Text - srccmnt  </col>
+<col fg="srcdrct" bg="subbg"> Test Text - srcdrct </col>
+<col fg="srcspid" bg="subbg"> Test Text - srcspid </col>
+<col fg="srcannot" bg="subbg"> Test Text - srcannot </col>

@@ -1,0 +1,18 @@
+$$ bm USER32!CreateWindow*
+$$ bp USER32!CreateWindowInternal
+bp USER32!VerNtUserCreateWindowEx
+
+
+ 2 e x86 76ebbc20     0001 (0001)  0:**** USER32!CreateWindowExA
+ 3 e x86 76ebee18     0001 (0001)  0:**** USER32!NtUserCreateWindowStation
+ 4 e x86 76ea2d41     0001 (0001)  0:**** USER32!CreateWindowInternal
+ 5 e x86 76ea32b6     0001 (0001)  0:**** USER32!VerNtUserCreateWindowEx
+ 6 e x86 76ea2d00     0001 (0001)  0:**** USER32!CreateWindowExW
+ 7 e x86 76f21840     0001 (0001)  0:**** USER32!CreateWindowIndirect
+ 8 e x86 76f258a0     0001 (0001)  0:**** USER32!CreateWindowStationA
+ 9 e x86 76f258f0     0001 (0001)  0:**** USER32!CreateWindowStationW
+10 e x86 76f2ccc0     0001 (0001)  0:**** USER32!_CreateWindowEx
+11 e x86 76ebee84     0001 (0001)  0:**** USER32!NtUserCreateWindowEx
+12 e x86 76f217c0     0001 (0001)  0:**** USER32!CreateWindowInBand
+13 e x86 76f2525a     0001 (0001)  0:**** USER32!CommonCreateWindowStation
+14 e x86 76e99650     0001 (0001)  0:**** USER32!CreateWindowInBandEx

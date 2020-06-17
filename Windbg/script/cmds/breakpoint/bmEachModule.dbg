@@ -1,0 +1,5 @@
+.foreach /f ( place "${$arg1}") 
+{ 
+.echo bm ${place}!${$arg2} ...
+bm ${place}!${$arg2}
+}

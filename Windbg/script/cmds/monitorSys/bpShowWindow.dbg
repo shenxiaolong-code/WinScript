@@ -1,0 +1,18 @@
+.if (not(${d$arg1}))
+{
+	.echo Now you're monitoring all windows for showhide events in current process.
+	.echo
+	.echo If you just want to monitor one window, do it this way
+	.echo  $$a${$arg0} [hwnd]
+	.echo
+
+	bp USER32!NtUserShowWindow .printf ShowWindow(%N, %d)n, poi(@esp+4), @@(!!@@(poi(@esp+8)));g
+	bp USER32!NtUserSetWindowPos .printf SetWindowPos(%N, %d)n, poi(@esp+4), @@(!!(@@(poi(@esp+1c))&0x40));g
+}
+.else
+{
+	bp USER32!NtUserShowWindow j (poi(@esp+4) == ${$arg1}) '.echo;.printf ShowWindow(%N, %d) n, poi(@esp+4), @@(!!@@(poi(@esp+8)));kL;g';'g'
+	bp USER32!NtUserSetWindowPos j (poi(@esp+4) == ${$arg1}) '.echo;.printf SetWindowPos(%N, %d)n, poi(@esp+4), @@(!!(@@(poi(@esp+1c))&0x40));kL;g';'g'
+}
+
+bl

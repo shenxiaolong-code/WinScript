@@ -1,0 +1,13 @@
+.echo +++++++ loading ${$arg0}
+.echo open or close detail information option
+.echo
+
+.echo switch to masn mode, because scmp operator is only available in masm mode
+.expr /s masm
+
+.if($scmp("${$arg1}","on")=0) { $$>a<${WinScriptPath}\windbg\script\loadSetting\loadNoisyOn.dbg ; };
+.if($scmp("${$arg1}","off")=0) { $$>a<${WinScriptPath}\windbg\script\loadSetting\loadNoisyOff.dbg ; };
+.if($scmp("${$arg1}","on")!=0 & $scmp("${$arg1}","off")!=0) { .printf /D /oe "Wrong parameter, only 'on' or 'off' is supported." }
+
+.echo
+.echo ------- exiting ${$arg0}

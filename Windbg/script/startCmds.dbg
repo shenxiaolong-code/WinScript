@@ -1,0 +1,64 @@
+$$ if any 2nd parameter exist , this script will be loaded forcely
+.if (${/d:runFlag}=0 | ${/d:$arg1})
+{
+.echo 
+.echo +++++++ loading ${$arg0}
+.echo
+.echo ************************************************************************************************
+.echo *                                                                                              *
+.echo *     loading windbg startup script , edited by xiaolong (xlshen@126.com) *
+.echo *                                                                                              *  
+.echo ************************************************************************************************
+
+.echo
+.echo reset windbg configuration.
+$$>a<${$arg0}\..\loadSetting\reset.dbg
+
+.echo
+.echo init windbg configuration.
+$$>a<${$arg0}\..\loadSetting\init.dbg
+
+.echo
+.echo set path environment variable "${/v:WinScriptPath}" for common debug purpuse.
+$$>a<${$arg0}\..\loadSetting\setPath2Var.dbg "${/v:WinScriptPath}" "${$arg0}\..\..\.."
+
+$$ Set run script when debugger startup;
+.block {
+.echo
+.echo WinScriptPath=${WinScriptPath}
+
+.echo
+$$>a<${WinScriptPath}\windbg\script\loadSetting\loadExtension.dbg
+
+.echo
+$$>a<${WinScriptPath}\windbg\script\loadSetting\loadAlais.dbg
+
+.echo
+$$>a<${WinScriptPath}\windbg\script\loadSetting\loadNatvis.dbg
+
+.echo
+.echo set symbol before set option, because some option depends on symbol search.
+$$>a<${WinScriptPath}\windbg\script\loadSetting\loadSymbol.dbg
+
+.echo
+$$>a<${WinScriptPath}\windbg\script\loadSetting\LoadVSSrc.dbg
+
+.echo
+$$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions.dbg
+
+.echo
+$$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptionsNoisy.dbg off
+
+.echo
+$$>a<${WinScriptPath}\windbg\script\loadSetting\loadInfo.dbg
+
+}
+
+.echo
+aS ${/v:runFlag} 1;
+
+.echo
+.echo ------- exiting ${$arg0}
+} .else {
+.echo ${$arg0} has been loaded , add parameter 'f' to load it again forcely ;
+}

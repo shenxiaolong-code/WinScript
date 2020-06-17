@@ -1,0 +1,34 @@
+.echo +++++++ loading ${$arg0}
+.echo
+
+.if(${/d:.exp}==0)
+{
+aS ${/v:.exp} $$>a<${$arg0}
+}
+
+.echo
+.printf /D "Click <link cmd=\"!analyze -v\">!analyze -v</link> to analyze exception.\r\n"
+.if(${/d:auto}==1) { !analyze -v }
+
+.echo 
+.printf /D "switch to exception thread: <link cmd=\"~#s\">~#s</link>\r\n"
+~#s
+.echo
+
+.echo
+.printf /D "check last exception record : <link cmd=\".exr -1\">.exr -1</link>\r\n"
+.exr -1
+.echo
+
+.echo 
+.printf /D "switch to Context Record: <link cmd=\".ecxr\">.ecxr</link>\r\n"
+.ecxr
+.echo
+
+.echo
+.printf /D "current thread last error: <link cmd=\"!gle\">!gle</link>\r\n"
+!gle
+.echo
+
+.echo
+.echo ------- exiting ${$arg0}

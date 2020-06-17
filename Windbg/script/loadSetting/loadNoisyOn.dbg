@@ -1,0 +1,38 @@
+.echo +++++++ loading ${$arg0}
+.echo open noisy option
+.echo
+
+.echo
+.echo Displays module loading [sxn ld]. 
+sxn ld
+
+.echo
+.echo Displays module unloading[sxn ud]. 
+sxn ud
+
+.echo
+.echo show all output message[.outmask /a]. 
+.outmask /a
+
+.echo
+.echo Displays symbol file loading and unloading[.srcnoisy 2]. 
+.srcnoisy 3
+
+.echo
+.echo display symbol load information [!sym noisy]
+!sym noisy
+.echo Allows authentication dialog boxes to appear when SymSrv receives an authentication request [!sym prompts]
+.echo it can avoid SymSrv being unable to access symbols over the internet.
+!sym prompts
+
+.echo
+.echo Causes bundle-type information to be displayed along with the standard disassembly information [.asm verbose]
+.asm verbose ;
+
+.echo
+.echo turns off quiet mode -- disabled [sqd]
+.echo display message about extension DLL is loaded or unloaded
+.echo The r (Registers) command requires an equal sign (=) in its syntax
+
+
+.echo ------- exiting ${$arg0}

@@ -1,0 +1,1 @@
+for /f "usebackq tokens=1,2,*" %%i in ( ` type "%~fs1" `) do start explorer.exe /select, "%%k"

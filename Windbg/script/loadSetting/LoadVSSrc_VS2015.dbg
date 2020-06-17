@@ -1,0 +1,33 @@
+.echo +++++++ loading ${$arg0}
+.echo processing LoadVSSrc_VS2015.dbg ...
+.echo
+
+.if (${/d:VsSrc}!=0) {
+ad ${/v:VsSrc};
+}
+
+.echo
+.echo set Visual studio 2015 source path
+.foreach /pS 3 (val { .shell -ci "*" if not defined VS140COMNTOOLS @echo no } ) { .printf /D /oe "Fails to found VS2015 install path.";};
+
+$$ aS ${/v:VsSrc} C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC
+$$>a<${$arg0}\..\setPath2Var.dbg  "${/v:VsSrc}" "%VS140COMNTOOLS%..\..\VC"
+.foreach /pS 3 (val {.shell -ci "*" if exist "${VsSrc}" @echo yes}) {
+.printf /D /op "Found VS2015 install path : ${VsSrc}\r\n"
+.echo loading Visual studio source file [${VsSrc}]......
+$$ crt part
+.srcpath+ "${VsSrc}\crt\src\vccorlib";
+.srcpath+ "${VsSrc}\crt\src\stl";
+.srcpath+ "${VsSrc}\crt\src\concrt";
+.srcpath+ "${VsSrc}\crt\src\vcruntime";
+
+$$ atlmfc part
+.srcpath+ "${VsSrc}\atlmfc\src\mfc";
+.srcpath+ "${VsSrc}\atlmfc\src\mfcm";
+.srcpath+ "${VsSrc}\atlmfc\src\atl";
+}
+
+$$ remove defined temporary environment variable
+$$ ad ${/v:VsSrc} ;
+
+.echo ------- exiting ${$arg0}

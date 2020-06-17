@@ -1,0 +1,32 @@
+.echo +++++++ loading ${$arg0}
+.echo initialize windbg environment
+
+.echo
+.echo set cache path : C:\symbols
+!homedir C:\symbols
+
+.echo set masm as default mode. because some operator(e.g. $scmp) is available only in masm mode [ .expr /s masm ]
+.expr /s masm ;
+
+as /e temp temp;
+
+.echo
+.echo set windbg debug mode
+aS /e ${/v:targetMode} PROCESSOR_ARCHITECTURE;
+.block {
+.echo targetMode=${targetMode}
+}
+
+.echo
+.echo init target mode
+.if($scmp("${/f:$CurrentDumpFile}","")==0) {
+ .printf /D /op "windbg live debug mode."; 
+ aS ${/v:dbgLive} 1;
+ } .else { 
+ .printf /D /op "windbg dump file analysis mode.";
+ aS ${/v:dbgDmp}  1;
+ };
+
+.echo
+.echo ------- exiting ${$arg0}
+

@@ -1,0 +1,49 @@
+$$ dump all string in current module . by shenxiaolong (xlshen@126.com, xiaolosh@cisco.com) ;
+
+.if(0==${/d:$arg1}) 
+{
+    $$ if no any input parameter ;
+    .foreach /pS 8 /ps 99 (val1 { lm a @$scopeip }) { $$>a<${$arg0} 0x${val1} }  ;
+} 
+.elsif (0==${/d:$arg2}) 
+{
+    $$ if there is only one input parameter ;
+    .foreach /pS 9 /ps 99 (val2 { lm a @$scopeip }) { $$>a<${$arg0} ${$arg1} 0x${val2} } ;
+} 
+.else 
+{
+    $$ if there is two input parameter , now all are ready ;
+    .foreach (val3 { lm1m a @$scopeip }) { .echo dump all string in module ${val3} : ${$arg1} -- ${$arg2} }  ;    
+    .echo   !mex.strings ${$arg1} ${$arg2}
+    .echo   s -sa ${$arg1} ${$arg2}
+    .echo   db ${$arg1} ${$arg2} 
+    
+    .foreach (val4 { lm1m a @$scopeip }) 
+    {
+        .if(0==$sicmp("${_curMod}","${val4}")) 
+        {            
+            .echo   
+            .echo   dump all string confirmed!
+            .echo   s -sa ${$arg1} ${$arg2} ;
+            .echo   [${val4}] dumping ....            
+            s -sa ${$arg1} ${$arg2} ;
+            .echo   
+            .echo   Done to dump all string from current module;
+            
+            $$ clear recorded module name after dump all string in current module;
+            ad /q ${/v:_curMod};
+        } 
+        .else 
+        {
+            $$ record current module name ;
+            .foreach (val5 { lm1m a @$scopeip }) 
+            {
+                ;aS ${/v:_curMod} ${val5};
+                
+                .echo   
+                .echo   double-click again to confirm dump string in current module '${val5}' -- it is time-consuming procedure. 
+                .echo   you can execute above command manually.
+            }
+        }
+    };   
+}

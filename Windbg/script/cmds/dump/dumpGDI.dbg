@@ -1,0 +1,67 @@
+$$ https://aloiskraus.wordpress.com/2016/06/25/show-gdi-handles-by-type-in-windbg/
+.echo Run as: $$>a<${$arg0}
+$$ Written by Alois Kraus 2016
+$$ uses pseudo registers r0-5 and r8-r14
+.echo prompt : keey your windbg matches with your OS (x86/x64)
+
+r @$t1=0
+r @$t8=0
+r @$t9=0
+r @$t10=0
+r @$t11=0
+r @$t12=0
+r @$t13=0
+r @$t14=0
+$$ Increment count is 1 byte until we find a matching field with the current pid
+r @$t4=1
+
+r @$t0=$peb
+$$ show current GdiSharedHandleTable pointer address
+.echo current GdiSharedHandleTable pointer is:
+?? ((ntdll!_PEB*)@$peb)->GdiSharedHandleTable
+.echo
+$$ Get address of GDI handle table into t5
+.foreach /pS 3 /ps 1 ( @$GdiSharedHandleTable { dt ntdll!_PEB GdiSharedHandleTable @$t0 } ) { r @$t5 = @$GdiSharedHandleTable }
+
+$$ On first call !address produces more output. Do a warmup
+.foreach /pS 50 ( @$myStartAddress {!address  @$t5} ) {  }
+
+
+$$ Get start address of file mapping into t2
+.foreach /pS 4 /ps 40 ( @$myStartAddress {!address  @$t5} ) { r @$t2 = @$myStartAddress }
+$$ Get end address of file mapping into t3
+.foreach /pS 7 /ps 40 ( @$myEndAddress {!address  @$t5} ) { r @$t3 = @$myEndAddress }
+.printf "GDI Handle Table %p %p", @$t2, @$t3
+
+.for(; @$t2 < @$t3; r @$t2 = @$t2 + @$t4) 
+{
+  $$ since we walk bytewise through potentially invalid memory we need first to check if it points to valid memory
+  .if($vvalid(@$t2,4) == 1 ) 
+  {
+     $$ Check if pid matches
+     .if (wo(@$t2) == @$tpid ) 
+     { 
+        $$ increase handle count stored in $t1 and increase step size by 0x18 because we know the cell structure GDICell has a size of 0x18 bytes.
+        r @$t1 = @$t1+1
+        r @$t4 = 0x18
+        $$ Access wType of GDICELL and increment per GDI handle type
+        .if (by(@$t2+6) == 0x1 )  { r @$t8 =  @$t8+1  }
+        .if (by(@$t2+6) == 0x4 )  { r @$t9 =  @$t9+1  }
+        .if (by(@$t2+6) == 0x5 )  { r @$t10 = @$t10+1 }
+        .if (by(@$t2+6) == 0x8 )  { r @$t11 = @$t11+1 }
+        .if (by(@$t2+6) == 0xa )  { r @$t12 = @$t12+1 }
+        .if (by(@$t2+6) == 0x10 ) { r @$t13 = @$t13+1 }
+        .if (by(@$t2+6) == 0x30 ) { r @$t14 = @$t14+1 }
+     } 
+  } 
+}
+
+.printf "\nGDI Handle Count      %d", @$t1
+.printf "\n\tDeviceContexts: %d", @$t8
+.printf "\n\tRegions:        %d", @$t9
+.printf "\n\tBitmaps:        %d", @$t10
+.printf "\n\tPalettes:       %d", @$t11
+.printf "\n\tFonts:          %d", @$t12
+.printf "\n\tBrushes:        %d", @$t13
+.printf "\n\tPens:           %d", @$t14
+.printf "\n\tUncategorized:  %d\n", @$t1-(@$t14+@$t13+@$t12+@$t11+@$t10+@$t9+@$t8)

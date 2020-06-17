@@ -1,0 +1,8 @@
+1. in windbg command input box: (can't add quote in path)
+!load <path>\debugext.dll
+
+2. show help
+!debugext.help
+
+3. dump possible string in current thread stack
+!debugext.dumpstrings esp

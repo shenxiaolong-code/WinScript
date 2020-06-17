@@ -1,0 +1,90 @@
+$$ https://msdn.microsoft.com/en-us/library/windows/desktop/ms724291%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
+.echo +++++++ loading ${$arg0}
+$$ usage example: $$>a<${$arg0} TelephonyPlugin
+.if(0 == ${/d:$arg1}){
+.echo lack parameter: ;
+.echo syntax : $$>a<${$arg0} moduleName
+.echo usage example: $$>a<${$arg0} TelephonyPlugin ;
+}
+
+.echo capture all gdi create call in module "${$arg1}"
+.echo switch auto mode to extract module address
+.effmach . ;
+
+.foreach /pS 8 /ps 10 ( pla { lmm ${$arg1} } ) { 
+aS ${/v:modStart} pla ;
+r @$t8= pla 
+};
+
+.foreach /pS 9 /ps 10 ( pla { lmm ${$arg1} } ) { 
+aS ${/v:modEnd} pla ;
+r @$t9= pla 
+};
+
+aS ${/v:bpCmd} ".if(poi(@esp)<${modStart}  or poi(@esp)>${modEnd} ) {gc;} .else { .if(poi(@esp)==1) {gc;} .else { }  }"  ; 
+aS ${/v:bpCmd} ".if(poi(@esp)<@$t8  or poi(@esp)>@$t9 ) {gc;} .else { .if(poi(@esp)==1) {gc;} .else { }  }"  ; 
+
+.block {
+
+.echo
+.printf "${$arg1} [ %x--%x ]\r\n", ${modStart} , ${modEnd};
+.echo breakpoint cmd : "${bpCmd}" ;
+
+.echo
+.echo create Bitmap
+bm GDI*!Create*Bitmap* " ${bpCmd} "
+bm GDI*!CreateDIBSection " ${bpCmd} "
+
+.echo
+.echo create Brush
+bm GDI*!Create*Brush* " ${bpCmd} "
+
+.echo
+.echo create DC
+bm GDI*!CreateDC " ${bpCmd} "
+
+.echo
+.echo create Enhanced metafile and DC
+bm GDI*!CreateEnhMetaFile " ${bpCmd} "
+
+.echo
+.echo create Font
+bm GDI*!CreateFont* " ${bpCmd} "
+
+.echo
+.echo create Memory DC
+bm GDI*!CreateCompatibleDC " ${bpCmd} "
+
+.echo
+.echo create Metafile and DC
+bm GDI*!CreateMetaFile " ${bpCmd} "
+
+.echo
+.echo create Palette
+bm GDI*!CreatePalette " ${bpCmd} "
+
+.echo
+.echo create Pen and extended pen
+bm GDI*!CreatePen* " ${bpCmd} "
+bm GDI*!ExtCreatePen " ${bpCmd} "
+
+.echo
+.echo create Region
+bm GDI*!PathToRegion " ${bpCmd} "
+bm GDI*!ExtCreateRegion " ${bpCmd} "
+bm GDI*!CombineRgn " ${bpCmd} "
+bm GDI*!Create*Rgn " ${bpCmd} "
+
+.echo
+.echo capture all gdi create call in module "${$arg1}"
+.echo module "${$arg1}" address range: [ ${modStart} - ${modEnd} ] ;
+.echo breakpoint cmd : "${bpCmd}";
+.echo
+}
+ad ${/v:bpCmd}
+
+.echo ------- exiting ${$arg0}
+
+
+
+

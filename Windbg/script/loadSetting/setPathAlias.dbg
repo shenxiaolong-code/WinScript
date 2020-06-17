@@ -1,0 +1,15 @@
+.echo +++++++ loading ${$arg0}
+.echo Run as: $$>a<${$arg0}
+
+.foreach /pS 2 ( val { .shell -ci "|;||;vercommand;" clip } ) {
+.echo running dos script to generate windbg alias script .. 
+.foreach /s ( val "once" ) {  .shell -ci "*" cmd.exe /c "${$arg0}\..\setPathAlias.bat" }
+.echo
+.echo loading dos-generated script '${temp}\setPathAlias.dbg' .. 
+$$>a<${temp}\setPathAlias.dbg
+}
+
+.echo
+.echo ------- exiting ${$arg0}
+
+ 

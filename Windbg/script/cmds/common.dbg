@@ -1,0 +1,10 @@
+$$ .echo +++++++ loading ${$arg0}
+$$ .echo Run as: $$>a<${$arg0}
+$$ .echo $arg1 ${$arg1}
+
+.foreach /s ( val "once" ) { .shell -ci "*" "${$arg0}\..\common.bat" "${$arg1}" "${$arg2}" "${$arg3}" "${$arg4}" };
+
+$$ .echo
+$$ .echo ------- exiting ${$arg0}
+
+ 

@@ -1,0 +1,40 @@
+Windows Registry Editor Version 5.00
+
+;note : there is 16 max entry limitation in MUIVerb, more entry will be not shown.
+;       there is max string length limitation for SubCommands. so it is best to short command name length within 16 total entry number.
+;       use ExtendedSubCommandsKey , instead of SubCommands , the advantage :
+;       many command can be grouped together, it is easy to maintain. 
+;       the menu path can be customered , instead of fix path :  HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell
+;       recommend to use path : HKEY_CLASSES_ROOT\._myMenus , because it lists the top position of registry.
+;       can NOT add HKEY_CLASSES_ROOT before path , else will fail to import to registry (MUST under same root key)
+
+[HKEY_CLASSES_ROOT\.dmp]
+@="dmpfile"
+
+[HKEY_CLASSES_ROOT\dmpfile\Shell\windbg]
+"MUIVerb"="windbg"
+"ExtendedSubCommandsKey"="._myMenus\\windbg\\dmpFileNode"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\01_analysis]
+@="analysis dump file with windbg"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\01_analysis\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  analysisDmp \"%1\""
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\02_analysisByVS]
+@="analysis dump file with visual studio"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\02_analysisByVS\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_vs.bat  analysisDmp \"%1\""
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\03_dmpCheck]
+@="check dump file availability"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\03_dmpCheck\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dumpCheck \"%1\""
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\04_collectSymManifest]
+@="collect symbol list"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\04_collectSymManifest\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\collectOfflineSymbols\\tools\\tools_collectOfflineSymbols.bat  collectSymbolList \"%1\""

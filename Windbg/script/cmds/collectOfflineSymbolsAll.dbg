@@ -1,0 +1,30 @@
+.echo +++++++ loading ${$arg0}
+.echo Run as: $$>a<${$arg0}
+
+.echo;
+.foreach /ps 99 ( val { $$>a<${$arg0}\..\common.dbg getDateString } ) {
+.echo create folder:${targetFolderPath}\symbols_${val};
+$$>a<${$arg0}\..\common.dbg createFolder "${targetFolderPath}\symbols_${val}"
+.foreach /pS 4 (dummy { .shell -ci "*" if exist "${targetFolderPath}\symbols_${val}\fulldump.dmp" (echo exist) else ( echo not exist ) } ) 
+{
+.echo create fulldump.dmp ...
+.dump /mapwd ${targetFolderPath}\symbols_${val}\fulldump.dmp;
+};
+.echo;
+.echo collecting symbol...;
+.copysym "${targetFolderPath}\symbols_${val}";
+.echo goto the folder:${targetFolderPath}\symbols_${val};
+$$>a<${$arg0}\..\common.dbg explorePath "${targetFolderPath}\symbols_${val}\fulldump.dmp"
+}
+
+.echo;
+.echo NOTE:;
+.echo collect all loaded symbols;
+.echo you can use command lml to show which symbol is loaded.;
+.echo if you want to collect all symbols, please run command .reload /f first or use .copysym /l to load all symbols.;
+.echo;
+
+.echo
+.echo ------- exiting ${$arg0}
+
+ 

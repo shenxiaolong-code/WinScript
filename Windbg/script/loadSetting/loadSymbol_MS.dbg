@@ -1,0 +1,14 @@
+.echo +++++++ loading ${$arg0}
+.echo
+
+.foreach /pS 3 (eVal {!homedir}) {
+.echo symbols cache path : ${eVal}\sym
+.sympath+ "cache*${eVal}";  
+}
+
+.echo
+.echo loading microsoft module symbols......
+.sympath+ "SRV*http://msdl.microsoft.com/download/symbols";
+.sympath+ "SRV*http://referencesource.microsoft.com/symbols";
+
+.echo ------- exiting ${$arg0}

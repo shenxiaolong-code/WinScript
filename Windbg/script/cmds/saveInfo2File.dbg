@@ -1,0 +1,63 @@
+.echo +++++++++++++++++ enter ${$arg0} +++++++++++++++++++++
+
+.echo
+$$ aS ${/v:analysisCache} ${$CurrentDumpFile}_analysis;
+.echo target dir : ${targetFolderPath}
+aS ${/v:analysisCache} D:\bin\AdbgDir;
+
+.block {
+
+.foreach /pS 4 ( var {.shell -ci "*" if not exist "${analysisCache}" echo no folder } ) 
+{
+.echo
+.echo ready to create directory: ${analysisCache} ;
+.shell -ci "*" mkdir "${analysisCache}" & exit ;
+}
+
+.foreach /pS 4 ( var {.shell -ci "*" if exist "${analysisCache}" echo has folder } ) 
+{
+.echo
+.echo .shell -ci "*" explorer.exe "${analysisCache}"  ;
+}
+
+.if($scmp("${$arg1}","peb")==0) {
+.echo save peb info to ${analysisCache}\peb.txt;
+.shell -ci "!peb" find /v "^*" > "${analysisCache}\peb.txt" & exit ;
+.echo done ;
+}
+
+.if($scmp("${$arg1}","stacks")==0) {
+.echo save all stack info to ${analysisCache}\stackAll.txt ;
+.shell -ci "~*kbc" find /v "^*" > "${analysisCache}\stackAll.txt" & exit ;
+.echo done
+}
+
+.if($scmp("${$arg1}","av")==0) {
+.echo save !analyze -v info to ${analysisCache}\analyze.txt ;
+.shell -ci "!analyze -v" find /v "^*" > "${analysisCache}\analyze.txt" & exit ;
+.echo done ;
+}
+
+.if($scmp("${$arg1}","locks")==0) {
+.echo save !locks -v info to ${analysisCache}\locks.txt ;
+.shell -ci "!locks -v" find /v "^*" > "${analysisCache}\locks.txt" & exit ;
+.echo done ;
+}
+
+.if($scmp("${$arg1}","gleAll")==0) {
+.echo save !gle -all info to ${analysisCache}\gleAll.txt ;
+.shell -ci "!gle -all" find /v "^*" > "${analysisCache}\gleAll.txt" & exit ;
+.echo done ;
+}
+
+.if($scmp("${$arg1}","el")==0) {
+.echo save .eventlog info to ${analysisCache}\eventlog.txt ;
+.shell -ci ".eventlog" find /v "^*" > "${analysisCache}\eventlog.txt" & exit ;
+.echo done ;
+}
+
+}
+
+.echo
+.echo -----------------leave ${$arg0} -------------------
+

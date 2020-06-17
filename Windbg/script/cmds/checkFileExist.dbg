@@ -1,0 +1,7 @@
+r @$t0=0
+.foreach /pS 4 (val { .shell -ci "*" if exist "${$arg1}" (echo exist) else ( echo not exist ) } ) 
+{
+.printf /D "<col fg=\"srcchar\" bg=\"wbg\"><B>ERROR: file is not exist : </B></col>" ;
+.echo ${$arg1}
+r @$t0=1
+};

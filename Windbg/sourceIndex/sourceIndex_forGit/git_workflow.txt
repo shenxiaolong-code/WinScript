@@ -1,0 +1,11 @@
+以下验证成功： 但是需要一个本地的git repo,本例中使用"D:\sourceCode\jabberGit129"
+git -C "D:\sourceCode\jabberGit129" show "8b006336aa:services/servicesframework/include/csfunified/framework/ServicesDispatcherCallback.h" "D:\work\shenxiaolong\core\WinScript\Windbg\script\test\sourceIndex\git_srcIndex\gitsrc\services\servicesframework\include\csfunified\framework\ServicesDispatcherCallback.h\8b006336aa\servicesdispatchercallback.h"
+
+注意事项：
+1. 选项show后面git用的路径必须下斜杠/。
+2. git路径是区分大小写的，其pdb中的中srctool.exe -r读取的原始路径大小写不一定正确，需要自己来保证大小写正确。
+2.1 验证可行的方法： 
+    用dir/s/b <fullPath> 命令显示出来的结果路径是大小写正确的路径，把其结果把存到一变量中。
+    再把变量值中的反斜杠(\)替换为正斜杠(/)
+3. 路径字符串的前后空格要trim掉，因为调试器的srcsrv解析时不trim的。
+4. 本地保存结果的路径文件夹必须存在(可预先创建)，否则执行命令会失败。(提示找不到系统路径)

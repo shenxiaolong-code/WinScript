@@ -1,0 +1,23 @@
+.echo +++++++ loading ${$arg0}
+
+.echo
+.echo loading Firefox symbol....
+.sympath+ "SRV*http://symbols.mozilla.org/firefox"  ;
+
+.echo
+.echo loading Chrome symbol....
+.echo https://www.chromium.org/developers/how-tos/debugging-on-windows
+.sympath+ "SRV*http://chromium-browser-symsrv"  ;
+.sympath+ "SRV*https://chromium-browser-symsrv.commondatastorage.googleapis.com"  ;
+
+.echo
+.echo loading Citrix symbol....
+.sympath+ "SRV*http://ctxsym.citrix.com/symbols"  ;
+
+.echo
+.echo loading Safari symbol....
+.sympath+ "SRV*http://developer.apple.com/internet/safari/windows_symbols"  ;
+
+
+.echo ------- exiting ${$arg0}
+

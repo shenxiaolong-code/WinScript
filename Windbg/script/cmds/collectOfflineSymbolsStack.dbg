@@ -1,0 +1,12 @@
+.echo +++++++ loading ${$arg0}
+.echo Run as: $$>a<${$arg0}
+
+.foreach /ps 99 ( val { .shell -ci "?? @$tid;kc" clip } ) {
+.foreach /s ( val "once" ) { .shell -ci "*" "${$arg0}\..\collectOfflineSymbolsStack.bat" "${targetFullPath}" }
+.echo
+}
+
+.echo
+.echo ------- exiting ${$arg0}
+
+ 

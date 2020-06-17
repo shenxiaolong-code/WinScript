@@ -1,0 +1,21 @@
+some commands are not supported in windbg script files.
+they MUST be implemented in manual way in windbg client
+e.g.
+.lsrcfix (Use Local Source Server) 
+.lsrcpath (Set Local Source Path) 
+.open (Open Source File) 
+.write_cmd_hist (Write Command History))
+.beep (Speaker Beep) 
+.sleep (Pause Debugger)
+.cls (Clear Screen) 
+.hh (Open HTML Help File) 
+.idle_cmd (Set Idle Command) 
+.remote (Create Remote.exe Server) 
+.restart (Restart Kernel Connection) 
+user-mode .restart (Restart Target Application) 
+.wtitle (Set Window Title)
+ 
+test below commands in script files:
+.srcfix
+.sympath
+

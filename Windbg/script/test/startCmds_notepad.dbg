@@ -1,0 +1,27 @@
+.echo 
+.echo 
+.echo ----------------------loading Startup setting scrip[${$arg0}]----------------------;
+.echo
+.echo clear alias and symbol path
+ad * ;
+.sympath ""
+
+.echo
+.echo set path environment variable "WinScriptPath".
+$$>a<${$arg0}\..\script\loadSetting\setPath2Var.dbg "${/v:TestPath}" "${$arg0}\.."
+$$>a<${$arg0}\..\script\loadSetting\setPath2Var.dbg "${/v:WinScriptPath}" "${TestPath}\..\.."
+.block {
+.echo WinScriptPath=${WinScriptPath}
+.echo
+}
+
+.block {
+.echo loading ${WinScriptPath}\windbg\script\startCmds.dbg
+$$>a<${WinScriptPath}\windbg\script\startCmds.dbg
+
+$$  .reload /v notepad.exe;
+
+}
+
+.echo
+.echo ----------------------finish Startup setting scrip[${$arg0}]----------------------;

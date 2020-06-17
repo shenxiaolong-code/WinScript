@@ -1,0 +1,43 @@
+_NT_DEBUGGER_EXTENSION_PATH = Path
+ Specifies the path that the debugger will first search for extension DLLs. Path can contain a drive letter followed by a colon (:). Separate multiple directories with semicolons (;). For details, see Loading Debugger Extension DLLs.
+ 
+_NT_EXECUTABLE_IMAGE_PATH = Path
+ Specifies the path containing the binary executable files. Path can contain a drive letter followed by a colon (:). Separate multiple directories with semicolons (;).
+ 
+_NT_SOURCE_PATH = Path
+ Specifies the path containing the source files for the target. Path can contain a drive letter followed by a colon (:). Separate multiple directories with semicolons (;). For details, and for other ways to change this path, see Source Path.
+ 
+_NT_SYMBOL_PATH = Path
+ Specifies the root of a directory tree containing the symbol files. Path can contain a drive letter followed by a colon (:). Separate multiple directories with semicolons (;). For details, and for other ways to change this path, see Symbol Path.
+ 
+_NT_ALT_SYMBOL_PATH = Path
+ Specifies an alternate symbol path searched before _NT_SYMBOL_PATH. This is useful for keeping private versions of symbol files. Path can contain a drive letter followed by a colon (:). Separate multiple directories with semicolons (;). For details, see Symbol Path.
+ 
+_NT_SYMBOL_PROXY = Proxy:Port
+ Specifies the proxy server to be used by SymSrv. For details, see Firewalls and Proxy Servers.
+ e.g. set _NT_SYMBOL_PROXY=172.30.47.146:8080
+ 
+_NT_DEBUG_HISTORY_SIZE = Number
+ Specifies the number of commands in the command history that can be accessed during remote debugging. Because commands vary in length, the number of lines available may not exactly match Number. For details, and for other ways to change this number, see Using Debugger Commands.
+ 
+_NT_DEBUG_LOG_FILE_OPEN = Filename
+ (CDB and KD only) Specifies the log file to which the debugger should send output. 
+ 
+_NT_DEBUG_LOG_FILE_APPEND = Filename
+ (CDB and KD only) Specifies the log file to which the debugger should append output. 
+ 
+_NT_EXPR_EVAL = {masm | c++} 
+ Specifies the default expression evaluator. If masm is specified, MASM expression syntax will be used. If c++ is specified, C++ expression syntax will be used. MASM expression syntax is the default. See Evaluating Expressions for details.
+ 
+_NO_DEBUG_HEAP
+ (Windows XP and later) Specifies that the debug heap should not be used for user-mode debugging.
+ 
+DBGENG_NO_DEBUG_PRIVILEGE 
+ Prevents processes spawned by the debugger from inheriting SeDebugPrivilege. 
+ 
+DBGHELP_HOMEDIR 
+ Specifies the path for the root of the default downstream store used by SymSrv and SrcSrv. Path can contain a drive letter followed by a colon (:). Separate multiple directories with semicolons (;). 
+ 
+SRCSRV_INI_FILE 
+ Specifies the path and name of the configuration file used by SrcSrv. By default, the path is the srcsrv subdirectory of the Debugging Tools for Windows installation directory, and the file name is Srcsrv.ini. See Source Indexing for details. 
+ 

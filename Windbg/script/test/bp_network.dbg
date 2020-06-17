@@ -1,0 +1,5 @@
+bp WS2_32!send          " kc L2 ; .printf \"data len:%d\\r\\n\" , poi(@esp+0xc) ; db poi(@esp+0x8) L?(poi(@esp+0xc)) ; .echo ;  gc ; "
+bp WS2_32!sendto        " kc L2 ; .printf \"data len:%d\\r\\n\" , poi(@esp+0xc) ; db poi(@esp+0x8) L?(poi(@esp+0xc)) ; .echo ;  gc ; "
+bp WS2_32!WSASend       " kc L2 ; .printf \"data len:%d\\r\\n\" , poi(@esp+0xc) ; db poi(@esp+0x8) L?(poi(@esp+0xc)) ; .echo ;  gc ; "
+bp WS2_32!WSASendTo     " kc L2 ; .printf \"data len:%d\\r\\n\" , poi(@esp+0xc) ; db poi(@esp+0x8) L?(poi(@esp+0xc)) ; .echo ;  gc ; "
+bp WS2_32!WSASendMsg    " kc L2 ; ?? (WSAMSG*)(poi(@esp+0x8)) ; "

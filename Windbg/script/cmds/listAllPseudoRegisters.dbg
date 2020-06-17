@@ -1,0 +1,189 @@
+.if ($scmp("${$arg1}","$ra")==0 | 0==${/d:$arg1}) {
+.echo
+.echo return address on current stack ($ra).                          
+? $ra ;
+}
+
+
+.if ($scmp("${$arg1}","$scopeip")==0 | 0==${/d:$arg1}) {
+.echo
+.echo current local context instruction address ($scopeip).           
+? $scopeip ;
+.echo can be used in : ;
+.printf /D "<exec cmd=\"ln $scopeip \">ln $scopeip </exec>\r\n"
+.printf /D "<exec cmd=\"lm1m a $scopeip \">lm1m a $scopeip </exec>\r\n"
+}
+
+
+.if ($scmp("${$arg1}","$exentry")==0 | 0==${/d:$arg1}) {
+.echo
+.echo current process entry function address ($exentry).              
+? $exentry ;
+.echo can be used in : ;
+.printf /D "<exec cmd=\"ln $exentry \"> ln $exentry</exec>\r\n"
+}
+
+
+.if ($scmp("${$arg1}","$retreg")==0 | 0==${/d:$arg1}) {
+.echo
+.echo return value register ($retreg).                                
+? $retreg ;
+.echo same as $eax on x86.
+}
+
+
+.if ($scmp("${$arg1}","$callret")==0 | 0==${/d:$arg1}) {
+.echo
+.echo return value of the last function ($callret).                   
+? $callret ;
+}
+
+
+.if ($scmp("${$arg1}","$csp")==0 | 0==${/d:$arg1}) {
+.echo
+.echo current call stack bottom address ($csp).                        
+? $csp ;
+.echo same as $esp on x86.
+.echo can be used in : ;
+.printf /D "<exec cmd=\"dds $csp;\">dds $csp </exec>\r\n"
+}
+
+
+.if ($scmp("${$arg1}","$frame")==0 | 0==${/d:$arg1}) {
+.echo
+.echo current frame index ($frame).                                   
+? $frame ; 
+.echo can be used in : ;
+.printf /D "<exec cmd=\".frame /c $frame \">.frame /c $frame </exec>\r\n"
+.printf /D "<exec cmd=\".cxr /c $frame \">.cxr - restore call stack /c $frame </exec>\r\n"
+}
+
+
+.if ($scmp("${$arg1}","$proc")==0 | 0==${/d:$arg1}) {
+.echo
+.echo current process address ($proc).                                
+? $proc ; 
+.echo address of EPROCESS block. ;
+}
+
+
+.if ($scmp("${$arg1}","$thread")==0 | 0==${/d:$arg1}) {
+.echo
+.echo current thread address ($thread).                               
+? $thread ; 
+.echo address of ETHREAD block. ;
+}
+
+
+.if ($scmp("${$arg1}","$peb")==0 | 0==${/d:$arg1}) {
+.echo
+.echo process environment block ($peb).                               
+? $peb ;
+}
+
+
+.if ($scmp("${$arg1}","$teb")==0 | 0==${/d:$arg1}) {
+.echo
+.echo thread environment block ($teb).                                
+? $teb ;
+}
+
+
+.if ($scmp("${$arg1}","$tpid")==0 | 0==${/d:$arg1}) {
+.echo
+.echo process PID ($tpid).                                            
+? $tpid ;
+}
+
+
+.if ($scmp("${$arg1}","$tid")==0 | 0==${/d:$arg1}) {
+.echo
+.echo current thread id ($tid).                                       
+? $tid ;
+.echo can be used in : ;
+.printf /D "<exec cmd=\"~[~~$tid] k \">~[~~$tid] k</exec>\r\n"
+}
+
+
+.if ($scmp("${$arg1}","$bpX")==0 | 0==${/d:$arg1}) {
+.echo
+.echo corresponding breakpoint address ($bpX).                        
+.echo $bp3  ;
+}
+
+
+.if ($scmp("${$arg1}","$dbgtime")==0 | 0==${/d:$arg1}) {
+.echo
+.echo current debugger running time ($dbgtime).                       
+? $dbgtime ;
+.echo can be used in : ;
+.printf /D "<exec cmd=\".formats $dbgtime \">.formats $dbgtime</exec>\r\n"
+}
+
+
+.if ($scmp("${$arg1}","$ip")==0 | 0==${/d:$arg1}) {
+.echo
+.echo instruction address register ($ip).                             
+? $ip ; .echo same as $eip on x86. .
+.echo can be used in : ;
+.printf /D "<exec cmd=\" ln $ip \">ln $ip </exec>\r\n"
+}
+
+
+.if ($scmp("${$arg1}","$eventip")==0 | 0==${/d:$arg1}) {
+.echo
+.echo current event instruction address ($eventip).                   
+? $eventip ;
+.echo same as $eip on x86.
+.echo can be used in : ;
+.printf /D "<exec cmd=\" ln $eventip \">ln $eventip </exec>\r\n"
+}
+
+
+.if ($scmp("${$arg1}","$exp")==0 | 0==${/d:$arg1}) {
+.echo
+.echo last evaluated expression ($exp).                               
+? $exp ;
+}
+
+
+.if ($scmp("${$arg1}","$ptrsize")==0 | 0==${/d:$arg1}) {
+.echo
+.echo address size ($ptrsize).                                        
+?  $ptrsize ;
+}
+
+
+.if ($scmp("${$arg1}","$pagesize")==0 | 0==${/d:$arg1}) {
+.echo
+.echo number of bytes in one page of memory ($pagesize).              
+? $pagesize ;
+}
+
+
+.if ($scmp("${$arg1}","$ea")==0 | 0==${/d:$arg1}) {
+.echo
+.echo last executed instruction($ea) -- it might be NOT available in current CPU structure                                
+.echo ? $ea ;
+}
+
+
+.if ($scmp("${$arg1}","$ea2")==0 | 0==${/d:$arg1}) {
+.echo
+.echo second executed instruction($ea2) -- it might be NOT available in current CPU structure                              
+.echo ? $ea2 ;
+}
+
+
+.if ($scmp("${$arg1}","$previp")==0 | 0==${/d:$arg1}) {
+.echo
+.echo previous event instruction address ($previp) -- it might be NOT available in current CPU structure                  
+.echo ? $previp ;
+}
+
+
+.if ($scmp("${$arg1}","$relip")==0 | 0==${/d:$arg1}) {
+.echo
+.echo instruction address related to the current event ($relip) -- it might be NOT available in current CPU structure     
+.echo ? $relip ;
+}

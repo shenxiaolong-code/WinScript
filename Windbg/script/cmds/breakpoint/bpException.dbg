@@ -1,0 +1,10 @@
+.echo ----------------------Loading exception setting script----------------------;
+
+sxe -c "knL;.dump /o C:\\Temp\\logs\\TestAutoDbg.dmp;gc;" -c2 "gc;" av;
+
+sxr;
+sxi av;
+sxi asrt;
+sxi bpe;
+sxi *;
+.echo ----------------------Finish Loading (exception setting)--------------------;

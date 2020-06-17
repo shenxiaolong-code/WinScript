@@ -1,0 +1,10 @@
+.echo +++++++ loading ${$arg0}
+.echo Run as: $$>a<${$arg0}
+
+.echo refer to below example :
+$$>a<${WinScriptPath}\Windbg\script\loadSetting\setPathAlias.dbg
+
+.echo
+.echo ------- exiting ${$arg0}
+
+ 

@@ -1,0 +1,7 @@
+.echo +++++++ loading ${$arg0}
+.echo set analysis dump file option
+
+
+
+.echo
+.echo ------- exiting ${$arg0}

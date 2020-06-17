@@ -1,0 +1,361 @@
+windbg ANSI Command Tree 1.0
+title {"All Commands"}
+body
+
+
+{"[Managed]"}
+ {"Load sos"} {".loadby sos mscorwks"}
+ {"clrstack"} {"!clrstack"}
+ {"Threads"} {"!threads"}
+ {"Stack Objects"} {"!dso"}
+ {"Exceptions"} {"!dae"}
+ {"-------------------------------"}
+
+
+{"[debug]"}
+ {"collect symbols"}
+  {"create new dump file(.dump)"} {".echo .dump /mapwd D:\work\dump_1.dmp ;"}
+  {"create new dump file from dmp analysis session (.dumpcab)"} {".echo .dumpcab -a c:\UserDumps\notepad.cab ;"}
+  {"collect all loaded symbols"} {"$$>a<${WinScriptPath}\windbg\script\cmds\collectOfflineSymbolsAll.dbg"}
+ {"remote debug"}
+  {"Create server on port 9999"} {".server tcp:port=9999"}
+  {"Show remote connections"} {".clients"}
+ {"live debug"}
+  {"break on startup"} {"bp @$exentry"}
+ {"Debugging Multiple Targets(c/s)"}
+  {"allow to debug child processes"}{".childdbg 1"}
+  {"disable to debug child processes"}{".childdbg 0"}
+  {"list all running processes"} {".tlist;.echo;.echo show matched process Ids;.echo .tlist -v "Cisco*";"}
+  {"current parent-child process"} {"|*"}
+  {"current all debug session"} {"||"}
+  {"attach new process"} {".echo .attach Pid"}
+  {"create new process(admin/x64/x86)"} {".echo  .createdir d:\myworkingDir\test; .echo .create C:\Windows\notepad.exe"}
+  {"open new dump file"} {".echo .opendump D:\work\dump_1.dmp ; .echo g;"}  
+  {"detach current debug session(live or dump)"} {".echo .detach"}
+ {"-------------------------------"}
+
+
+{"[3rd tools]"}
+ {"mex"} {"!mex.help"}
+ {"pykd"} {"!pykd.help"}
+ {"loadsos in 64bit debugger"} {".load "C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\SOS.dll""}
+ {"dump all strings in one module example"} {".echo !mex.strings -m ${exeModuleName}"}
+ {"-------------------------------"}
+
+
+{"[calculator tools]"}
+ {"sizeof"} {"?? sizeof(ntdll!_DPH_BLOCK_INFORMATION)"}
+ {"function size"} {"x /v CiscoJabber!startApp"}
+ {"value format"} {".formats 0x34df4"}
+ {"-------------------------------"}
+
+
+{"-----------------reload panel----------------"}{".cmds; .cur;"}
+
+
+{"[Logging]"}
+ {"Open Log"} {".logopen ${$CurrentDumpPath}\windbg_debug_log.txt "}
+ {"Close Log"} {".logclose"}
+ {"-------------------------------"}
+
+
+{"[Switches]"}
+ {"step prompt - Quiet"}    {".prompt_allow -sym -dis -reg -src -ea ; .pcmd /c ; rm 0;"}
+ {"step prompt - show x"}   {".pcmd -s "x""}
+ {"Enable Unicode"}         {".enable_unicode 1"}
+ {"Disable Unicode"}        {".enable_unicode 0"}
+ {"Symbol Noisy load"}      {"!sym noisy"}
+ {"Symbol Quiet load"}      {"!sym quiet"}
+ {"src Noisy load"}         {".srcnoisy 3"}
+ {"src Quiet load"}         {".srcnoisy 0"}
+ {"source code mode"}       {".lines -e;l+*"}
+ {"Disassembly mode"}       {"l-t"}
+ {"show inline funtion"}    {".inline 1"}
+ {"hide inline funtion"}    {".inline 0"}
+ {"-------------------------------"}
+
+
+{"[Information]"}
+ {"open target Location"} {".shell -ci "*" cmd.exe /c start . ;"}
+ {"path info"}
+  {"symbol path"} {".sympath"}
+  {"srcpath"} {".srcpath"}
+  {"visual data file"} {".nvlist"}
+  {"extension moduels"} {".extpath"}
+  {"cache path"} {"!homedir"}
+ {"target info"}
+  {"target version"} {"vertarget"}
+  {"Process Environment Block(!peb)"} {"!peb"}
+  {"dump file path"} {".echo ${$CurrentDumpFile}"}
+  {"dump overview by mex"} {"!mex.dumpinfo"}
+ {"debugger info"}
+  {"startup command line"} {"vercommand"}
+  {"debugger version"} {"version"}
+  {"loaded extension modules"} {".chain"}
+  {"visual data parser"} {".nvlist"}
+ {"time info"}
+  {"Application run time"} {".time"}
+  {"all threads run time"} {"!runaway"}
+ {"-------------------------------"}
+
+
+{"-----------reset call stack (.cxr)---------------"}{".cxr;"}
+
+
+{"[Process info]"}
+ {"Process structure"} {"dx @$peb"}
+ {"Process being debugged"} {"|"}
+ {"Process working directory"} {".createdir"}
+ {"-------------------------------"}
+
+
+{"[Thread and Stacks]"}
+ {"current frame"}
+  {"List current frame variables"} {"x /t /v"}
+  {"List current frame source"} {"lsa @$scopeip"}
+ {"list call stack (k)"}
+  {"Dump stack w/ DML"} {"kpM 1000"}
+  {"Dump stacks without private info"} {"knL 1000"}
+  {"Dump stacks with all parameters"} {"kPn 1000"}
+  {"Dump stacks (distance from last frame)"} {"kf 1000"}
+  {"Dump stacks with Frame Pointer Omission"} {"kvn 1000"}
+  {"Dump all stack"} {"~*kbn 1000"}
+ {"Thread info"}
+  {"current thread structure"} {"?? @$TEB"}
+  {"Thread environment block"} {"!teb"}
+  {"TEB summary"} {"!threads"}
+  {"Time of current thread"} {".ttime"}
+  {"Dump thread stack statistics by mex"} {"!mex.us -l"}
+  {"interpret raw stack by mex"} {"!mex.interpretrawstack"}
+  {"show 71,72,74 thread name"} {".foreach /s (val "71 72 74 " ) { ~${val}s;.frame 5;dv this; }"}
+ {"dump stack context"} {"-------------------------------"}
+  {"Dump stack native object by mex"} {"!mex.ndso"}
+  {"Dump stack string by mex"} {"!mex.dumpstackstrings"}
+  {"Dump raw stack stack by mex"} {"!mex.interpretrawstack"}
+  {"Dump raw stack stack (!ddstack)"} {"!ddstack"}
+ {"thread stack statistics"}
+  {"Dump thread stack statistics by mex"} {"!mex.us -l"}
+  {"Dump unique stacks"} {"!uniqstack -pn"}
+ {"stack config"} {"-------------------------------"}
+  {"Set auto mode"} {".effmach ."}
+  {"Set x86 mode"} {".effmach x86"}
+  {"Set x64 mode"} {".effmach amd64"}
+  {"Set frame length to 2000"} {".kframes 2000"}
+ {"kernel mode only"}
+  {"kernel stacks"} {"!stacks"}
+  {"The list of all thread stack traces"} {"!process 0 ff"}
+  {"Ready threads"} {"!ready"}
+ {"-------------------------------"}
+
+
+{"[Modules]"}
+ {"current module load/unload"}{"lm1m a @$scopeip ;"}
+  {"reload current module and symbol exactly"} {".foreach /pS 3 /ps 10 (val { .shell -ci "lmn a  @$scopeip" find "." }) { .echo .reload /f ${val};.reload /f ${val};}"}
+  {"reload current module without verify symbol"} {".foreach /pS 3 /ps 10 (val { .shell -ci "lmn a  @$scopeip" find "." }) { .reload /i ${val};}"}
+  {"unload current module"} {".foreach /pS 3 /ps 10 (val { .shell -ci "lmn a  @$scopeip" find "." }) { ;aS ${/v:curMod} ${val} ;.reload /u ${val};}"}
+  {"load current module without symbol which is unloaded just now"} {".if(0!=${/d:curMod}){ .reload ${curMod} } .else { .echo no unloaded modue is recorded.; } "}
+  {"goto module"} {" .shell -ci "lmv a @$scopeip;" find /i "Image path:" > tempModPath.txt | ${WinScriptPath}\windbg\script\cmds\gotoFile.bat "tempModPath.txt""}
+  {"goto symbol"} {" .foreach /pS 3 /ps 8    (val    { .shell -ci "!chksym @$scopeip;" find /i "Loaded pdb is" }   )     {   .shell -ci "*" explorer.exe /select, "${val}" }; "}
+  {"goto target"} {" .shell -ci "*" explorer.exe /select, "${targetFullPath}""}
+ {"current modue info"}
+  {"module basic info (lmv)"} {"lmv a @$scopeip;"}
+  {"module inner info (!dlls)"} {"!dlls -c @$scopeip ;"}
+  {"module PE header info"}{".foreach ( val { lm1m a @$scopeip ; }) {!dh ${val}; .echo ;.echo Done to dump module '${val}' header info.}"}
+  {"module name"}{"lm1m a @$scopeip ;"}
+  {"module sympath path"}{"lma @$scopeip;"}
+  {"module all info (!dlls -a) -- very long"} {".echo !dlls -a -c @$scopeip ;"}
+  {"used exported API"} {".foreach ( val { lm1m a @$scopeip } ) { x ${val}!_imp__*}"}
+  {"any one module info -- need input parameter"}
+   {"module info with modle name (lmvm)"} {".echo lmvm IMPresenceServices"}
+   {"module info include addres (lmv)"} {".echo lmv a 0x2345"}
+   {"debug info (!lmi)"} {".echo !lmi IMPresenceServices"}
+   {"module name include addr"}{".echo lm1m a addr"}
+   {"show PE header(!dh)"} {".echo !dh user32.dll"}
+   {"verify module symbol matched"} {".echo !chksym user32;"}
+   {"used exported API"} {".echo x modName!_imp__* ;"}
+   {"show !dlls options help"} {"!dlls -h ;"}
+  {"all moduels info"} {"-------------------------------"}
+   {"All Modules (include unloaded)"} {".echo lm D sm"}
+   {"only Loaded Modules"} {".echo lmo D sm"}
+   {"Loaded Modules (verbose)"} {".echo lmvo D sm"}
+   {"basic info (!dlls)"} {"!dlls -m ;"}
+   {"modules which have a symbol problem"} {".echo lme D sm"}
+   {"show exe PE header -- time-consuming procedure"} {".echo .foreach ( val { lm1m } ) { !dh ${val} }"}
+ {"detects corruptted modules"}
+  {"current module"}{".foreach ( val { lm1m a @$scopeip ; }) {!chkimg -lo 50 -d !${val} -v ;}"}
+  {"verify specifed moduel"} {".echo !chkimg -lo 50 -d !ntdll -v"}
+  {"verify all moduels -- time-consuming procedure"} {".echo !for_each_module !chkimg -lo 50 -d !${@#ModuleName} -v"}
+ {"load modules"}
+  {"enable load Unqualified symbol (.symopt- 100)"}{".symopt- 100;"}
+  {"disable load Unqualified symbol (.symopt+ 100)"}{".symopt+ 100;"}
+  {"load unloaded moduels in image unloaded list (lm)"}{".echo .reload /unl modName.dll;"}
+  {"load system moduels(resolve 'unqualified symbol' issue)"}{".reload /s;.reload /n;"}
+  {"load any module"}{".echo .reload /s anyModFullPath.ext;"}
+  {"load any module without verify symbol match"}{".echo .reload /i anyModFullPath.ext;"}
+  {"unload module and its symbol"}{".echo .reload /u anyModFullPath.ext;"}
+  {"re-download current module symbol to overwriten and re-load symbol"}{".foreach /pS 3 /ps 10 (val { .shell -ci "lmn a  @$scopeip" find "." }) {.echo .reload /o /f ${val};.reload /o /f ${val};};"}
+ {"write memory to file"}{".echo .writemem d:\myMod.dll 0x1234 L?0x4535 ;"}
+ {"!for_each_module example in script"} {".echo !for_each_module .echo @#Base @#End @#ModuleName"}
+ {"!for_each_module help"} {".echo !for_each_module -?"}
+ {"-------------------------------"}
+
+
+{"[Exception]"}
+ {"exception info"} {"-------------------------------"}
+  {"Exception code"} {".exr -1"}
+  {"Exception stacks"} {".ecxr"}
+  {"last error in current thread"} {"!gle"}
+  {"last error in all threads"} {"!gle -all"}
+  {"explain error code example"} {"!error 0x1"}
+ {"check crash"} {"-------------------------------"}
+  {"script analysis exception"} {"$$>a<${WinScriptPath}\windbg\script\cmds\checkException.dbg"}
+  {"detect moduel corruption"} {".echo !chkimg -lo 50 -d !ntdll -v"}
+  {"analysis crashed thread by mex"} {"!mex.us -crash"}
+  {"!analyze"} {"!ext.analyze -v"}
+  {"exception chain in current thread"} {"!exchain"}
+ {"check hang & high CPU"} {"-------------------------------"}
+  {"check CPU time (!runaway)"} {"!runaway"}
+  {"currently not waiting threads(kernel mode)"}{"!running"}
+  {"current thread time"} {".ttime"}
+  {"!analysis -hang"} {"!ext.analyze -v -hang"}
+  {"who block main thread."} {"~0"}
+  {"check deadlock"}
+   {"list locked critical sections (!cs -l)"} {"!cs -l"}
+   {"check deadlock (!deadlock)"} {"!deadlock"}
+   {"query specifed lock"}
+    {"list single lock"} {".echo !Kdexts.locks -v 0x1b33f060"}
+    {"list single critical sections"} {".echo !cs -o 0x1b33f060"}
+   {"list all locks"} {"-------------------------------"}
+    {"list all Locks (!Kdexts.locks)"} {"!Kdexts.locks -v"}
+    {"list all critical sections Locks (!cs)"} {"!cs -v -s"}
+   {"kernel mode only"}
+    {"Critical system queues"} {"!exqueue f"}
+ {"check memory leak"}
+  {"fix 'No symbols for ntdll. Cannot continue.' "} {".reload /u ntdll.dll"}
+  {"show memory total usage"} {"!address -summary"}
+  {"show heap commit info"} {"!heap -a"}
+  {"trace memory leak"} {"-------------------------------"}
+   {"1. list max heap usage"} {"!heap -s"}
+   {"2. most memory block statistics in heap 01150000"} {".echo !heap -stat -h 01150000"}
+   {"3. specifed block size(0x50) in heap"} {".echo !heap -flt s 0x50"}
+   {"4. who alloc memory addr 0x1b33f060"} {".echo !heap -p -a 0x1b33f060"}
+   {"gflag options to trace memory alloc procedure -- live debug or enable it before app startup"}
+    {"current gflag options"}{"!exts.gflag;"}
+    {"gflag options list"}{"!exts.gflag -?;"}
+     {"necessary gflag options for memory alloc trace"}{"!exts.gflag +ust;"}
+     {"optional gflag options for memory alloc trace (nice to have)"}{"!exts.gflag +hpa;"}
+   {".. detect possible leaked heap blocks"} {"!heap -l "}
+   {".. specifed block size(0x50,0x80) range in heap"} {"!heap -flt r 0x50 0x80"}
+  {"query memory block info"} {"-------------------------------"}
+   {"memory UserPtr 0x1b33f060 State info"} {".echo !address 0x1b33f060"}
+   {"memory UserPtr 0x1b33f060 memory block info -- usefull but slow"} {".echo !heap -x 0x1b33f060"}
+   {"memory HEAP_ENTRY address 0x2db52018 info in heap--stacks"} {".echo !heap -i 2db52018"}
+   {"memory HEAP_ENTRY address 0x2db52018 structure"} {".echo dt ${$ntsym}!_DPH_BLOCK_INFORMATION 2db52018"}
+  {"query single heap info"} {"-------------------------------"}
+   {"heap all info for heap 036b0000"} {".echo !heap -a -h 036b0000"}
+   {"dump detail heap page info for heap 036b0000"} {".echo !heap -p -h 036b0000"}
+   {"all available alloc call stacks in heap "} {".echo !heap -k -h 01150000"}
+   {"heap structure for heap 036b0000"} {".echo dt ${$ntsym}!_HEAP 036b0000"}
+  {"help example"} {"-------------------------------"}
+   {"!heap help in browser"} {".shell -ci "*" cmd.exe /c start "" "mk:@MSITStore:C:\PROGRA~2\WI3CF2~1\10\DEBUGG~1\x86\debugger.chm::/debugger/_heap.htm" "}
+   {"!heap help"} {"!heap -?"}
+   {"!heap page help"} {"!heap -p -?"}
+   {"memory breakpoint example"} {".echo bp ucrtbase!_malloc_base "j(poi(@esp+4)!=0x20) 'gc ;' " "}
+  {"kernel mode only"}
+   {"Processes and virtual memory"} {"!vm 4"}
+   {"Sorted pool consumption (paged)"} {"!poolused 4"}
+   {"Sorted pool consumption (nonpaged)"} {"!poolused 3"}
+ {"kernel mode only"}
+  {".bugcheck"} {".bugcheck"}
+  {"Critical system queues"} {"!exqueue f"}
+ {"-------------------------------"}
+
+
+{"[search example]"}
+ {"search global variable"} {"-------------------------------"}
+  {"search global variable in module"}{".echo x modName!*dynamic initializer for*;"}
+  {"search global variable in function scope(getInstance)"}{".echo x modName!*::getInstance"}
+  {"search global variable in current module"}{".foreach ( val { lm1m a @$scopeip ; }) {.echo x ${val}!*dynamic initializer for*;x ${val}!*dynamic initializer for*;};"}
+   {"search global variable in function scope(getInstance)"}{".foreach ( val { lm1m a @$scopeip ; }) {.echo x ${val}!*::getInstance;x ${val}!*::getInstance;};"}
+   {"open source file (.open)"}{".echo .open -a addr"}
+   {"list source code (lsa)"}{".echo lsa addr"}
+ {"search string in specifed place"} {"-------------------------------"}
+  {"string in current thread stack"} {"!mex.dumpstackstrings"}
+  {"string in current module"} {"$$>a<${WinScriptPath}\windbg\script\cmds\dump\dumpAllStringInCurModule.dbg"}
+ {"search string example"} {"-------------------------------"}
+  {"any human readable string"}
+   {"any ASCII string"} {".echo s -sa 0x10000 L?512"}
+   {"any ASCII string whose length >=14"} {".echo s -[14]sa 0x10000 L?512"}
+   {"any Unicode string"} {".echo s -su 0x10000 0x11000"}
+  {"specified string -- Hello"}
+   {"specified ASCII string"} {".echo s -a 0x10000 L?512 "Hello" "}
+   {"specified Unicode string"} {".echo s -u 0x10000 0x11000 "Hello""}
+   {"search "Hello" string in every module"} {".echo !for_each_module s-a @#Base @#End "hello""}
+  {"search dword 0x0001003f"} {".echo s -d 0x10000 L?512 0x0001003f"}
+ {"search instruction"} {"-------------------------------"}
+  {"jnz instruction from current address"} {".echo # jnz "}
+  {"call instruction from 779f9fba "} {".echo # call 779f9fba "}
+  {"strlen call from main function "} {".echo # strlen main"}
+  {"search szFileName variable usage from notepad!WinMain"} {".echo # notepad!szFileName notepad!WinMain"}
+  {"search myfunc function call in every module"} {".echo !for_each_module # myfunc @#Base @#End"}
+ {"-------------------------------"}
+
+
+{"[jabber specific]"}
+ {"new dump analysis session"}{".shell -ci "*" cmd.exe /c start ${WinScriptPath}\Companys\cisco\contextMenu\jabberPRT.bat "${$CurrentDumpFile}" analysis"}
+ {"jabber version"} {".jver"} 
+ {"jabber crash thread"} {".foreach /pS 3 /ps 10 ( val { .shell -ci "~#kv" find /i "UnhandledExceptionFilter" } ) { .cxr poi(${val}+4) }"}
+ {"search crash in log"}{".echo topLevelRuntimeExpectionFilter|hangDetectionLoop|startJabberPrt is copied into clipboard; .jlog;"}
+ {"jabber prt thread"} {"~#;~#kP;"}
+ {"fix current jabber pdb symbol"}{".jfix ;"}
+ {"jabber global data"}
+  {"PluginRuntime"} {"dx ContactsSearchPlugin!ContactsSearchPlugin::g_instance->pluginRuntime;"}
+  {"all Plugins"} {"dx ContactsSearchPlugin!ContactsSearchPlugin::g_instance->pluginRuntime->m_pluginContainer._Ptr->loadedPlugins._Ptr;"}
+  {"service Factory"} {"dx ServicesFramework!CSFUnified::ServiceFactory::instance._Ptr->unifiedFactory._Ptr;"}
+  {"all service"} {"dx ServicesFramework!CSFUnified::ServiceFactory::instance._Ptr->unifiedFactory._Ptr->services._Ptr->typeNameMap;"}
+  {"all featureSet"} {"dx ServicesFramework!CSFUnified::ServiceFactory::instance._Ptr->unifiedFactory._Ptr->featureSets._Ptr->typeNameMap;"}
+ {"message queue"}
+  {"ServicesDispatcher"} {".printf /ow "last executed csf::Task name : %ma\r\nTasks in queue:\r\n" , @@C++(((ServicesFramework!CSFUnified::ServiceFactoryImpl*)ServicesFramework!CSFUnified::ServiceFactory::instance._Ptr)->unifiedFactory._Ptr->servicesDispatcher._Ptr->m_lastTaskName._Mypair._Myval2._Bx._Ptr);dx ServicesFramework!CSFUnified::ServiceFactory::instance._Ptr->unifiedFactory._Ptr->servicesDispatcher._Ptr->queuedTasks._Ptr->_taskQueue;"}
+  {"PluginEventDispatcher"} {"dx ContactsSearchPlugin!ContactsSearchPlugin::g_instance->pluginRuntime->m_pluginEventDispatcher._Ptr->events._Ptr->c;"}
+  {"WindowsMessageQueueHelper"} {"dx JabberUtils!jabberutils::WindowsMessageQueueHelper::virtualMessageQueue.virtualMessageQueue;"}
+  {"timer queue"} {"dx PluginUtils!pluginutils::TimerUtils::idToTimerContext._Ptr;"}
+ {"-------------------------------"}
+
+
+{"[All Pseudo-Registers]"} {".hh pseudo-registers"}
+ {"list all available Pseudo-Registers value"}                          {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg;"}
+ {"return address on current stack ($ra)"}                              {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $ra       ;"}
+ {"current local context instruction address (@$scopeip)"}               {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg @$scopeip  ;"}
+ {"current process entry function address ($exentry)"}                  {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $exentry  ;"}
+ {"return value register ($retreg)"}                                    {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $retreg   ;"}
+ {"return value of the last function ($callret)"}                       {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $callret  ;"}
+ {"current call stack depth address ($csp)"}                            {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $csp      ;"}
+ {"current frame index ($frame)"}                                       {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $frame    ;"}
+ {"current process address ($proc)"}                                    {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $proc     ;"}
+ {"current thread address ($thread)"}                                   {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $thread   ;"}
+ {"process environment block ($peb)"}                                   {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $peb      ;"}
+ {"thread environment block ($teb)"}                                    {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $teb      ;"}
+ {"process PID ($tpid)"}                                                {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $tpid     ;"}
+ {"current thread id ($tid)"}                                           {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $tid      ;"}
+ {"corresponding breakpoint address ($bpX)"}                            {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $bp3      ;"}
+ {"current debugger running time ($dbgtime)"}                           {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $dbgtime  ;"}
+ {"instruction address register ($ip)"}                                 {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $ip       ;"}
+ {"current event instruction address ($eventip)"}                       {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $eventip  ;"}
+ {"last evaluated expression ($exp)"}                                   {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $exp      ;"}
+ {"address size ($ptrsize)"}                                            {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $ptrsize  ;"}
+ {"number of bytes in one page of memory ($pagesize)"}                  {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $pagesize ;"}
+ {"below might be NOT available on current CPU structure."}
+  {"last executed instruction($ea) "}                                   {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $ea      ;"}
+  {"second executed instruction($ea2)"}                                 {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $ea2     ;"}
+  {"previous event instruction address ($previp)"}                      {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $previp  ;"}
+  {"instruction address related to the current event ($relip)"}         {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $relip   ;"}
+ {"-------------------------------"}
+
+
+{"[dx command] : case sensetive"}
+ {"list Debugger"}{"dx -r1 Debugger"}
+ {"list Debugger.Settings"}{"dx -r1 Debugger.Settings"}
+ {"set Debugger.Settings example"}{".echo .settings set Display.PreferDMLOutput=true"}
+ {"use dx variable example"}{"dx -r1 @$curthread"}
+ {"search all thread include 'Exception' in function name"}{"dx -r1 @$curprocess.Threads.Select(p=>p.Stack).Select(p=>p.Frames).Select(t=>t[1]).Where( ( p=>p.ToDisplayString().Contains("Exception") == true ))"}
+ {"help on browser"}{".shell -ci "*" cmd.exe /c start "" "https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/dx--display-visualizer-variables-";"}

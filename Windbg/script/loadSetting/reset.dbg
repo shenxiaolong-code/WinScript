@@ -1,0 +1,23 @@
+.echo +++++++ loading ${$arg0}
+.echo reset windbg environment;
+.echo;
+
+.echo;
+.echo reset symbol path[.symfix]...;
+.symfix;
+
+.echo;
+.echo reset source path[.srcfix]...;
+.srcfix;
+
+.echo;
+.echo reset all alias [ad *]...;
+ad *;
+
+.echo;
+.echo reset exception setting[.sxr]...;
+sxr;
+
+.echo;
+.echo ------- exiting ${$arg0}
+

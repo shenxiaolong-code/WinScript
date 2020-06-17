@@ -1,0 +1,10 @@
+.echo +++++++ loading ${$arg0}
+.echo
+
+.echo
+.echo loading MS symbol ...
+$$>a<${WinScriptPath}\windbg\script\loadSetting\loadSymbol_MS.dbg
+
+
+
+.echo ------- exiting ${$arg0}

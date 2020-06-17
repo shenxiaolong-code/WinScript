@@ -1,0 +1,10 @@
+$$ .echo +++++++ loading ${$arg0}
+$$ .echo Run as: $$>a<${$arg0} ${$arg1} ${$arg2}   
+.echo
+
+.echo
+.foreach /ps 99 (val { .shell -ci "*" for /f "usebackq tokens=1,2,*" %i in ( ` dir "${$arg2}" ^| find /i  "Directory of" ` ) do @echo %~sk } ) { ;aS ${$arg1} ${val};};
+
+.echo;
+$$ .echo ------- exiting ${$arg0}
+

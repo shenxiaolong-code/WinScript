@@ -1,0 +1,62 @@
+Windows Registry Editor Version 5.00
+
+;note : there is 16 max entry limitation in MUIVerb, more entry will be not shown.
+;       there is max string length limitation for SubCommands. so it is best to short command name length within 16 total entry number.
+;       use ExtendedSubCommandsKey , instead of SubCommands , the advantage :
+;       many command can be grouped together, it is easy to maintain. 
+;       the menu path can be customered , instead of fix path :  HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell
+;       recommend to use path : HKEY_CLASSES_ROOT\._myMenus , because it lists the top position of registry.
+;       can NOT add HKEY_CLASSES_ROOT before path , else will fail to import to registry (MUST under same root key)
+
+[HKEY_CLASSES_ROOT\.dll]
+; @="DllFile"
+
+[HKEY_CLASSES_ROOT\DllFile\Shell\viewModule]
+"MUIVerb"="view module"
+"ExtendedSubCommandsKey"="._myMenus\\binTools\\binFileNode"
+
+[HKEY_CLASSES_ROOT\exefile\Shell\viewModule]
+"MUIVerb"="view module"
+"ExtendedSubCommandsKey"="._myMenus\\binTools\\binFileNode"
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\01_viewFunction]
+@="view function"
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\01_viewFunction\command]
+@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat viewFunction \"%1\""
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\02_viewDependency]
+@="view dependency"
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\02_viewDependency\command]
+@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat viewDependency \"%1\""
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\03_peview]
+@="PE viewer"
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\03_peview\command]
+@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat peView \"%1\""
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\04_dumpBin]
+@="dumpbin"
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\04_dumpBin\command]
+@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat dumpBin \"%1\""
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\05_listProcess]
+@="list refered processes"
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\05_listProcess\command]
+@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat listProcess \"%1\""
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\06_hexEdit]
+@="HEX editor"
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\06_hexEdit\command]
+@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat hexEdit \"%1\""
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\07_downloadPdb]
+@="download Pdb file by symchk.exe"
+
+[HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\07_downloadPdb\command]
+@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat downloadPdb \"%1\""

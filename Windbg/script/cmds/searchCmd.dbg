@@ -1,0 +1,24 @@
+.echo +++++++ loading ${$arg0}
+.echo
+.echo search command which include "${$arg1}"
+
+.foreach /ps 2 ( var { .echo search command } ) 
+{
+.echo available extend cmd:
+.shell -ci "*" find /i "${$arg1}" ${WinScriptPath}\windbg\test\extCmds.txt ;
+}
+
+.foreach /ps 2 ( var { .echo search command } ) 
+{
+.echo available mex cmd:
+.shell -ci "*" find /i "${$arg1}" ${WinScriptPath}\windbg\test\mexCmds.txt ;
+}
+
+.echo
+.printf /D "available meta cmd : (<link cmd=\".help\" alt=\"list all available meta command in current mode\" >.help<altlink name=\"list all dot command\" cmd=\".help\" ></link>)\r\n"
+.extmatch "*${$arg1}*"
+.findext "${$arg1}"
+
+
+.echo
+.echo ------- exiting ${$arg0}

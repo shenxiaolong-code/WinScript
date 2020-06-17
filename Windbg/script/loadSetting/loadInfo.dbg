@@ -1,0 +1,53 @@
+.echo +++++++ loading ${$arg0}
+.echo set seldom used option
+.echo
+
+.echo.
+.echo current debugger processor mode(effective machine):
+.effmach
+
+.echo.
+.echo extension DLL search path:
+.extpath+ ";";
+
+.echo
+.echo loaded visualizers:
+.nvlist
+
+.echo
+.echo list of possible expression types:[.expr /q]
+.expr /q
+
+.echo
+.echo gflag setting
+!gflag
+
+.echo
+.echo symbol option setting
+.symopt
+
+.echo
+.echo current output mask(.outmask)
+.outmask
+
+.echo
+.echo sym and src cache directory, you can use !homedir to change it. (!homedir)
+.foreach /pS 3 (eVal {!homedir}) { .echo windbg symbol cache path : ${eVal} ; .echo windbg source file cache path : ${eVal}\src ;} ;
+
+.echo
+.echo system and app runtime time:
+.time
+
+.echo
+.echo debugger startup command line:
+vercommand
+
+.echo
+.echo debug target info: (vertarget)
+vertarget
+
+.echo
+.echo cache directory :
+!homedir
+
+.echo ------- exiting ${$arg0}

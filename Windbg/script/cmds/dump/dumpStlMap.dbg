@@ -1,0 +1,50 @@
+$$ http://blogs.microsoft.co.il/sasha/2013/07/25/displaying-and-searching-stdmap-contents-in-windbg/
+.if ($sicmp("${$arg1}", "-n") == 0) { 
+    .if (@@(@$t0->_Isnil) == 0) { 
+        .if (@$t2 == 1) { 
+            .printf /D "<exec cmd=\"db %p L10\">%p</exec>\n", @$t0, @$t0 
+            .printf "key = " 
+            ?? @$t0->_Myval.first 
+            .printf "value = " 
+            ?? @$t0->_Myval.second 
+        } .else { 
+            r? $t9 = @$t0->_Myval 
+            command 
+        } 
+    }
+
+    $$ Recurse into _Left, _Right unless they point to the root of the tree 
+    .if (@@(@$t0->_Left) != @@(@$t1)) { 
+        .push /r /q 
+        r? $t0 = @$t0->_Left 
+        $$>a< ${$arg0} -n 
+        .pop /r /q 
+    } 
+    .if (@@(@$t0->_Right) != @@(@$t1)) { 
+        .push /r /q 
+        r? $t0 = @$t0->_Right 
+        $$>a< ${$arg0} -n 
+        .pop /r /q 
+    } 
+} .else { 
+    r? $t0 = ${$arg1}
+
+    .if (${/d:$arg2}) { 
+        .if ($sicmp("${$arg2}", "-c") == 0) { 
+            r $t2 = 0 
+            aS ${/v:command} "${$arg3}" 
+        } 
+    } .else { 
+        r $t2 = 1 
+        aS ${/v:command} " " 
+    }
+
+    .printf "size = %d\n", @@(@$t0._Mysize)  
+     
+    r? $t0 = @$t0._Myhead->_Parent 
+    r? $t1 = @$t0->_Parent
+
+    $$>a< ${$arg0} -n
+
+    ad command 
+}

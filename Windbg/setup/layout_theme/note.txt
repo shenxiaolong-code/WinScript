@@ -1,0 +1,14 @@
+定制theme时应该注意的问题：
+加载一个主题后，检查下列内容，确保这列内容都是缺省值，否则可能会不匹配以后的应用场景
+.sympath    /  .symfix
+.srcpath    /  .srcfix
+.extpath    /  .unloadall
+.nvlist     /  .nvunloadall
+.sxr
+bl          /   bd *
+然后使用qd命令退出，再把主题保存为文件。
+否则在其它应用场景中会发现莫名其妙的不存在的定义或者路径,或者新定义的变量值是老值。
+
+比如：
+如果保存了unicode dump file name,则下次加载主题文件(.wew)时，会自动打开上次加载的.dmp文件。
+如果保存了unicode dump open dialog path,则下次从主菜单File去Open Crash Dump...时，打开文件对话框会自动打开上次打开.dmp文件的路径。

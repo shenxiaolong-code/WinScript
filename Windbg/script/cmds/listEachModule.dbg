@@ -1,0 +1,6 @@
+.echo Run as: $$>a<${$arg0} ${$arg1}
+.echo modules in ${$arg1}
+.foreach /f ( place "${$arg1}") 
+{ 
+.printf /D "check <link cmd=\"lmDvm ${place} \">${place}</link> DLL module.\r\n"
+}

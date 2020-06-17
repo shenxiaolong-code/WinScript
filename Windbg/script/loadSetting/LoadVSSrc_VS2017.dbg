@@ -1,0 +1,33 @@
+.echo +++++++ loading ${$arg0}
+.echo processing LoadVSSrc_VS2017.dbg ...
+.echo
+
+.if (${/d:VsSrc}!=0) {
+ad ${/v:VsSrc};
+}
+
+.echo set vs2017 install path to VsSrc
+.foreach /ps 99 /s ( val "dummy" ) { .shell -ci "*" cmd.exe /c ${$arg0}\..\LoadVSSrc_VS2017.bat "${targetFullPath}" }
+$$>a<${temp}\vsInstallDir.txt
+
+.echo
+$$ aS ${/v:VsSrc} C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Tools\MSVC\14.16.27023
+.foreach /pS 3 (val {.shell -ci "*" if exist "${VsSrc}" @echo yes}) {
+.printf /D /op "Found VS2017 install path :\r\n"
+.echo loading Visual studio source file [${VsSrc}]......
+$$ crt part
+.srcpath+ "${VsSrc}\crt\src\vccorlib";
+.srcpath+ "${VsSrc}\crt\src\stl";
+.srcpath+ "${VsSrc}\crt\src\concrt";
+.srcpath+ "${VsSrc}\crt\src\vcruntime";
+
+$$ atlmfc part
+.srcpath+ "${VsSrc}\atlmfc\src\mfc";
+.srcpath+ "${VsSrc}\atlmfc\src\mfcm";
+.srcpath+ "${VsSrc}\atlmfc\src\atl";
+}
+
+$$ remove defined temporary environment variable
+$$ ad ${/v:VsSrc} ;
+
+.echo ------- exiting ${$arg0}

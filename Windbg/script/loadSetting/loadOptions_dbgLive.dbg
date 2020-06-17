@@ -1,0 +1,50 @@
+.echo +++++++ loading ${$arg0}
+.echo set live debug option
+
+.echo
+.echo debug child process [.childdbg 1] 
+$$ .childdbg 1
+
+.echo
+.echo Create user mode stack trace database [ !gflag +ust ] -- need to set [.symopt- SYMOPT_NO_UNQUALIFIED_LOADS] first
+!exts.gflag +ust
+
+.echo
+.echo Place heap allocations at ends of pages [ !gflag +hpa ] -- need to set [.symopt- SYMOPT_NO_UNQUALIFIED_LOADS] first
+!exts.gflag +hpa
+
+.echo
+.echo Enable exception logging. [ !gflag +eel ]
+!exts.gflag +eel
+
+.echo
+.echo Stop on unhandled user-mode exception. [ !gflag +sue ]
+!exts.gflag +sue
+
+.echo
+.echo enables the target application to send commands to the debugger [.ocommand windbg ]. 
+.ocommand windbg
+
+.echo
+.echo step over "std::std::basic_string<*>::*"
+.step_filter "std::std::basic_string<*>::*"
+
+.echo
+.echo reset sex option [ sxr ]
+sxr;
+.echo disable WOW64 breakpoint
+sxi wob;
+.echo disable WOW64 single step exception
+sxi wos;
+
+.echo
+$$ sets the debugger reporting mode for Windows Runtime errors.
+.echo When a Windows Runtime error occurs, display error code and text, and execution stops (!winrterr break)
+$$ !winrterr break
+
+.echo
+.echo Restores the output mask to the default value 0x3F7 [.outmask /d]
+.outmask /d
+
+.echo
+.echo ------- exiting ${$arg0}

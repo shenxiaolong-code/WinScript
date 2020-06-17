@@ -1,0 +1,350 @@
+<config>
+
+  <syntax_highlighting_groups>
+    // bg mode
+    // 0 - background opaque default 
+    // 1 - background transparent
+    // 2 - background opaque defined
+
+    // color in hex - 00bbggrr
+    // <group fgColor bgColor bgMode>
+
+
+    <group 00ffffff 00000000 1> 
+      // Data Transfer Instruction
+      CMOVE CMOVZ CMOVNE CMOVNZ CMOVA CMOVNBE CMOVAE CMOVNB CMOVB CMOVNAE CMOVBE CMOVNA CMOVG CMOVNLE
+      CMOVGE CMOVNL CMOVL CMOVNGE CMOVLE CMOVNG CMOVC CMOVNC CMOVO CMOVNO CMOVS CMOVNS CMOVP CMOVPE CMOVNP 
+      CMOVPO XCHG BSWAP XADD CMPXCHG CMPXCHG8B PUSHA PUSHAD POPA POPAD CWD CDQ CBW CWDE MOVSX MOVZX 
+
+      // Binary Arithmetic Instructions
+      ADD ADC SUB SBB IMUL MUL IDIV DIV INC DEC NEG CMP 
+
+      // Decimal Arithmetic Instructions
+      DAA  DAS  AAA  AAS  AAM  AAD  
+
+      // Logical Instructions
+      AND OR XOR NOT
+
+      // Shift and Rotate Instructions
+      SAR SHR SAL/SHL SHRD SHLD ROR ROL RCR RCL 
+
+      // Bit and Byte Instructions
+      BT BTS BTR BTC BSF BSR SETE SETZ SETNE SETNZ SETA SETNBE SETAE SETNB SETNC SETB SETNAE SETC SETBE SETNA SETG SETNLE 
+      SETGE SETNL SETL SETNGE SETLE SETNG SETS SETNS SETO SETNO SETPE SETP SETPO SETNP TEST 
+
+      // String Instructions
+      MOVS MOVSB MOVS MOVSW MOVS MOVSD CMPS CMPSB CMPS CMPSW CMPS CMPSD SCAS SCASB SCAS SCASW SCAS SCASD LODS LODSB 
+      LODS LODSW LODS LODSD STOS STOSB STOS STOSW STOS STOSD REP REPE REPZ REPNE REPNZ 
+
+      // I/O Instructions
+      IN OUT INS INSB INS INSW INS INSD OUTS OUTSB OUTS OUTSW OUTS OUTSD 
+
+      // Enter and Leave Instructions
+      //ENTER LEAVE
+
+      // Flag Control (EFLAG) Instructions
+      STC CLC CMC CLD STD LAHF SAHF PUSHF PUSHFD PUSHFQ POPF POPFD STI CLI 
+
+      // Segment Register Instructions
+      LDS LES LFS LGS LSS 
+
+      // Miscellaneous Instructions
+      LEA NOP UD2 XLAT XLATB CPUID MOVBE 
+
+      // FPU Data Transfer Instructions
+      FLD FST FSTP FILD FIST FISTP1 FBLD FBSTP FXCH FCMOVE FCMOVNE FCMOVB FCMOVBE FCMOVNB FCMOVNBE FCMOVU FCMOVNU 
+
+      // x87 FPU Basic Arithmetic Instructions
+      FADD FADDP FIADD FSUB FSUBP FISUB FSUBR FSUBRP FISUBR FMUL FMULP FIMUL FDIV FDIVP FIDIV FDIVR FDIVRP 
+      FIDIVR FPREM FPREM1 FABS FCHS FRNDINT FSCALE FSQRT FXTRACT 
+
+      // x87 FPU Comparison Instructions
+      FCOM FCOMP FCOMPP FUCOM FUCOMP FUCOMPP FICOM FICOMP FCOMI FUCOMI FCOMIP FUCOMIP FTST FXAM 
+
+      // x87 FPU Transcendental Instructions
+      FSIN FCOS FSINCOS FPTAN FPATAN F2XM1 FYL2X FYL2XP1 
+
+      // x87 FPU Load Constants Instructions
+      FLD1 FLDZ FLDPI FLDL2E FLDLN2 FLDL2T FLDLG2 
+
+      // x87 FPU Control Instructions
+      FINCSTP FDECSTP FFREE FINIT FNINIT FCLEX FNCLEX FSTCW FNSTCW FLDCW FSTENV FNSTENV FLDENV FSAVE FNSAVE 
+      FRSTOR FSTSW FNSTSW WAIT/FWAIT FNOP 
+
+      // X87 FPU AND SIMD STATE MANAGEMENT INSTRUCTIONS
+      FXSAVE FXRSTOR 
+
+      // MMX Data Transfer Instructions
+      MOVD MOVQ 
+
+      // MMX Conversion Instructions
+      PACKSSWB PACKSSDW PACKUSWB PUNPCKHBW PUNPCKHWD PUNPCKHDQ PUNPCKLBW PUNPCKLWD PUNPCKLDQ 
+
+      // MMX Packed Arithmetic Instructions
+      PADDB PADDW PADDD PADDSB PADDSW PADDUSB PADDUSW PSUBB PSUBW PSUBD PSUBSB PSUBSW PSUBUSB PSUBUSW PMULHW PMULLW PMADDWD 
+
+      // MMX Comparison Instructions
+      PCMPEQB PCMPEQW PCMPEQD PCMPGTB PCMPGTW PCMPGTD 
+
+      // MMX Logical Instructions
+      PAND PANDN POR PXOR 
+
+      // MMX Shift and Rotate Instructions
+      PSLLW PSLLD PSLLQ PSRLW PSRLD PSRLQ PSRAW PSRAD 
+
+      // MMX State Management Instructions
+      EMMS
+
+      // SSE Data Transfer Instructions
+      MOVAPS MOVUPS MOVHPS MOVHLPS MOVLPS MOVLHPS MOVMSKPS MOVSS 
+
+      // SSE Packed Arithmetic Instructions
+      ADDPS ADDSS SUBPS SUBSS MULPS MULSS DIVPS DIVSS RCPPS RCPSS SQRTPS SQRTSS RSQRTPS RSQRTSS MAXPS MAXSS MINPS MINSS 
+
+      // SSE Comparison Instructions
+      CMPPS CMPSS COMISS UCOMISS 
+
+      // SSE Logical Instructions
+      ANDPS ANDNPS ORPS XORPS 
+
+      // SSE Shuffle and Unpack Instructions
+      SHUFPS UNPCKHPS UNPCKLPS 
+
+      // SSE Conversion Instructions
+      CVTPI2PS CVTSI2SS CVTPS2PI CVTTPS2PI CVTSS2SI CVTTSS2SI 
+
+      // SSE MXCSR State Management Instructions
+      MXCSR MXCSR LDMXCSR STMXCSR 
+
+      // SSE 64-Bit SIMD Integer Instructions
+      PAVGB PAVGW PEXTRW PINSRW PMAXUB PMAXSW PMINUB PMINSW PMOVMSKB PMULHUW PSADBW PSHUFW 
+
+      // SSE Cacheability Control, Prefetch, and Instruction Ordering Instructions
+      MASKMOVQ MOVNTQ MOVNTPS PREFETCH prefetchw SFENCE 
+
+      // SSE2 Data Movement Instructions
+      MOVAPD MOVUPD MOVHPD MOVLPD MOVMSKPD MOVSD 
+
+      // SSE2 Packed Arithmetic Instructions
+      ADDPD ADDSD SUBPD SUBSD MULPD MULSD DIVPD DIVSD SQRTPD SQRTSD MAXPD MAXSD MINPD MINSD 
+
+      // SSE2 Logical Instructions
+      ANDPD ANDNPD ORPD XORPD 
+
+      // SSE2 Compare Instructions
+      CMPPD CMPSD COMISD UCOMISD 
+
+      // SSE2 Shuffle and Unpack Instructions
+      SHUFPD UNPCKHPD UNPCKLPD 
+
+      // SSE2 Conversion Instructions
+      CVTPD2PI CVTTPD2PI CVTPI2PD CVTPD2DQ CVTTPD2DQ CVTDQ2PD CVTPS2PD CVTPD2PS CVTSS2SD CVTSD2SS CVTSD2SI CVTTSD2SI CVTSI2SD 
+
+      // SSE2 Packed Single-Precision Floating-Point Instructions
+      CVTDQ2PS CVTPS2DQ CVTTPS2DQ 
+
+      // SSE2 128-Bit SIMD Integer Instructions
+      MOVDQA MOVDQU MOVQ2DQ MOVDQ2Q PMULUDQ PADDQ PSUBQ PSHUFLW PSHUFHW PSHUFD PSLLDQ PSRLDQ PUNPCKHQDQ PUNPCKLQDQ 
+
+      // SSE2 Cacheability Control and Ordering Instructions
+      LFENCE MFENCE PAUSE MASKMOVDQU MOVNTPD MOVNTDQ MOVNTI 
+
+      // SSE3 x87-FP Integer Conversion Instruction
+      FISTTP
+
+      // SSE3 Specialized 128-bit Unaligned Data Load Instruction
+      LDDQU
+
+      // SSE3 SIMD Floating-Point Packed ADD/SUB Instructions
+      ADDSUBPS ADDSUBPD 
+
+      // SSE3 SIMD Floating-Point Horizontal ADD/SUB Instructions
+      HADDPS HSUBPS HADDPD HSUBPD 
+
+      // SSE3 SIMD Floating-Point LOAD/MOVE/DUPLICATE Instructions
+      MOVSHDUP MOVSLDUP MOVDDUP 
+
+      // SSE3 Agent Synchronization Instructions
+      MONITOR MWAIT MONITOR 
+
+      // Horizontal Addition/Subtraction
+      PHADDW PHADDSW PHADDD PHSUBW PHSUBSW PHSUBD 
+
+      // Packed Absolute Values
+      PABSB PABSW PABSD 
+
+      // Multiply and Add Packed Signed and Unsigned Bytes
+      PMADDUBSW
+
+      // Packed Multiply High with Round and Scale
+      PMULHRSW
+
+      // Packed Shuffle Bytes
+      PSHUFB
+
+      // Packed Sign
+      PSIGNB PSIGNW PSIGND
+
+      // Packed Align Right
+      PALIGNR
+
+      // Dword Multiply Instructions
+      PMULLD PMULDQ 
+
+      // Floating-Point Dot Product Instructions
+      DPPD DPPS 
+
+      // Streaming Load Hint Instruction
+      MOVNTDQA
+
+      // Packed Blending Instructions
+      BLENDPD BLENDPS BLENDVPD BLENDVPS PBLENDVB PBLENDW 
+
+      // Packed Integer MIN/MAX Instructions
+      PMINUW PMINUD PMINSB PMINSD PMAXUW PMAXUD PMAXSB PMAXSD 
+
+      // Floating-Point Round Instructions with Selectable Rounding Mode
+      ROUNDPS ROUNDPD ROUNDSS ROUNDSD 
+
+      // Insertion and Extractions from XMM Registers
+      EXTRACTPS INSERTPS PINSRB PINSRD PINSRQ PEXTRB PEXTRW PEXTRD PEXTRQ 
+
+      // Packed Integer Format Conversions
+      PMOVSXBW PMOVZXBW PMOVSXBD PMOVZXBD PMOVSXWD PMOVZXWD PMOVSXBQ PMOVZXBQ PMOVSXWQ PMOVZXWQ PMOVSXDQ PMOVZXDQ 
+
+      // Improved Sums of Absolute Differences (SAD) for 4-Byte Blocks
+      MPSADBW PHMINPOSUW
+
+      // Packed Test
+      PTEST
+
+      // Packed Qword Equality Comparisons
+      PCMPEQQ
+
+      // Dword Packing With Unsigned Saturation
+      PACKUSDW
+
+      // String and Text Processing Instructions
+      PCMPESTRI PCMPESTRM PCMPISTRI PCMPISTRM 
+
+      // Packed Comparison SIMD integer Instruction
+      PCMPGTQ
+
+      // Application-Targeted Accelerator Instructions
+      CRC32 POPCNT
+
+      // SYSTEM INSTRUCTIONS
+      LGDT SGDT LLDT SLDT LTR STR LIDT SIDT MOV LMSW SMSW CLTS ARPL LAR LSL VERR VERW MOV INVD WBINVD INVLPG 
+      LOCK HLT RSM RDMSR WRMSR RDPMC RDTSC RDTSCP XSAVE XRSTOR XGETBV XSETBV 
+
+      // 64-BIT MODE INSTRUCTIONS
+      CDQE CMPSQ CMPXCHG16B LODSQ MOVSQ MOVZX STOSQ SWAPGS 
+
+      // VIRTUAL-MACHINE EXTENSIONS
+      VMPTRLD VMPTRST VMCLEAR VMREAD VMWRITE VMCALL VMLAUNCH VMRESUME VMXOFF VMXON INVEPT INVVPID 
+
+      // SAFER MODE EXTENSIONS
+      GETSEC CAPABILITIES GETSEC ENTERACCS GETSEC EXITAC GETSEC SENTER GETSEC SEXIT GETSEC PARAMETERS GETSEC SMCRTL GETSEC WAKEUP
+    </group>
+
+    <group 00ff00ee 00000000 1> 
+      // Control Transfer Instructions
+      JMP JE JZ JNE JNZ JA JNBE JAE JNB JB JNAE JBE JNA JG JNLE JGE JNL JL JNGE JLE JNG JC JNC JO JNO JS JNS 
+      JPO JNP JPE JP JCXZ JECXZ LOOP LOOPZ LOOPE LOOPNZ LOOPNE CALL RET IRET INT INTO BOUND ENTER LEAVE
+
+      // X86 System instructions
+      SYSENTER SYSEXIT
+
+      // X64
+      SYSCALL SYSRET 
+    </group>
+
+    // directives keywords
+    <group 00db7093 00000000 1>
+      dword qword oword byte ptr fword word xmmword
+    </group>
+
+    // registers
+    <group 002a2aa5 00000000 2>
+      eax ebx ecx edx esi edi
+      ax bx cx dx si di bp sp al ah bl bh cl ch dl dh
+      rax rbx rcx rdx rsi sil rdi dil rbp bpl rsp spl rip
+      r8 r8d r8w r8b r9 r9d r9w r9b r10 r10d r10w r10b r11 r11d r11w r11b r12 r12d r12w r12b r13 r13d r13w r13b r14 r14d r14w r14b r15 r15d r15w r15b
+      cs ss ds es fs gs
+      cr0 cr2 cr3 cr4 cr8
+      st0 st1 st2 st3 st4 st5 st6 st7 
+      mm0 mm1 mm2 mm3 mm4 mm5 mm6 mm7 
+      xmm0 xmm1 xmm2 xmm3 xmm4 xmm5 xmm6 xmm7 xmm8 xmm9 xmm10 xmm11 xmm12 xmm13 xmm14 xmm15
+      dr0 dr1 dr2 dr3 dr6 dr7
+    </group>
+    
+    // special registers
+    <group 0000FF80 00000000 2>
+      ebp esp eip
+    </group>
+    
+    // special registers
+    <group 0018EC1A 00000000 2>
+      push pop
+    </group>
+
+  </syntax_highlighting_groups>
+
+
+  <dynamic_highlighting_groups>
+    <group>
+      rax eax ax al ah
+    </group>
+    <group>
+      rbx ebx bx bl bh
+    </group>
+    <group>
+      rcx ecx cx cl ch
+    </group>
+    <group>
+      rdx edx dx dl dh
+    </group>
+    <group>
+      rsi esi si sil
+    </group>
+    <group>
+      rdi edi di dil
+    </group>
+    <group>
+      rbp ebp bp bpl
+    </group>
+    <group>
+      rsp esp sp spl
+    </group>
+    <group>
+      rip eip ip
+    </group>
+    <group>
+      r8 r8d r8w r8b
+    </group>
+    <group>
+      r9 r9d r9w r9b
+    </group>
+    <group>
+      r10 r10d r10w r10b
+    </group>
+    <group>
+      r11 r11d r11w r11b
+    </group>
+    <group>
+      r12 r12d r12w r12b
+    </group>
+    <group>
+      r13 r13d r13w r13b
+    </group>
+    <group>
+      r14 r14d r14w r14b 
+    </group>
+    <group>
+      r15 r15d r15w r15b
+    </group>
+
+
+  </dynamic_highlighting_groups>
+
+</config>

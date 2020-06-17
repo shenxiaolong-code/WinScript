@@ -1,0 +1,5 @@
+C:\symbols
+C:\ProgramData\dbg\sym
+%temp%\SymbolCache
+%windbgPath%\x86\sym
+%windbgPath%\x64\sym

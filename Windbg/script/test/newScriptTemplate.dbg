@@ -1,0 +1,6 @@
+.echo 
+.echo ----------------------loading Startup script [${$arg0}]----------------------;
+.echo
+
+.echo
+.echo ----------------------finish Startup script [${$arg0}]---------------------------;
