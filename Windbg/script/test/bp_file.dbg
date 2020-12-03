@@ -1,1 +1,0 @@
-bp KERNELBASE!WriteFile " .echo KERNELBASE!WriteFile\r\n ; db poi(esp+0x8) L?(poi(esp+0xc)) ; .echo.  gc;"

@@ -1,0 +1,34 @@
+.echo +++++++ loading ${$arg0}
+.echo
+.echo analysis lock information in current thread for deadlock case ...
+
+aS ${/v:deadlockFolder} ${temp}\deadlock\result;
+
+.block {
+
+.foreach /pS 4 ( var {.shell -ci "*" if exist "${deadlockFolder}" echo has folder } ) 
+{
+.echo
+.echo .shell -ci "*" rd /f/q "${deadlockFolder}"  ;
+}
+
+.foreach /pS 4 ( var {.shell -ci "*" if not exist "${deadlockFolder}" echo no folder } ) 
+{
+.echo
+.echo ready to create directory: ${deadlockFolder} ;
+.shell -ci "*" mkdir "${deadlockFolder}" & exit ;
+}
+
+.foreach /pS 3 /ps 99 ( val {.shell -ci "kv" find /i "RtlEnterCriticalSection"} ) { !cs -o ${val} }
+
+$$ .foreach /pS 3 /ps 99 ( val {.shell -ci "kv" find /i "RtlEnterCriticalSection"} ) { .shell -ci "!cs -o ${val}" find /v "^*" > "${analysisCache}\1.txt" & exit ; }
+$$ .shell -ci "~*kbc" type "${analysisCache}\1.txt"
+$$ .shell -ci "~*kbc" find /v "^*" > "${analysisCache}\stackAll.txt" & exit ;
+
+}
+
+ad ${/v:deadlockFolder};
+
+
+.echo
+.echo ------- exiting ${$arg0}

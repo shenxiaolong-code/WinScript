@@ -1,2 +1,0 @@
-http://kdext.com/extensions/kdfFiles.html
-it is useful when developing driver -- avoid copying/replacing driver file module when debuging frequently across network.

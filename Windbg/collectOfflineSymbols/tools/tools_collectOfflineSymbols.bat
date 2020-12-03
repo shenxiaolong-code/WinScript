@@ -11,6 +11,7 @@ rem title length limited to 256 chars , else dos will report "Not enough memory 
 rem @title %0 %*
 rem echo %0 %* & pause
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
+@echo %~fs0 %*
 
 set cmds_%~n0="%~fs0" %*
 if {"%~1"}=={""} call :Test NoOutput & goto End
@@ -124,21 +125,38 @@ set "%~1=srv*%outFolder%*http://msdl.microsoft.com/download/symbols"
 goto :eof
 
 :: *********************************************************************************************************************
+::[DOS_API:collectSymbolOneModule] generate manifest file for specified single module. in general this API is called from windbg.
+::usage     : call :collectSymbolOneModule md_name.dll md_Timestamp md_SizeOfImage md_age
+::e.g.      : call :collectSymbolOneModule ntdll.dll 37FD3042 19A000 2
+:collectSymbolOneModule
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
+echo %0 %*
+set manifestFileName=%~n1_manifest.txt
+call :collectSymbolList.setDefaultOutFolder "%temp%\symbol_manifest_Collect\%~n1_%~2
+call :collectSymbolList.processOutFolder "%outFolder%"
+echo %~1,%~2%~3,%~4 > "%manifestFile%"
+if not defined NoCollectSymbolListMsg start "" "%outFolder%"
+call :collectSymbolList.prepareDownloadToolSet
+del /q "%outFolder%\keep*.bat"
+goto :eof
+
 ::[DOS_API:collectSymbolList] collect symbol manifest file on one restricted computer.
 ::usage     : call :collectSymbolList possibleInputParam possibleOutputParam
 ::e.g.      : call :collectSymbolList "%~f0" bRet
 ::            call :collectSymbolList "%~f0" bRet "optParamer"
 :collectSymbolList
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
+set "manifestFilter=%~f2"
 if not {"%~x1"}=={""} call :collectSymbolList.File     %*
 if     {"%~x1"}=={""} call :collectSymbolList.NotFile  %*
+if exist "%manifestFilter%" call "%~dp0tools_symFilter.bat" filterSpecficModules "%manifestFile%" "%manifestFilter%"
 goto :eof
 
 :collectSymbolList.File
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
 set _extName=%~x1
 call :toLowerString _extName
-if not defined outFolder set "outFolder=%temp%\%~n1_symbolCollect"
+call :collectSymbolList.setDefaultOutFolder "%temp%\symbol_manifest_Collect\%~n1"
 call :collectSymbolList.processOutFolder "%outFolder%"
 if {"%_extName%"}=={".exe"} call :collectSymbolList.application     %*
 if {"%_extName%"}=={".dmp"} call :collectSymbolList.dumpFile        %*
@@ -150,6 +168,13 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
 if not exist "%~1\" call :collectSymbolList.folder  %*
 if     exist "%~1\" call :collectSymbolList.process %*
+goto :eof
+
+:collectSymbolList.setDefaultOutFolder
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
+if defined outFolder goto :eof
+call "%WinScriptPath%\common\genNameByTime.bat" dtStr
+set "outFolder=%~1_%dtStr%"
 goto :eof
 
 :collectSymbolList.processOutFolder
@@ -205,14 +230,14 @@ goto :eof
 
 :collectSymbolList.folder
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
-if not defined outFolder set "outFolder=%~dp0..\Folder_%~n1"
+call :collectSymbolList.setDefaultOutFolder "%~dp0..\symbol_manifest_Collect\Folder_%~n1"
 call :collectSymbolList.processOutFolder "%outFolder%"
 call :collectSymbolList.run /r /if "%~fs1"
 goto :eof
 
 :collectSymbolList.process
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
-if not defined outFolder set "outFolder=%~dp0..\process_%~1"
+call :collectSymbolList.setDefaultOutFolder "%~dp0..\symbol_manifest_Collect\process_%~1"
 call :collectSymbolList.processOutFolder "%outFolder%"
 call :collectSymbolList.run /ip "%~1"
 goto :eof
@@ -224,6 +249,7 @@ goto :eof
 
 :collectSymbolList.dumpFile
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
+call :collectSymbolList.dumpFile.generateModuleList "%~fs1"
 call :collectSymbolList.run /id "%~fs1"
 goto :eof
 
@@ -238,6 +264,21 @@ call :collectSymbolList.run /ih "%~fs1"
 goto :eof
 
 :: *********************************************************************************************************************
+:collectSymbolList.dumpFile.generateModuleList
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
+where symchk.exe 2>nul || call :symchk.findWindbgPath
+where symchk.exe 2>nul || set "path=%symchkPath%;%path%"
+:: cdb.exe -z "%~f1" -cf "cdbCmd.dbg"
+:: cdb.exe -z deadLock.dmp -c ".shell -ci \"k\" find /i \"::\" > test.txt "
+set "filterFolder=%outFolder%\filter"
+if not exist "%filterFolder%" md "%filterFolder%\"
+if exist "%manifestFilter%" copy "%manifestFilter%" "%filterFolder%\" & goto :eof
+set "tmpModuleFile=%filterFolder%\module_all_%~n1.txt"
+cdb.exe -z "%~fs1" -c " !for_each_module \".echo @#ImageName \"  ; qq " > "%tmpModuleFile%"
+type "%tmpModuleFile%"  | find /i "C:\Windows\" > "%filterFolder%\module_ms.txt"
+type "%tmpModuleFile%"  | find /v "C:\Windows\" | find /i ":\" | find /v "Loading Dump File" > "%filterFolder%\module_user.txt"
+goto :eof
+
 :collectSymbolList.prepareDownloadToolSet
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
 if not defined NoCollectSymbolListMsg echo. & echo create download tool set ...
@@ -270,8 +311,10 @@ echo if not defined outFolder echo outFolder is not defined, something are wrong
 echo dir/s/b "%%outFolder%%\*.dll" "%%outFolder%%\*.pdb"
 echo pause
 ) > "%outFolder%\runMe_onNetworkedPc.bat"
-echo call "%~dp0tools_symFilter.bat" keepMsBasic "%%~dp0%manifestFileName%" > "%outFolder%\keepMsBasic.bat"
-echo call "%~dp0tools_symFilter.bat" keepMsAll "%%~dp0%manifestFileName%"   > "%outFolder%\keepMsAll.bat"
+if exist "%manifestFilter%" goto :eof
+echo call "%~dp0tools_symFilter.bat" keepMsBasic "%%~dp0%manifestFileName%" > "%outFolder%\keepModule_MsBasic.bat"
+echo call "%~dp0tools_symFilter.bat" filterSpecficModules "%%~dp0%manifestFileName%" "%%~dp0filter\module_ms.txt"     > "%outFolder%\keepModule_MsAll.bat"
+echo call "%~dp0tools_symFilter.bat" filterSpecficModules "%%~dp0%manifestFileName%" "%%~dp0filter\module_user.txt"   > "%outFolder%\keepModule_OnlyUser.bat"
 goto :eof
 
 :: *********************************************************************************************************************

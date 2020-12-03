@@ -4,7 +4,7 @@
 ::@set _Echo=1
 ::set _Stack=%~nx0
 ::set _Debug=1
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 rem title length limited to 256 chars , else dos will report "Not enough memory resources are available to process this command"
 rem @title %0 %*
@@ -545,14 +545,7 @@ if {"%~2"}=={""} start cmd.exe /k %~fs0 loadEnvWindbg %* "reentry"
 if {"%~2"}=={""} goto :eof
 call tools_error.bat checkPathExist "%~1" "%~fs0" loadEnvWindbg_mark
 pushd "%~1"
-for /f "usebackq tokens=*" %%i in ( ` dir/s/b *.dmp,*.dll,*.exe ` ) do if not defined _tmpFirstFile set "_tmpFirstFile=%%~fsi"
-set _tmpExt=%_tmpFirstFile:~-4%
-set windbgMode=
-if {"%_tmpExt%"}=={".dll"} call call tools_isX86X64.bat IsX86OrX64Mod "%_tmpFirstFile%" windbgMode
-if {"%_tmpExt%"}=={".exe"} call call tools_isX86X64.bat IsX86OrX64Mod "%_tmpFirstFile%" windbgMode
-rem if {"%_tmpExt%"}=={".pdb"} call call tools_isX86X64.bat IsX86OrX64Mod "%_tmpFirstFile%" windbgMode
-if {"%_tmpExt%"}=={".dmp"} call call tools_isX86X64.bat IsX86OrX64Dump "%_tmpFirstFile%" windbgMode
-if not defined windbgMode set windbgMode=x64
+call tools_isX86X64.bat IsX86OrX64Folder "%cd%" windbgMode x64
 where windbg.exe 1>nul 2>nul || set "path=%windbgPath%\%windbgMode%;%path%"
 cls
 set ls=dir/w "%windbgPath%\%windbgMode%\*.exe"

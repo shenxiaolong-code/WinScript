@@ -3,7 +3,7 @@
 
 ::@set _Echo=1
 ::set _Stack=%~nx0
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
 
@@ -66,18 +66,6 @@ echo.
 echo test call :FindFileVersion "C:\Windows\System32\cmd.exe" cmdVer
 call tools_path.bat FindFileVersion "C:\Windows\System32\cmd.exe" cmdVer
 echo cmdVer=%cmdVer%
-
-echo.
-echo test call pythonAppInstalled "Scrapy" bScrapyInstalled
-call tools_path.bat pythonAppInstalled "Scrapy" bScrapyInstalled
-if      defined bScrapyInstalled echo Scrapy is installed.
-if not  defined bScrapyInstalled echo Scrapy is NOT installed.
-
-echo.
-echo test call pythonAppInstalled "Scrapy11" bScrapyInstalled
-call tools_path.bat pythonAppInstalled "Scrapy11" bScrapyInstalled
-if      defined bScrapyInstalled echo Scrapy11 is installed.
-if not  defined bScrapyInstalled echo Scrapy11 is NOT installed.
 
 echo.
 echo test call :isFileExist "%~f0" _bFExist
@@ -143,17 +131,7 @@ call :CreateFolderShortcut "%tmp%\testCreateFolderShortcut" "%~dp0"
 
 goto :eof
 
-::[DOS_API:pythonAppInstalled]check whether python extension is installed.
-::usage         : call tools_path.bat pythonAppInstalled pythonAppName  bOutputValue
-::outVar        : bOutputValue
-::example       : set bOutputValue=1
-::              : call tools_path.bat pythonAppInstalled "Scrapy" bScrapyInstalled
-::              : bScrapyInstalled=1
-:pythonAppInstalled
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-set %~2=
-for /f "usebackq tokens=1" %%i in ( ` pip list 2^>^&1 ^| find /i "%~1" ` ) do set %~2=1
-goto :eof
+
 
 ::[DOS_API:checkOutputPath]check whether output directory exists. if not exist , just create it to simply general script code.
 ::call e.g  : call :checkOutputPath "C:\tem\myFile.dat"
@@ -173,7 +151,7 @@ goto :eof
 call tools_error.bat checkParamCount 2 %*
 set rp=%~3
 if not defined rp set rp=.
-for /f "usebackq tokens=*" %%i in ( ` reg query "%~1" 2^>nul ^| find /i "(Default)" ` ) do call :FindAppPathInReg.parse "%~2" "%rp%" "%%~i"
+for /f "usebackq tokens=*" %%i in ( ` reg query "%~1" 2^>nul ^| find /i "(Default)" ` ) do call :FindAppPathInReg.parse "%~2" "%rp%" %%~i
 goto :eof
 
 ::[DOS_API:FindAppPathInEnv]lookup one file's full path by file name in path environment variables.
@@ -273,8 +251,11 @@ goto :eof
 :ToShortPath
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if {"%~1"}=={""} goto :eof
+call set "_tmpToShortPathVal=%%%~1%%"
+if {"%_tmpToShortPathVal%"}=={""} goto :eof
 :: for /f "tokens=*"  %i in ( "%VS140COMNTOOLS%..\.." ) do echo "%~fsi"
-for /f %%i in ( "D:\work\shenxiaolong\core\WinScript\common\tools_path.bat " ) do set "%~1=%%~fsi"
+for /f %%i in ( "%_tmpToShortPathVal%" ) do set "%~1=%%~fsi"
+rem for /f %%i in ( "D:\work\shenxiaolong\core\WinScript\common\tools_path.bat " ) do set "%~1=%%~fsi"
 goto :eof
 
 
@@ -365,18 +346,20 @@ rem if the path length is bigger than 256 chars, below command result might be w
 rem TODO: use forfiles.exe to check
 if not exist "%~fs1"  call set "%~2=0" & goto :eof
 set "_tmpFilePath=%~fs1"
+if {"%_tmpFilePath:~-1%"}=={"\"} call set "%~2=0" & goto :eof
 if not {"%_tmpFilePath:~256%"}=={""} call set "%~2=1" & goto :eof
 
 set "_tmpAttrib=%~a1"
 call tools_message.bat enableDebugMsg "%~0" "attrib of '%~1' is %_tmpAttrib% in %0 , test char is '%_tmpAttrib:~0,1%'"
 if {"%_tmpAttrib:~0,1%"}=={"d"} (
 call tools_message.bat enableDebugMsg "%~0" "'%~1' is directory in %0 , return 0"
-call set "%~2=0"
+set _tmpisFileExist=0
 ) else (
 call tools_message.bat enableDebugMsg "%~0" "'%~1' is file in %0 , return 1"
-call set "%~2=1"
+set _tmpisFileExist=1
 )
-call exit /b %%%~2%%
+if not {"%~2"}=={""} call set "%~2=%_tmpisFileExist%"
+exit /b %_tmpisFileExist%
 goto :eof
 
 ::[DOS_API:isFolderExist]enter specified path, because cd , pushd can't change driver
@@ -385,17 +368,18 @@ goto :eof
 :isFolderExist
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 rem %~a1 can't work correctly in some DOS version
-if not exist "%~s1" exit /b 0
-set _tmpAttrib=%~a1
-call tools_message.bat enableDebugMsg "%~0" "attrib of '%~1' is %_tmpAttrib% in %0 , test char is '%_tmpAttrib:~0,1%'"
-if {"%_tmpAttrib:~0,1%"}=={"d"} (
+if not exist "%~s1" set "%~2=0" & goto :eof
+set "tmpFolderPath=%~1"
+if not {"%tmpFolderPath:~-1%"}=={"\"} set "tmpFolderPath=%tmpFolderPath%\"
+if exist "%tmpFolderPath%" (
 call tools_message.bat enableDebugMsg "%~0" "'%~1' is directory in %0 , return 1"
-call set "%~2=1"
+set _tmpisFolderExist=1
 ) else (
 call tools_message.bat enableDebugMsg "%~0" "'%~1' is file in %0 , return 0"
-call set "%~2=0"
+set _tmpisFolderExist=0
 )
-call exit /b %%%~2%%
+if not {"%~2"}=={""} call set "%~2=%_tmpisFolderExist%"
+exit /b %_tmpisFolderExist%
 goto :eof
 
 ::[DOS_API:isPathExist]enter specified path, because cd , pushd can't change driver
@@ -405,11 +389,28 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if exist "%~fs1" (
 call tools_message.bat enableDebugMsg "%~0" "'%~1' exist in %0 , return 1"
-exit /b 1
+set _tmpisPathExist=1
 ) else (
 call tools_message.bat enableDebugMsg "%~0" "'%~1' do NOT exist in %0 , return 0"
-exit /b 0
+set _tmpisPathExist=0
 )
+if not {"%~2"}=={""} call set %~2=%_tmpisPathExist%
+exit /b %_tmpisPathExist%
+goto :eof
+
+::[DOS_API:getPathAttrib]check one path attribute : NotExist , folder , file, error
+::call e.g  : call :getPathAttrib path outputVal
+::            call :getPathAttrib E:\temp\mydir\  enumAttrib
+:getPathAttrib
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set %~2=error
+if not exist "%~1" set "%~2=NotExist" & goto :eof
+set _tmpAttrib=
+for /f "tokens=*" %%i in ( "work" ) do set "_tmpAttrib=%%~ai"
+if not defined _tmpAttrib goto :eof
+call tools_message.bat enableDebugMsg "%~0" "'%~1' attribute : %_tmpAttrib%"
+if not {"%_tmpAttrib:~0,1%"}=={"d"}  set %~2=folder
+if     {"%_tmpAttrib:~0,1%"}=={"d"}  set %~2=file
 goto :eof
 
 ::[DOS_API:showPathInExplorer]open folder by explorer
@@ -465,9 +466,8 @@ goto :eof
 
 :ToNormalPath.PathExist
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-pushd "%_tmpToNormalPath%"
-set "%~1=%cd%"
-popd
+:: pushd/popd might has different partition issue and access permission issue.
+for /f "usebackq tokens=2*" %%i in ( ` dir "%_tmpToNormalPath%"  ^| find /i "Directory of"  `  ) do set "%~1=%%j"
 goto :eof
 
 :ToNormalPath.PathNotExist

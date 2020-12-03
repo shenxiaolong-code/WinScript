@@ -1,4 +1,4 @@
-echo off
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 
 rem set default value
 if not defined window_sizeH set window_sizeH=0x002d

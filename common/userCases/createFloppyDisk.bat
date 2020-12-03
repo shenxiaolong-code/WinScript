@@ -1,4 +1,4 @@
-@echo off
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 rem linux command : fallocate -l 1474560 myimage.vfd
 rem Linux & other Unix-like systems: head -c 1474560 /dev/zero > myimage.vfd
 if {%~1}=={} %~dp0tools_message.bat popMsg "empty parameter"  & goto :End

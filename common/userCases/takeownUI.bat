@@ -1,4 +1,4 @@
-@echo off
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 :Input
 cls
 @echo pls input directory or module(exe/lib/dll) path :

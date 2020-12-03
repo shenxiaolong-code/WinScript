@@ -1,6 +1,6 @@
 ::@set _Echo=1
 ::set _Stack=%~nx0
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%" >nul
 where "tools_path.bat" 1>nul 2>nul || set "path=%~dp0..\common;%path%" >nul
@@ -109,8 +109,7 @@ if not  exist "%~fs1" set "_tmpDumpDir=%_regTmpDir%"
 if      exist "%~fs1" set "_tmpDumpDir=%~fs1"
 if not exist "%_tmpDumpDir%\" md "%_tmpDumpDir%\"
 call tools_AppDbgRegGenerater.bat LocalExceptDump.Generate "%~1" "%tmpRegFile%" "%_tmpDumpDir%"
-call tools_error.bat checkFileExist "%tmpRegFile%" "%~fs0" setFlag.LocalExceptDump.enable_mark
-call tools_reg.bat importRegFile "%tmpRegFile%"
+call :setFlag.checkAndImportRegFile "%tmpRegFile%"
 goto :eof
 
 :setFlag.LocalExceptDump.disable
@@ -132,8 +131,7 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call :setFlag.regTempFile tmpRegFile DebugAppLaunch %1
 call tools_AppDbgRegGenerater.bat DebugAppLaunch.Generate "%~1" "%tmpRegFile%"
-call tools_error.bat checkFileExist "%tmpRegFile%" "%~fs0" setFlag.DebugAppLaunch.enable_mark
-call tools_reg.bat importRegFile "%tmpRegFile%"
+call :setFlag.checkAndImportRegFile "%tmpRegFile%"
 goto :eof
 
 :setFlag.DebugAppLaunch.disable
@@ -155,8 +153,7 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call :setFlag.regTempFile tmpRegFile MonitorAppExit %1
 call tools_AppDbgRegGenerater.bat MonitorAppExit.Generate "%~1" "%tmpRegFile%"
-call tools_error.bat checkFileExist "%tmpRegFile%" "%~fs0" setFlag.MonitorAppExit.enable_mark
-call tools_reg.bat importRegFile "%tmpRegFile%"
+call :setFlag.checkAndImportRegFile "%tmpRegFile%"
 goto :eof
 
 :setFlag.MonitorAppExit.disable
@@ -165,10 +162,16 @@ call tools_AppDbgRegGenerater.bat MonitorAppExit.Cancel "%~1"
 goto :eof
 
 :://////////////////////////////////////////////////////////////////////////////////////////
+:setFlag.checkAndImportRegFile
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call tools_error.bat checkFileExist "%~fs1" "%~fs0" setFlag.checkAndImportRegFile.mark
+call tools_reg.bat importRegFile "%~fs1"
+start explorer.exe /select, "%~fs1"
+goto :eof
+
 :setFlag.regTempFile
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if      exist "%~fs3" set "_regTmpDir=%~dpn3"
-if not  exist "%~fs3" set "_regTmpDir=%temp%\%~n3"
+set "_regTmpDir=%temp%\flags_reg\%~nx3"
 if not exist "%_regTmpDir%\" md "%_regTmpDir%\"
 set "_tmpRegFile=%_regTmpDir%\%~2.reg"
 if exist "%_tmpRegFile%" del /f/q "%_tmpRegFile%"
@@ -187,14 +190,9 @@ goto :eof
 :setEnv
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0..\common;%path%"
-if not defined defWindbgPath call set defWindbgPath=C:\Program Files ^(x86^)\Windows Kits\10\Debuggers\x86
-call tools_path.bat ToShortPath defWindbgPath
-if not defined windbgPath (
-call tools_message.bat warningMsg "environment variable windbgPath is not set, use %defWindbgPath%"
-set windbgPath=%defWindbgPath%;
-)
-where gflags.exe 1>nul 2>nul || @set path=%path%;%windbgPath%;
-call tools_path.bat ToShortPath windbgPath
+where windbg.exe 1>nul 2>nul || call tools_appInstallPath.bat FindPathWindbg windbgPath
+if not defined windbgPath call tools_message.bat errorMsg "Fails to find windbg.exe path. use environment variable g_windbgDir to specify windbg path and try again."
+where gflags.exe 1>nul 2>nul || @set path=%path%;%windbgPath%\x86;
 call tools_message.bat enableDebugMsg "%~0" "windbgPath=%windbgPath%"
 goto :End
 goto :eof

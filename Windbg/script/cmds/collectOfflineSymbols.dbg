@@ -1,0 +1,110 @@
+.echo +++++++ loading ${$arg0}
+.echo Run as: $$>a<${$arg0}
+
+
+.if (0==${/d:$arg1} & 1==${/d:dbgDmp}) {
+$$     **************** collect symbol manifest file  for dump analysis session ****************
+.foreach /s ( val "once" ) {
+.shell -ci "*" cmd.exe /c ${WinScriptPath}\Windbg\collectOfflineSymbols\tools\tools_collectOfflineSymbols.bat collectSymbolList "${dumpFolderPath}\${dumpModuleName}.dmp" "${/f:manifestFilter}"
+}
+ad ${/v:manifestFilter} ;
+}
+
+.if (0==${/d:$arg1} & 1==${/d:dbgLive}) {
+$$     **************** collect symbol manifest file  for live-debug session ****************
+.foreach /ps 99 ( val { $$>a<${$arg0}\..\common.dbg getDateString } ) {
+aS ${/v:symFolder} ${temp}\symbol_manifest_Collect\symbols_${exeModuleName}_${val};
+.block {
+.echo create folder:${symFolder};
+$$>a<${$arg0}\..\common.dbg createFolder "${symFolder}"
+aS ${/v:tmpDmpFile} ${symFolder}\miniDump_${exeModuleName}.dmp;
+.block {
+.echo generate ${tmpDmpFile}
+.dump ${tmpDmpFile}
+.foreach /s ( val "once" ) { .shell -ci "*" cmd.exe /c ${WinScriptPath}\Windbg\collectOfflineSymbols\tools\tools_collectOfflineSymbols.bat collectSymbolList "${tmpDmpFile}" "${/f:manifestFilter}"}
+ad ${/v:manifestFilter} ;
+}
+ad ${/v:tmpDmpFile};
+}
+ad ${/v:symFolder};
+}
+}
+
+
+.if (1==${/d:$arg1} & $scmp("${$arg1}","curOne")==0) {
+$$     **************** collect symbol manifest file  for current single module ****************
+$$ format , from ntdll and lmvm
+$$ set line=%dllName%,%Timestamp%%SizeOfImage%,%age%
+.foreach        ( val { lm1m a @$scopeip  } )          {   .echo collect symbol for ${val}; !chksym ${val}; }
+.foreach /ps 99 ( val { !chksym @$scopeip } )          {   aS ${/v:md_name}        ${val};    }
+.foreach /pS 2 /ps 99 ( val { !chksym @$scopeip } )    {   aS ${/v:md_Timestamp}   ${val};    }
+.foreach /pS 4 /ps 99 ( val { !chksym @$scopeip } )    {   aS ${/v:md_SizeOfImage} ${val};    }
+.foreach /pS 0xb /ps 99 ( val { !chksym @$scopeip } )  {   aS /x ${/v:md_age}      ${val}+1;  }
+.block {
+.foreach /pS 1 /ps 99 ( val { .shell -ci ".formats ${md_age}" find /i "Decimal:" } )  {
+.echo manifest information : ${md_name},${md_Timestamp},${md_SizeOfImage},${val}
+.echo
+.shell -ci "*" cmd.exe /c ${WinScriptPath}\Windbg\collectOfflineSymbols\tools\tools_collectOfflineSymbols.bat collectSymbolOneModule "${md_name}" ${md_Timestamp}  ${md_SizeOfImage} ${val}
+} }
+ad ${/v:md_name} ;
+ad ${/v:md_Timestamp} ;
+ad ${/v:md_SizeOfImage} ;
+ad ${/v:md_age} ;
+}
+
+.if (1==${/d:$arg1} & $scmp("${$arg1}","curStack")==0) {
+$$     **************** TODO :collect symbol manifest file  for current thread stack ****************
+.foreach /pS 2 ( val {?? @$tid} ) {
+.foreach /ps 99 ( dtStr { $$>a<${$arg0}\..\common.dbg getDateString } ) {
+aS ${/v:manifestFilter} ${temp}\symbol_manifest_Collect\thread_${val}_${dtStr}.txt
+.block {
+.echo generate all module information in current thread:${val}
+.echo ${manifestFilter}
+.foreach /s ( val "once" ) { .shell -ci "kc" clip }
+$$>a<${$arg0}\..\common.dbg moduleListInCurThread "${manifestFilter}"
+$$>a<${$arg0}
+$$ $$>a<${$arg0}\..\common.dbg gotoFile "${manifestFilter}"
+}
+$$ ad ${/v:manifestFilter} ;
+}
+}
+}
+
+.if (1==${/d:$arg1} & $scmp("${$arg1}","backupLoaded")==0) {
+$$     **************** only copy loaded symbol files to folder ****************
+.foreach /ps 99 ( val { $$>a<${$arg0}\..\common.dbg getDateString } ) {
+aS ${/v:symFolder} ${temp}\symbols_backup\${exeModuleName}_loaded_${val};
+.block {
+.echo create folder:${symFolder};
+$$>a<${$arg0}\..\common.dbg createFolder "${symFolder}\"
+.echo collecting loaded symbol files without overwriting the existing symbol files (.pdb) ....;
+.echo .copysym "${symFolder}";
+.copysym "${symFolder}";
+.echo open folder ${symFolder}
+$$>a<${$arg0}\..\common.dbg gotoFolder "${symFolder}"
+}
+ad ${/v:symFolder};
+}
+}
+
+.if (1==${/d:$arg1} & $scmp("${$arg1}","backupAll")==0) {
+$$     **************** copy all symbol files to folder , if they are not loaded, loaded them first , then copy ****************
+.foreach /ps 99 ( val { $$>a<${$arg0}\..\common.dbg getDateString } ) {
+aS ${/v:symFolder} ${temp}\symbols_backup\${exeModuleName}_all_${val};
+.block {
+.echo create folder:${symFolder};
+$$>a<${$arg0}\..\common.dbg createFolder "${symFolder}\"
+.echo collecting all symbol files (.pdb) , if it is not loaded, then loaded them and copy them ....;
+.copysym /l "${symFolder}";
+.echo open folder ${symFolder}
+$$>a<${$arg0}\..\common.dbg gotoFolder "${symFolder}"
+}
+ad ${/v:symFolder};
+}
+}
+
+
+.echo
+.echo ------- exiting ${$arg0}
+
+ 

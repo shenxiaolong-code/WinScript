@@ -35,7 +35,9 @@ goto :eof
 ::call e.g  : call :errorMsg "hello, I am error msg"
 :errorMsg
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if not defined errorMsg_exitHandler set "errorMsg_exitHandler=exit"
+if      defined customized_exitHandler set errorMsg_exitHandler=%customized_exitHandler%
+if not  defined customized_exitHandler if       defined _Debug set "errorMsg_exitHandler=echo don't exist in debug mode.(set _Debug=1)"
+if not  defined customized_exitHandler if not   defined _Debug set "errorMsg_exitHandler=exit"
 if {"%~1"}=={""} (
 call :warningMsg "errorMsg shouldn't be empty."
 ) else (
@@ -44,8 +46,10 @@ echo.
 call colorTxt.bat 0b "[error]%~1"
 )
 echo.
+if not defined customized_exitHandler (
 echo press any key to exit current script session -- or Press Ctrl_C to terminate current job when debuging ...
 pause > nul
+)
 %errorMsg_exitHandler%
 goto :eof
 
@@ -189,7 +193,7 @@ echo.
 echo test call :Help
 call :Help
 
-set errorMsg_exitHandler=echo.
+set customized_exitHandler=echo doesn't exit in self-testing [%~nx0] ....
 
 echo.
 echo test call :warningMsg "warningMsg interface test"
@@ -201,7 +205,7 @@ call :warningMsg "skipped test :errorMsg because it causes exit"
 echo [skip]test call :errorMsg "warningMsg interface test"
 echo call :errorMsg "errorMsg interface test"
 
-set errorMsg_exitHandler=
+set customized_exitHandler=
 
 echo.
 goto :eof

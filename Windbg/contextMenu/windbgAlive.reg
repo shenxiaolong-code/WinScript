@@ -55,6 +55,12 @@ Windows Registry Editor Version 5.00
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\001_vsEnv\command]
 @="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_vs.bat  loadEnvVsMenu \"%V\" "
 
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\002_vsEnv]
+@="generate .sln file by CMake - CMakeLists.txt"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\002_vsEnv\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_vs.bat  CMakeGen \"%V\" "
+
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\01_dbgPid_UI]
 @="debug running app by PID"
 

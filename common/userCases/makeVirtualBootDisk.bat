@@ -10,7 +10,7 @@ rem http://lesca.me/archives/a-quick-introduction-to-winpe-imagex-and-dism.html
 
 ::@set _Echo=1
 ::set _Stack=%~nx0
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 
 set toolDir=%~dp0

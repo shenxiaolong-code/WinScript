@@ -1,4 +1,4 @@
-@echo off
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 echo calling %~f0
 rem set _Debug=1
 if defined _Debug (
@@ -45,6 +45,7 @@ call :addWindbgVariable natvisPath
 :parseClip
 echo .echo [%date% %time%] loading alais from '%dbgFile%' > "%dbgFile%"
 for /f "tokens=*" %%i in ('powershell Get-Clipboard ^| find /i "examine	name:"')						do call :processLine.image "%%i"
+for /f "tokens=*" %%i in ('powershell Get-Clipboard ^| find /i "attach	name:"')						do call :processLine.image "%%i"
 for /f "tokens=*" %%i in ('powershell Get-Clipboard ^| find /i "dump: "') 								do call :processLine.target "%%i"
 for /f "tokens=*" %%i in ('powershell Get-Clipboard ^| find /i "command line: "') 						do call :processLine.commandLine %%i
 ::for /f delims^=^"^ tokens^=^2^,^4^,^6 %%i in ('powershell Get-Clipboard ^| find /i "command line: "') 	do call :processLine.commandLine "%%~i" "%%~j" "%%~k"
@@ -53,17 +54,18 @@ goto :eof
 :processLine.image
 set "_line=%~1"
 set "_line=%_line:*name: =%"
-if defined _Debug echo %0 : _line=%_line%
-call :processLine.image.add."%_line%"
+if defined _Debug echo %0 : _line="%_line%"
+call :processLine.image.add  "%_line%"
 goto :eof
 
 :processLine.image.add
+if defined exePathDefined goto :eof
 @set "tmpDir=%~dps1"
 set exeFolderPath=%tmpDir:~0,-1%
-if defined exeFolderPath goto :eof
 call :addWindbgVariable exeFolderPath
 set exeModuleName=%~n1
 call :addWindbgVariable exeModuleName
+set "exePathDefined=%~f1"
 @goto :eof
 
 :processLine.target
@@ -104,7 +106,7 @@ set "fileName=%~nx1"
 if {"%lowerFileName%"}=={"windbg.exe"}   call :processLine.commandLine.add.windbgPath      "%fileFolder%"    "%fileName%"                                  
 if {"%lowerExtName%"}=={".log"}          call :processLine.commandLine.add.logFullPath     "%fileFolder%"    "%fileName%"                                  
 if {"%lowerExtName%"}=={".dmp"}          call :processLine.commandLine.add.dumpPath        "%fileFolder%"    "%fileName%"                                  
-if {"%lowerExtName%"}=={".exe"} if not  {"%lowerFileName%"}=={"windbg.exe"}    call :processLine.commandLine.add.exePath  "%fileFolder%"    "%fileName%"   
+if {"%lowerExtName%"}=={".exe"} if not  {"%lowerFileName%"}=={"windbg.exe"}    call :processLine.image.add  "%fileFolder%\%fileName%"   
 goto :eof
 
 :processLine.commandLine.add.windbgPath
@@ -113,14 +115,6 @@ set windbgFolderPath=%~s1
 call :addWindbgVariable windbgFolderPath
 set windbgExeMode=%~n1
 call :addWindbgVariable windbgExeMode
-@goto :eof
-
-:processLine.commandLine.add.exePath
-if defined exeFolderPath   goto :eof
-set exeFolderPath=%~s1
-call :addWindbgVariable exeFolderPath
-set exeModuleName=%~n2
-call :addWindbgVariable exeModuleName
 @goto :eof
 
 :processLine.commandLine.add.dumpPath

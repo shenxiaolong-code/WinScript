@@ -6,39 +6,47 @@ $$>a<${WinScriptPath}\windbg\script\loadSetting\setPathAlias.dbg ;
 
 .echo
 .echo set alias ...
+aS ${/v:.al}     $$>a<${$arg0} ;
+
+aS ${/v:.cmdline}   vercommand;
 aS ${/v:.av}     !analyze -v ;
 aS ${/v:.hang}   !analyze -v -hang ;
-aS ${/v:.cmd}    vercommand;
 aS ${/v:.ver}    vertarget;
 aS ${/v:.le}     .lastevent;
 aS ${/v:.el}     .eventlog;
 aS ${/v:.fs}     .shell -ci "~*kc;" find /i 
 aS ${/v:.v}      !for_each_local .printf /D "check <link cmd=\"dv /a /V /i @#Local \"> @#Local </link>\r\n";
+aS ${/v:pp}      ga @$ra ;
+aS ${/v:.?}      $$>a<${WinScriptPath}\windbg\script\cmds\searchCmd.dbg ;
+aS ${/v:.?.}     .frame_ebpfix ;
+
+
 aS ${/v:.dv}     dv /t /i /A ;
 aS ${/v:.k}      kPL ;
 aS ${/v:.f}      .frame /c ;
 aS ${/v:.bl}     bl /L ;
 aS ${/v:.x}      ".echo use x /s 0x10 to specify size, use /f to show function, use /d to show data ; x /v /A" ;
 aS ${/v:.lm}     !lmi ;
-aS ${/v:pp}      ga @$ra ;
-
-aS ${/v:.al}     $$>a<${$arg0} ;
-aS ${/v:.info}   $$>a<${WinScriptPath}\windbg\script\loadSetting\loadInfo.dbg ;
-aS ${/v:.on}     $$>a<${WinScriptPath}\windbg\script\loadSetting\loadNoisyOn.dbg ;
-aS ${/v:.off}    $$>a<${WinScriptPath}\windbg\script\loadSetting\loadNoisyOff.dbg ;
-aS ${/v:.cmds}   .foreach /ps 3 (var { .shell -ci "*" echo %WinScriptPath:\=\\%} ) {.printf /D "<exec cmd=\".cmdtree ${var}\\Windbg\\script\\loadSetting\\cmdTree.dbg\">open cmd panel</exec>\r\n"} ;
-aS ${/v:.cur}   .foreach /ps 3 (var { .shell -ci "*" echo %WinScriptPath:\=\\%} ) {.printf /D "<exec cmd=\".cmdtree ${var}\\Windbg\\script\\loadSetting\\currently.dbg\">open currently panel</exec>\r\n"} ;
-aS ${/v:.mods}   $$>a<${WinScriptPath}\windbg\script\cmds\enumModEntry.dbg ;
-aS ${/v:..tlist} .shell -ci "*" cmd.exe /c "${windbgFolderPath}\tlist.exe" ;
-aS ${/v:.ddump}  .block {.dump /o /mapwd "${targetFolderPath}\${exeModuleName}_1.dmp"};
 
 
-aS ${/v:.?}         $$>a<${WinScriptPath}\windbg\script\cmds\searchCmd.dbg ;
-aS ${/v:.reglist}   $$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg ;
-aS ${/v:.?.}        .frame_ebpfix ;
-aS ${/v:.gdi}       $$>a<${WinScriptPath}\windbg\script\cmds\dump\DumpGDI.dbg ;
+aS ${/v:.on}        $$>a<${WinScriptPath}\windbg\script\loadSetting\loadNoisyOn.dbg ;
+aS ${/v:.off}       $$>a<${WinScriptPath}\windbg\script\loadSetting\loadNoisyOff.dbg ;
+aS ${/v:.cmds}      .foreach /ps 3 (var { .shell -ci "*" echo %WinScriptPath:\=\\%} ) {.printf /D "<exec cmd=\".cmdtree ${var}\\Windbg\\script\\loadSetting\\cmdTree.dbg\">open cmd panel</exec>\r\n"} ;
+aS ${/v:.cur}       .foreach /ps 3 (var { .shell -ci "*" echo %WinScriptPath:\=\\%} ) {.printf /D "<exec cmd=\".cmdtree ${var}\\Windbg\\script\\loadSetting\\cmdTree_cur.dbg\">open currently panel</exec>\r\n"} ;
+aS ${/v:.pan}       $$>a<${WinScriptPath}\windbg\script\cmds\openCmdPanel.dbg ;
+aS ${/v:.ddump}     .block {.dump /o /mapwd "${targetFolderPath}\${exeModuleName}_1.dmp"};
 aS ${/v:.stack}     .printf "top[@$teb->NtTib.StackBase]      : 0x%p\r\ncur[@$teb->NtTib.StackLimit]     : 0x%p\r\nbuttom[@$teb->DeallocationStack] : 0x%p\r\n\r\nStack      : [0x%p - 0x%p] , max  size : 0x%x\r\nused stack : [0x%p - 0x%p] , used size : 0x%x\r\n" , @@C++(@$teb->NtTib.StackBase) ,@@C++(@$teb->NtTib.StackLimit) , @@C++(@$teb->DeallocationStack) ,@@C++(@$teb->DeallocationStack)  , @@C++(@$teb->NtTib.StackBase) , @@C++(@$teb->NtTib.StackBase) - @@C++(@$teb->DeallocationStack) ,@@C++(@$teb->NtTib.StackLimit) , @@C++(@$teb->NtTib.StackBase) , @@C++(@$teb->NtTib.StackBase) - @@C++(@$teb->NtTib.StackLimit) ;
 aS ${/v:.ddstack}   dds @@C++(@$teb->NtTib.StackLimit) @@C++(@$teb->NtTib.StackBase) ;
+
+aS ${/v:.log}       .block { .shell -ci "*" cmd.exe /c start ${WinScriptPath}\common\tools_txtFile.bat openTxtFile "${logFullPath}" } ;
+aS ${/v:.new}       .foreach /s ( val "once" ) { .shell -ci "vercommand" clip & cmd.exe /c ${WinScriptPath}\windbg\script\cmds\common.bat "debugNewSession" };
+
+aS ${/v:.info}      $$>a<${WinScriptPath}\windbg\script\loadSetting\loadInfo.dbg ;
+aS ${/v:.reglist}   $$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg ;
+aS ${/v:.gdi}       $$>a<${WinScriptPath}\windbg\script\cmds\dump\DumpGDI.dbg ;
+aS ${/v:.mods}      $$>a<${WinScriptPath}\windbg\script\cmds\enumModEntry.dbg ;
+aS ${/v:..tlist}    .shell -ci "*" cmd.exe /c "${windbgFolderPath}\tlist.exe" ;
+
 
 .if(${/d:dbgLive})
 {
@@ -60,7 +68,7 @@ $$ aS ${/v:targetFullPath}     ${$CurrentDumpFile}
 $$ aS ${/v:.dir}           .shell -ci "*" explorer.exe /select,"${$CurrentDumpFile}"
 }
 
-aS ${/v:.history}       .write_cmd_hist ${targetFolderPath}\historyCmds.log;
+aS ${/v:.his}         .write_cmd_hist ${targetFolderPath}\historyCmds.log;
 aS ${/v:.dir}         .block { .shell -ci "*" explorer.exe /select,"${targetFullPath}"};
 
 aS ${/v:.test}          $$>a<${WinScriptPath}\windbg\script\test\test.dbg ;

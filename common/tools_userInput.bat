@@ -3,7 +3,7 @@
 
 ::@set _Echo=1
 ::set _Stack=%~nx0
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
 
@@ -53,20 +53,20 @@ if defined waitPathPrompt  echo %inputPathPrompt%
 if defined waitPathPrompt2 echo %inputPathPrompt2%
 call set %~1=
 call :waitString %~1
-set errorExitHandler=echo retry...
+set customized_exitHandler=echo retry...
 call tools_error.bat %~2 "%%%~1%%"
 if not {"%errorlevel%"}=={"1"} goto :waitPath %*
 call tools_message.bat enableDebugMsg "%~0" "set %~1=%%%~1%%"
-set errorExitHandler=
+set customized_exitHandler=
 goto :eof
 
-::[DOS_API:inputPath]wait user to input one file path, if non-current directory, MUST full path
-::usage         : call tools_userInput.bat inputPath outVar
+::[DOS_API:waitPathFolder]wait user to input one file path, if non-current directory, MUST full path
+::usage         : call tools_userInput.bat waitPathFolder outVar
 ::outVar        : output var
-::example       : call tools_userInput.bat inputPath filePath
+::example       : call tools_userInput.bat waitPathFolder filePath
 :waitPathFolder
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call tools_error.bat checkParamCount 2 %*
+call tools_error.bat checkParamCount 1 %*
 if defined waitPathFolderPrompt  set inputPathPrompt=%waitPathFolderPrompt%
 if defined waitPathFolderPrompt2 set inputPathPrompt2=%waitPathFolderPrompt2%
 call :waitPath %* checkFolderExist

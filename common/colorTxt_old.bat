@@ -1,7 +1,7 @@
 ::refer: http://stackoverflow.com/questions/4339649/how-to-have-multiple-colors-in-a-windows-batch-file
 ::show color text , need findstr /a and Backspace key
 
-@echo off
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 setlocal
 
 call :Echo.Color.Init

@@ -1,6 +1,6 @@
 ::@set _Echo=0
 ::set _Stack=%~nx0
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 
 ::http://www.vistax64.com/tutorials/67717-take-ownership-file.html

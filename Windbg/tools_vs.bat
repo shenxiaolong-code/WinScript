@@ -4,7 +4,7 @@
 ::@set _Echo=1
 ::set _Stack=%~nx0
 ::set _Debug=1
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 @title %0 %*
 @echo %~fs0 %*
@@ -15,7 +15,7 @@ title %~n0 %*
 call :setPath "%~fs0"
 rem call tools_error.bat checkAdmin %~fs0 %*
 
-set supportedDbgCmds=;dbgPid;dbgAppName;dbgNewInstance;analysisDmp;vsInstallPath;findVSPath;loadEnvVs;loadEnvVsMenu;
+set supportedDbgCmds=;dbgPid;dbgAppName;dbgNewInstance;analysisDmp;vsInstallPath;findVSPath;loadEnvVs;loadEnvVsMenu;CMakeGen;
 ::call :checkParameter dbgPid 2734
 ::call :checkParameter dbgAppName 
 ::call :checkParameter dbgAppName "notepad.exe"
@@ -316,9 +316,11 @@ goto :eof
 
 :vsInstallPath
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-set %~2=
-if      {"%~1"}=={"newest"}     call :vs.vsInstallPath.newest %~2
-if not  {"%~1"}=={"newest"}     call :vs.vsInstallPath.specified %*
+:: call :vs.vsInstallPath.%~1   %2
+if     {"%~2"}=={""}            call :vs.vsInstallPath.newest %~1
+if not {"%~2"}=={""}            set %~2=
+if not {"%~2"}=={""}    if      {"%~1"}=={"newest"}     call :vs.vsInstallPath.newest %~2
+if not {"%~2"}=={""}    if not  {"%~1"}=={"newest"}     call :vs.vsInstallPath.specified %*
 goto :eof
 
 :vs.vsInstallPath.newest
@@ -347,12 +349,21 @@ goto :eof
 :vs.vsInstallPath.newest.after2017
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 for /f "usebackq tokens=*" %%i in (`"%vswherePath%" -latest -products * -requires Microsoft.Component.MSBuild -property installationPath`) do set "%~1=%%~si"
+:: "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -requires Microsoft.VisualStudio.Workload.NativeDesktop
+:: "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
 goto :eof
 
 :vs.vsInstallPath.specified
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 for %%a in ("vs2017=15.0" "vs2015=14.0" "vs2008=9.0") do if not defined vs%~1 set "%%~a"
 if defined vs%~1 call :vs.vsInstallPath.specified.queryReg "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\VisualStudio\SxS\VS7\%%vs%~1%%" "%~2"
+if not defined %~2 call :vs.vsInstallPath.specified.%~1  %2
+goto :eof
+
+:vs.vsInstallPath.specified.2019
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set "vswherePath=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
+for /f "usebackq tokens=*" %%i in (  ` call "%vswherePath%" -latest -products * -requires Microsoft.Component.MSBuild -property installationPath ^| find /i "2019"  ` ) do set "%~1=%%~fsi"
 goto :eof
 
 :vs.vsInstallPath.specified.queryReg
@@ -372,7 +383,7 @@ goto :eof
 
 :vs.load
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-where devenv.exe 1>nul 2>nul || call :vs.findVSPath
+where devenv.exe 1>nul 2>nul || call :findVSPath
 call tools_message.bat enableDebugCmd "%~0" where devenv.exe
 call tools_message.bat enableDebugMsg "%~0" "cd=%cd%"
 set actCmd=start devenv.exe %*
@@ -388,9 +399,32 @@ for /f "usebackq tokens=2,*" %%a in ( ` dir "%~dp0.." ^| find /i "Directory of" 
 where tools_path.bat 1>nul 2>nul || set path=%path%;%~dp1;%WinScriptPath%\common;
 goto :eof
 
+
+:CMakeGen
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if exist "%~fs1" pushd "%~fs1"
+call tools_error.bat checkFileExist "%cd%\CMakeLists.txt"
+set VSVer=%~2
+if not defined VSVerDef set VSVerDef=vs2017
+if not defined VSVer echo if use different vs version, usage e.g : $~fs0 CMakeGen "%~1" vs2019
+if not defined VSVer set VSVer=%VSVerDef%
+if not exist "build\"  md "build"
+cd build
+if {"%VSVer%"}=={"vs2019"} cmake -G "Visual Studio 16" -A Win32 ..
+:: for vs2017
+:: cmake -G "Visual Studio 15" -A Win32 ..
+:: cmake -G "Visual Studio 15" -A Win64 ..
+if {"%VSVer%"}=={"vs2017"} cmake -G "Visual Studio 15" -A Win32 ..
+:: for vs2015
+:: cmake -G "Visual Studio 14" -A Win32 ..
+if {"%VSVer%"}=={"vs2015"} cmake -G "Visual Studio 14" -A Win32 ..
+
+popd
+goto :eof
+
 :loadEnvVsMenu
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if {"%~2"}=={""} start cmd.exe /k %~fs0 loadEnvVs %* "newCmdWindow"
+if {"%~2"}=={""} call tools_error.bat checkAdmin cmd.exe /k %~fs0 loadEnvVsMenu %* "newCmdWindow"
 if {"%~2"}=={""} goto :eof
 if exist "%~fs1" cd /d "%~fs1"
 call :loadEnvVs
@@ -413,8 +447,8 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 set vcvars32Path=
 for /f "usebackq tokens=*" %%i in ( `dir/s/b "%_vsInstallPath%\vcvars32.bat" ` ) do if not defined vcvars32Path set "vcvars32Path=%%~dpi"
-echo runing %vcvars32Path%vcvars32.bat
-call "%vcvars32Path%vcvars32.bat"
+:: echo runing %vcvars32Path%vcvars32.bat
+call :loadEnvVs.impl "%vcvars32Path%vcvars32.bat"
 goto :eof
 
 :loadEnvVs.specified
@@ -423,8 +457,8 @@ set "supportedVsArch=;x86;amd64;x64;arm;x86_arm;x86_amd64;amd64_x86;amd64_arm;"
 call tools_error.bat checkSupportedCmd "%~1" "%supportedVsArch%"
 set vcvarsallPath=
 for /f "usebackq tokens=*" %%i in ( `dir/s/b "%_vsInstallPath%\vcvarsall.bat" ` ) do if not defined vcvarsallPath set "vcvarsallPath=%%~dpi"
-echo runing %vcvarsallPath%vcvarsall.bat %~1
-call "%vcvarsallPath%vcvarsall.bat" %~1
+:: echo runing %vcvarsallPath%vcvarsall.bat %~1
+call :loadEnvVs.impl "%vcvarsallPath%vcvarsall.bat" %~1
 
 rem select C++ development enviroment automatically
 rem select certica by reg store, x86 first , then x64 , check VsDevCmd.bat
@@ -439,6 +473,12 @@ rem call "%vcvarsallPath%\vcvarsall.bat" x86
 
 rem echo generate arm application
 rem call "%vcvarsallPath%\vcvarsall.bat" arm
+goto :eof
+
+:loadEnvVs.impl
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+echo runing %*
+call %*
 goto :eof
 
 :dumpEnvVs

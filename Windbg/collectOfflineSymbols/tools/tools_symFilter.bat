@@ -38,16 +38,16 @@ goto :eof
 ::e.g.      : call :filterSpecficModules "d:\symbolList.txt" "d:\msFilter.txt"
 :filterSpecficModules
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
-set "_tmpTargetFile=%~fs1"
+set "_tmpTargetFile=%~f1"
 set "_tmpBackupFile=%~dpn1_backup%~x1"
 if not exist "%_tmpBackupFile%" rename "%_tmpTargetFile%" "%~n1_backup%~x1"
 if exist "%_tmpTargetFile%" del /f/q "%_tmpTargetFile%"
-for /f "usebackq" %%i in ( ` type "%~fs2" ` ) do call :filterSpecficModules.addOne "%%i"
+for /f "usebackq tokens=* " %%i in ( ` type "%~fs2" ` ) do call :filterSpecficModules.addOne "%%~nxi"
 goto :eof
 
 :filterSpecficModules.addOne
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
-type "%_tmpBackupFile%" | find /i "%~1" >> "%_tmpTargetFile%"
+type "%_tmpBackupFile%" | find /i "%~1" 2>nul >> "%_tmpTargetFile%"
 goto :eof
 
 
@@ -56,15 +56,7 @@ goto :eof
 ::e.g.      : call :keepMsBasic "d:\symbolList.txt"
 :keepMsBasic
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
-call :filterSpecficModules "%~fs1" "%~dp0msModule.txt"
-goto :eof
-
-::[DOS_API:keepMsAll]keep all symbol files list
-::usage     : call :keepMsAll <symbolManifestFile>
-::e.g.      : call :keepMsAll "d:\symbolList.txt"
-:keepMsAll
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
-call :filterSpecficModules "%~fs1" "%~dp0mSModuleAll.txt"
+call :filterSpecficModules "%~f1" "%~dp0msBasicModule.txt"
 goto :eof
 
 :End

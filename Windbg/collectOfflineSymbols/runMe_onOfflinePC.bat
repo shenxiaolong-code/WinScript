@@ -1,5 +1,5 @@
 
-@echo off
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 where tools_collectOfflineSymbols.bat 1>nul 2>nul || set "path=%~dp0tools;%path%"
 
 set NoCollectSymbolListMsg=1

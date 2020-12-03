@@ -6,8 +6,4 @@
 .echo ${$arg0} ${$arg1}
 .foreach /ps 99 ( dummy { .shell -ci "ln ${$arg1}" find /i "memory" | clip } ) {;};
 .foreach /ps 99 ( vsval { .shell -ci "*" cmd.exe /c ${$arg0}\..\getVSVer.bat } ) {;aS ${/v:vsVer} ${vsval}};
-
-.block 
-{
-.printf /D /op "visual studio version is : ${vsVer}\r\n"; 
-} }
+}

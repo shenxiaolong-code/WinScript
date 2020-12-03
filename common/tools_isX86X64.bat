@@ -3,7 +3,7 @@
 
 ::@set _Echo=1
 ::set _Stack=%~nx0
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
 
@@ -28,6 +28,16 @@ echo test call :Help
 call :Help
 
 echo.
+echo test call :IsX86OrX64Path "%~fs0" modType x86
+call :IsX86OrX64Path "%~fs0" modType x86
+echo modType=%modType%
+
+echo.
+echo test call :IsX86OrX64Folder "%~dp0" modType
+call :IsX86OrX64Folder "%~dp0" modType
+echo modType=%modType%
+
+echo.
 echo test call :IsX86OrX64Mod "%windir%\system32\notepad.exe" modType
 call :IsX86OrX64Mod "%windir%\system32\notepad.exe" modType
 echo modType=%modType%
@@ -44,6 +54,48 @@ echo osType=%osType%
 
 goto :eof
 
+::[DOS_API:IsX86OrX64Path]auto detect arch mode of one path.
+::usage      : call :IsX86OrX64Path path osType [defMode]
+::call e.g   : call :IsX86OrX64Path path osType
+::             call :IsX86OrX64Path path osType  x64
+::result e.g : set osType=x86
+:IsX86OrX64Path
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call tools_error.bat checkPathExist "%~f1"  "%~f0" checkPathExistMark
+set %~2=%~3
+call tools_path.bat getPathAttrib "%~f1"  _tmpAttrib
+if {"%_tmpAttrib%"}=={"folder"} call :IsX86OrX64Folder      %*
+if {"%_tmpAttrib%"}=={"file"}   call :IsX86OrX64.oneFile    %*
+goto :eof
+
+::[DOS_API:IsX86OrX64Folder]check the first file is x86/x64 arch in specified folder.
+::usage      : call :IsX86OrX64Folder folderPath osType [defMode]
+::call e.g   : call :IsX86OrX64Folder folderPath osType
+::             call :IsX86OrX64Folder folderPath osType  x64
+::result e.g : set osType=x86
+:IsX86OrX64Folder
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call tools_error.bat checkParamCount 2 %*
+set %~2=%~3
+pushd "%~1"
+set _tmpFirstFile=
+for /f "usebackq tokens=*" %%i in ( ` dir/s/b *.dmp,*.dll,*.exe ^| find /v "File Not Found" ` ) do if not defined _tmpFirstFile set "_tmpFirstFile=%%~fsi"
+popd
+if defined _tmpFirstFile call :IsX86OrX64.oneFile "%_tmpFirstFile%" %~2
+if not defined %~2 set %~2=x64
+goto :eof
+
+:IsX86OrX64.oneFile
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set %~2=%~3
+set _tmpExt=%~x1
+call tools_string.bat toLower _tmpExt
+if {"%_tmpExt%"}=={".dll"} call :IsX86OrX64Mod "%~fs1" %~2
+if {"%_tmpExt%"}=={".exe"} call :IsX86OrX64Mod "%~fs1" %~2
+if {"%_tmpExt%"}=={".dmp"} call :IsX86OrX64Dump "%~fs1" %~2
+rem if {"%_tmpExt%"}=={".pdb"} call :IsX86OrX64Mod "%~fs1" %~2
+goto :eof
+
 ::[DOS_API:IsX86OrX64Mod]check one module is 32 bit or 64 bit, support .dll or .exe module
 ::usage      : call :IsX86OrX64Mod modPath outputVal
 ::call e.g   : call :IsX86OrX64Mod "C:\myApp\sym\gdi32.dll" modType
@@ -54,6 +106,7 @@ goto :eof
 ::7-zip or sigcheck.exe all can do this job, but 7-zip is better for check dll
 call tools_error.bat checkParamCount 2 %*
 call tools_error.bat checkFileExist "%~fs1"
+set disablePathMsg_7z=1
 if not defined _path7z call tools_appInstallPath.bat FindPath7Z _path7z
 call tools_error.bat checkFileExist "%_path7z%\7z.exe"
 set %~2=

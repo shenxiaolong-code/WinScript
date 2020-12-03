@@ -1,19 +1,19 @@
 .echo +++++++ loading ${$arg0}
-.echo processing LoadVSSrc_VS2015.dbg ...
+.echo processing LoadVSSrc_VS2019.dbg ...
 .echo
 
 .if (${/d:VsSrc}!=0) {
 ad ${/v:VsSrc};
 }
 
-.echo
-.echo set Visual studio 2015 source path
-.foreach /pS 3 (val { .shell -ci "*" if not defined VS140COMNTOOLS @echo no } ) { .printf /D /oe "Fails to found VS2015 install path.";};
+.echo set vs2019 install path to VsSrc
+.foreach /ps 99 /s ( val "dummy" ) { .shell -ci "*" cmd.exe /c ${$arg0}\..\LoadVSSrc_VS2019.bat "${targetFullPath}" }
+$$>a<${temp}\vsInstallDir.txt
 
-$$ aS ${/v:VsSrc} C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC
-$$>a<${$arg0}\..\setPath2Var.dbg  "${/v:VsSrc}" "%VS140COMNTOOLS%..\..\VC"
+.echo
+$$ aS ${/v:VsSrc} C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.23.28105
 .foreach /pS 3 (val {.shell -ci "*" if exist "${VsSrc}" @echo yes}) {
-.printf /D /op "Found VS2015 install path : ${VsSrc}\r\n"
+.printf /D /op "Found VS2017 install path :\r\n"
 .echo loading Visual studio source file [${VsSrc}]......
 $$ crt part
 .srcpath+ "${VsSrc}\include";

@@ -1,4 +1,4 @@
-@echo off
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 ::echo %0 %*
 for /f "eol=; tokens=*" %%i in ('powershell Get-Clipboard') do set "_windbgCLip=%%i"
 ::echo _windbgCLip=%_windbgCLip%

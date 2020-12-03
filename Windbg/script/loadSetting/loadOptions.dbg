@@ -58,30 +58,35 @@ $$ .reload
 .netsyms 1
 
 .echo
-.echo set command prompt info mode [.prompt_allow +sym -dis +reg]
-.prompt_allow +sym -dis +reg
-
-.echo
-.echo only displays the basic integer registers when step [rm 2]
-rm 2
-
-.echo
 .echo .pcmd show nothing [x].
 $$.pcmd -s "dv /a /V /i";
 $$.pcmd -s "dv /t /i /A";
 .pcmd -c;
 
 .echo
-.echo enable soure line support [.lines -e -t]
+.echo enable soure line support, it is global switch for source code related command. [.lines -e -t]
 .lines -e -t
 
 .echo
+.echo set auto prompt info when step live debug. note : .prompt_allow priority is lower than l+s
+.echo show source file path and line number(+src),function name (symbol,+sym) , current assemble code (+dis) , disable register info (-reg) [.prompt_allow +src +sym +dis -reg]
+.prompt_allow +src +sym +dis -reg
+
+.echo
 .echo set source display info [l+lst].
+.echo List source line number at prompt , same with .prompt_allow +src
 l+l
+.echo start source code mode , instead of assemble mode.
 l+t
+.echo [disable] don't display other message except source file and line number when live-debug
+.echo [caution] l+o will affect many other display options, it is hard to restore to expected output.
 l-o
-.echo don't List source code at prompt
+.echo don't display source code in the command output window. you can see the source code in source code window directly.
 l-s
+
+.echo
+.echo only displays the basic integer registers for r command [rm 2]
+rm 2
 
 .echo
 .echo prompt displays 5 source lines before and 10 after[lsp 5 10].

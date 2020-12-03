@@ -1,4 +1,4 @@
-@echo off
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 set fileType=*.c,*.h,*.cpp,*.hpp,*.inl
 
 rem ********************************************

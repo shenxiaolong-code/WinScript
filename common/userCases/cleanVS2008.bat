@@ -1,4 +1,4 @@
-﻿@echo off 
+﻿@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @cls 
 @title ******清除VS2008中最近的项目****** 
 ::@color 2e 

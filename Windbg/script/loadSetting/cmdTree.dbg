@@ -13,6 +13,7 @@ body
 
 
 {"[debug]"}
+ {"debug new session"} {".new ;"}
  {"collect symbols"}
   {"create new dump file(.dump)"} {".echo .dump /mapwd D:\work\dump_1.dmp ;"}
   {"create new dump file from dmp analysis session (.dumpcab)"} {".echo .dumpcab -a c:\UserDumps\notepad.cab ;"}
@@ -154,8 +155,8 @@ body
   {"reload current module without verify symbol"} {".foreach /pS 3 /ps 10 (val { .shell -ci "lmn a  @$scopeip" find "." }) { .reload /i ${val};}"}
   {"unload current module"} {".foreach /pS 3 /ps 10 (val { .shell -ci "lmn a  @$scopeip" find "." }) { ;aS ${/v:curMod} ${val} ;.reload /u ${val};}"}
   {"load current module without symbol which is unloaded just now"} {".if(0!=${/d:curMod}){ .reload ${curMod} } .else { .echo no unloaded modue is recorded.; } "}
-  {"goto module"} {" .shell -ci "lmv a @$scopeip;" find /i "Image path:" > tempModPath.txt | ${WinScriptPath}\windbg\script\cmds\gotoFile.bat "tempModPath.txt""}
-  {"goto symbol"} {" .foreach /pS 3 /ps 8    (val    { .shell -ci "!chksym @$scopeip;" find /i "Loaded pdb is" }   )     {   .shell -ci "*" explorer.exe /select, "${val}" }; "}
+  {"goto module"} {" .shell -ci "lmv a @$scopeip;" find /i "Image path:" | clip & cmd.exe /c ${WinScriptPath}\windbg\script\cmds\common.bat gotoFileFromClip "Image path: " "}
+  {"goto symbol"} {" .shell -ci "!chksym @$scopeip;" find /i "Loaded pdb is" | clip & cmd.exe /c ${WinScriptPath}\windbg\script\cmds\common.bat gotoFileFromClip "Loaded pdb is " "}
   {"goto target"} {" .shell -ci "*" explorer.exe /select, "${targetFullPath}""}
  {"current modue info"}
   {"module basic info (lmv)"} {"lmv a @$scopeip;"}
@@ -224,7 +225,7 @@ body
    {"check deadlock (!deadlock)"} {"!deadlock"}
    {"query specifed lock"}
     {"list single lock"} {".echo !Kdexts.locks -v 0x1b33f060"}
-    {"list single critical sections"} {".echo !cs -o 0x1b33f060"}
+    {"list single critical sections"} {".echo !cs -s -o 0x1b33f060"}
    {"list all locks"} {"-------------------------------"}
     {"list all Locks (!Kdexts.locks)"} {"!Kdexts.locks -v"}
     {"list all critical sections Locks (!cs)"} {"!cs -v -s"}
@@ -265,6 +266,10 @@ body
    {"Processes and virtual memory"} {"!vm 4"}
    {"Sorted pool consumption (paged)"} {"!poolused 4"}
    {"Sorted pool consumption (nonpaged)"} {"!poolused 3"}
+ {"check deadlock"}
+  {"show all locks(!locks -v)"}{"!locks -v"}
+  {"show single lock info auto"}{"$$>a<${WinScriptPath}\windbg\script\cmds\checkDeadLock.dbg"}
+  {"show single lock info manual"}{".echo !cs -o lockAddr"}
  {"kernel mode only"}
   {".bugcheck"} {".bugcheck"}
   {"Critical system queues"} {"!exqueue f"}

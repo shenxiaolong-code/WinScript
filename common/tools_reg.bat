@@ -3,7 +3,7 @@
 
 ::@set _Echo=1
 ::set _Stack=%~nx0
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 where %~nx0 1>nul 2>nul || set "path=%~dp0;%path%"
 where TortoiseProc.exe 1>nul 2>nul || set "path=C:\Program Files\TortoiseSVN\bin;%path%"
@@ -73,7 +73,7 @@ call :makeRegKeyFromVarPath "%~1" _tmpDeleteRegVariableKey
 echo y | reg delete "\\%_tmpDeleteRegVariableKey%" /v "%~nx1"
 goto :eof
 
-::[DOS_API:addRegVariable] delete specified registry variable path
+::[DOS_API:addRegVariable] add specified registry variable path
 ::call e.g  : call :addRegVariable registryVariablePath value
 ::result e.g: call :addRegVariable "\\ZODIAC\HKLM\Software\MyCo\MTU" value
 :addRegVariable
@@ -82,9 +82,11 @@ call :makeRegKeyFromVarPath "%~1" _tmpaddRegVariable
 if not defined regValType set regValType=REG_SZ 
 rem other regValType vaue :
 rem REG_BINARY      fe340ead
+rem REG_DWORD	    0x111
+rem REG_QWORD	    0x111
 rem REG_MULTI_SZ    fax\0mail
 rem REG_EXPAND_SZ   ^%systemroot^%      //use environment variable's value
-echo y | reg delete "%_tmpaddRegVariable%" /v "%~nx1" /t %regValType% /d "%~2"
+echo y | reg add "%_tmpaddRegVariable%" /v "%~nx1" /t %regValType% /d "%~2"
 goto :eof
 
 ::[DOS_API:queryRegVariable] query specified registry variable value

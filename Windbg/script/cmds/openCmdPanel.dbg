@@ -1,8 +1,8 @@
 .echo +++++++ loading ${$arg0}
 .echo
 .echo
-.printf /D "click <link alt=\"show operation panel\" cmd=\".cmds\" > .cmds<altlink name=\"open operation panel\" cmd=\".cmds\" ></link> tp open operation panel. ";
-.printf /D "click <link alt=\"show current panel\" cmd=\".cur\" > .cur<altlink name=\"open current panel\" cmd=\".cur\" ></link> tp open current panel. ";
+.printf /D "click <link alt=\"show operation panel\" cmd=\".cmds\" > .cmds<altlink name=\"open operation panel\" cmd=\".cmds\" ></link> tp open all operation panel. \r\n";
+.printf /D "click <link alt=\"show current panel\" cmd=\".cur\" > .cur<altlink name=\"open current panel\" cmd=\".cur\" ></link> tp open current rang panel. \r\n";
 
 .echo
 .echo ------- exiting ${$arg0}

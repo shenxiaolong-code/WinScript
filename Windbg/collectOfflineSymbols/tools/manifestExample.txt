@@ -1,3 +1,4 @@
+; format : %dllName%,%Timestamp%%SizeOfImage%,%age%
 ntdll.dll,5e0eb751180000,2
 KERNELBASE.dll,5e0eb7f547000,2
 mswsock.dll,57334da83c000,2

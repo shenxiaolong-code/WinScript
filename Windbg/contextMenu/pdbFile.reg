@@ -16,19 +16,19 @@ Windows Registry Editor Version 5.00
 "ExtendedSubCommandsKey"="._myMenus\\windbg\\pdbFileNode"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\01_readPdb]
-@="read source code info"
+@="read srcsrv info (pdbstr.exe)"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\01_readPdb\command]
 @="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  readPdb  \"%V\""
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\02_writePdb]
-@="write source code info"
+@="write srcsrv info (pdbstr.exe)"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\02_writePdb\command]
 @="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  writePdb \"%V\""
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\03_rawInfo]
-@="read pdb raw info"
+@="read raw indexed source file list (srctool.exe)"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\03_rawInfo\command]
 @="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  pdbInfo \"%V\"  raw"

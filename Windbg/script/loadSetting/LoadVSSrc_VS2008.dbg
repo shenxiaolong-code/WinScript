@@ -20,6 +20,7 @@ $$>a<${$arg0}\..\setPath2Var.dbg  "${/v:VsSrc}" "%VS90COMNTOOLS%..\..\VC"
 .printf /D /op "Found VS2008 install path : ${VsSrc}\r\n"
 .echo loading Visual studio source file [${VsSrc}]......
 $$ crt part
+.srcpath+ "${VsSrc}\include";
 .srcpath+ "${VsSrc}\crt\src\vccorlib";
 .srcpath+ "${VsSrc}\crt\src\stl";
 .srcpath+ "${VsSrc}\crt\src\concrt";

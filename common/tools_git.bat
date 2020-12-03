@@ -4,7 +4,7 @@
 ::@set _Echo=1
 ::set _Stack=%~nx0
 ::set _Debug=1
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
 
@@ -127,7 +127,7 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 set %~2=
 call tools_error.bat checkParamCount 2 %*
-call tools_error.bat checkPathExist "%~1"
+call tools_error.bat checkPathExist "%~1" "%~f0" gitLocalRootPathMark
 call tools_message.bat enableDebugMsg "%~0" "inputPath : %~f1"
 git -C "%~fs1" config --get remote.origin.url 1>nul 2>nul || goto :eof
 for /f "usebackq tokens=*" %%i in ( ` git -C "%~fs1" rev-parse --show-toplevel ` ) do set _tmpLocalPath=%%i
@@ -226,7 +226,20 @@ set "tmpPath=%~fs1"
 set "gitPath=%tmpPath:\=/%"
 :: for long commit id : git rev-parse HEAD
 :: git log -1 --pretty^=format:%h "D:\sourceCode\jabberGit129\products\jabber-win\src\plugins\instant-message\IMWindow\IMRenderer.cpp"
-for /F "usebackq tokens=*" %%i in ( ` git -C "%gitPath%" log --pretty^=format:%h -n 1 ` ) do set %~1=%%i
+rem for /F "usebackq tokens=*" %%i in ( ` git -C "%gitPath%" log --pretty^=format:%h -n 1 ` ) do set %~1=%%i
+rem @for /F "usebackq tokens=*" %%i in ( ` git rev-parse --short HEAD ` )   do @echo actual ID(short)  : %%i
+rem @for /F "usebackq tokens=*" %%i in ( ` git rev-parse HEAD ` )           do @echo current commit ID : %%i
+@for /F "usebackq tokens=*" %%i in ( ` git rev-parse --short HEAD ` )   do set %~1=%%i
+goto :eof
+
+::[DOS_API:gitCurCommitIDLong] get newest commit long id by specified file full path.
+::call e.g  : call :gitCurCommitIDLong "C:\mySvnProject" commitID
+::result 	  set commitID=b0c6b4e63015e4038c77c60e47b3f7eb7ae89713
+:gitCurCommitIDLong
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set "tmpPath=%~fs1"
+set "gitPath=%tmpPath:\=/%"
+for /F "usebackq tokens=*" %%i in ( ` git -C "%gitPath%" rev-parse HEAD ` ) do set %~1=%%i
 goto :eof
 
 ::[DOS_API:gitFileByCommitID] get single file in specified commit id and store to specified path
@@ -322,6 +335,21 @@ if not {"%isGitProject%"}=={"1"} call tools_message.bat errorMsg "%~1 is not git
 call :gitLocalRootPath "%~1" gitProjectRoot
 ::call set "DefaultBackupPathRoot=%~f1\gitBackupSrc"
 call :gitBackupSrc "%gitProjectRoot%" %2
+goto :eof
+
+::[DOS_API:getCaseSensitiveePath] in some similiar linux system(e.g. git), the path is case sensitive, but window path is not case sensitive. here convert existed window path to similiar linux path
+::syntax    :   call :getCaseSensitiveePath gitRepoFilePath  outputVar
+::call e.g  :   call :getCaseSensitiveePath "E:\work\sourceCode\Jabber140\products\jabber-win\src\plugins\ContactsSearchPlugin\ContactTree.cpp" outputVar
+::              call :getCaseSensitiveePath "E:\work\sourceCode\Jabber140\products\jabber-win\src\plugins\ContactsSearchPlugin\ContactTree.cpp"                   //use default : just show new value
+:getCaseSensitiveePath
+@for %%a in ( 1 "%~nx0" "%0" %EchoCmdList% ) do @if {"%%~a"}=={"%EchoCmd%"} @echo [%~nx0] commandLine: %0 %*
+if not exist "%~fs1" goto :eof
+for /f "usebackq tokens=4" %%i in ( ` fsutil file queryfileid "%~fs1" ` ) do set fileID=%%i
+if defined _Debug echo fileID=%fileID%
+for /f "usebackq tokens=*" %%i in ( ` fsutil file queryFileNameById %~d1\ %fileID% ` ) do set "filePath=%%i"
+if defined _Debug echo filePath=%filePath%
+if not  {"%~2"}=={""} set "%~2=%filePath:*\\?\=%"
+if      {"%~2"}=={""} echo %filePath:*\\?\=%
 goto :eof
 
 ::[DOS_API:gitBackupSrc] backup modify source files to specified path
@@ -605,6 +633,66 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 set "%~2=%~n1"
 goto :eof
+
+::[DOS_API:getLocalBrName]get git local branch name in 
+::usage         : call :getLocalBrName outputName
+::e.g           : call :getLocalBrName oName
+::                set oName=12.8
+:getLocalBrName
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+rem for /f "usebackq tokens=*" %%1 in ( ` git name-rev --name-only HEAD ` ) do call set "localBrName=%%1"
+for /f "usebackq tokens=*" %%i in ( ` git name-rev --name-only HEAD ` ) do call set "%~1=%%i"
+goto :eof
+
+::[DOS_API:getRemoteBrName]get remote origin branch name
+::usage         : call :getRemoteBrName outputName
+::e.g           : call :getRemoteBrName oName
+::                set oName=origin/12.8
+:getRemoteBrName
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+rem for /f "usebackq tokens=*" %%1 in ( ` git rev-parse --abbrev-ref --symbolic-full-name @{u} ` ) do call set "remoteBrName=%%1"
+for /f "usebackq tokens=*" %%i in ( ` git rev-parse --abbrev-ref --symbolic-full-name @{u} ` ) do call set "%~1=%%i"
+goto :eof
+
+::[DOS_API:getRemoteBrNameShort]get remote origin branch name without origin name
+::usage         : call :getRemoteBrNameShort outputName
+::e.g           : call :getRemoteBrNameShort oName
+::                set oName=12.8
+:getRemoteBrNameShort
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+rem for /f "usebackq tokens=*" %%1 in ( ` git rev-parse --abbrev-ref --symbolic-full-name @{u} ` ) do call set "remoteBrName=%%1"
+for /f "usebackq tokens=*" %%i in ( ` git rev-parse --abbrev-ref --symbolic-full-name @{u} ` ) do call set "_tmpRemoteBrName=%%i"
+set "%~1=%_tmpRemoteBrName:origin/=%"
+goto :eof
+
+::[DOS_API:showModifiedFileList]get modified file list in current git repo
+::usage         : call :showModifiedFileList
+::e.g           : call :showModifiedFileList
+::                set oName=MiniMPL
+:showModifiedFileList
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+git ls-files --modified --others
+goto :eof
+
+::[DOS_API:createPatch] create one patch for last commit
+::usage         : call :createPatch
+::e.g           : call :createPatch
+:createPatch
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+rem https://stackoverflow.com/questions/4126300/git-how-to-get-all-the-files-changed-and-new-files-in-a-folder-or-zip
+rem git diff HEAD^ HEAD > a.patch
+git diff HEAD^ HEAD > "%~dpn1.patch"
+goto :eof
+
+::[DOS_API:applyPatch]apply one patch in current git branch
+::usage         : call :applyPatch
+::e.g           : call :applyPatch
+:applyPatch
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+rem patch -p1 < a.patch
+patch -p1 < "%~f1"
+goto :eof
+
 
 ::[DOS_API:ignoreList]ignore some folder and files which lists in one files when push to remote git server for some reason, e.g private/pwd files
 ::usage         : call :ignoreList

@@ -3,7 +3,7 @@
 
 ::@set _Echo=1
 ::set _Stack=%~nx0
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
 
@@ -138,7 +138,7 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if {"%argC%"}=={"3"} call :showLineInfo "%~f2" "%~3"
 call echo %%cmds_%~n0%%
-call tools_message.bat errorMsg "file[%~1] doesn't exist. script exit."
+call tools_message.bat errorMsg "path[%~1] doesn't exist. script exit."
 goto :eof
 
 ::[DOS_API:checkFileExist] show file doesn't exist error

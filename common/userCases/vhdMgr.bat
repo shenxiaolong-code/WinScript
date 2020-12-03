@@ -9,7 +9,7 @@
 
 ::@set _Echo=1
 ::set _Stack=%~nx0
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 rem http://www.utilizewindows.com/create-virtual-hard-disk-vhd-using-diskpart-in-windows-7/
 rem https://msdn.microsoft.com/en-us/ff794606%28v=winembedded.60%29?f=255&MSPPError=-2147217396

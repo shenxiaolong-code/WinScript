@@ -3,7 +3,7 @@
 
 ::@set _Echo=1
 ::set _Stack=%~nx0
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
 
@@ -12,6 +12,118 @@ if {%1}=={} call :Test  & goto End
 
 call :%1 %2 %3 %4 %5 %6 %7 %8 %9
 goto End
+
+::******************************DOS API section**************************************************************************
+
+::[DOS_API:download]download a file from one url
+::call e.g  : call :download  'http://shanghai-nfs.cisco.com/builds/Trunk/BUILD_TRUNK_JABBERWIN-RELEASE/12667/archive/CiscoJabberSetup.msi' 'D:\CiscoJabberSetup.msi'"
+:download
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if {"%~2"}=={""} (
+call colorTxt.bat 0c "parameter is not enough. usage example:"
+echo.
+call colorTxt.bat 0b "call %~f0 download 'http://shanghai-nfs.cisco.com/builds/Trunk/BUILD_TRUNK_JABBERWIN-RELEASE/12667/archive/CiscoJabberSetup.msi' 'D:\CiscoJabberSetup.msi'"
+echo.
+call tools_txtFile.bat ShowCurLineNo "%~f0" mark97
+pause
+goto :End
+)
+set "_targetUrl=%~1"
+set "_targetPath=%~2"
+if not defined downloader set downloader=curl
+call :download.%downloader% "%_targetUrl%" "%_targetPath%"
+goto :eof
+
+::[DOS_API:showDNS]show current DNS information in specified interface card
+::                 call :showDNS  [option] 
+::call e.g       : call :showDNS
+::               : call :showDNS  "Ethernet"
+:showDNS
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if not  {"%~1"}=={""}   netsh interface ip show config "%~1"
+if      {"%~1"}=={""}   netsh interface ip show config
+:: ipconfig /displaydns
+:: nslookup
+goto :eof
+
+::[DOS_API:setDns]set DNS on specified interface card
+::                 call :setDns interfaceName primaryDns [Opt_secondDns]
+::call e.g       : call :setDns  "Ethernet" 64.104.14.184
+::               : call :setDns  "Ethernet" 64.104.14.184  64.104.123.245
+:setDns
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call tools_error.bat 2 checkParamCount %*
+call :deleteDNS
+netsh int ipv4 set dns name="%~1" static %~2 primary validate=no
+if not {"%~3"}=={""} netsh int ipv4 add dns name="%~1" %~3 index=2
+ipconfig /flushdns
+goto :eof
+
+::[DOS_API:deleteDNS]delete DNS on specified interface card
+::                 call :deleteDNS interfaceName [opt_dnsIp]
+::call e.g       : call :deleteDNS  "Ethernet"
+::               : call :deleteDNS  "Ethernet" 64.104.14.184
+:deleteDNS
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set "_tmpDNSIP=%~2"
+if not defined _tmpDNSIP set _tmpDNSIP=all
+netsh	interface	ipv4	delete  dnsserver "%~1" %_tmpDNSIP%
+:: netsh interface ipv4 delete dns "Ethernet" 64.104.14.184
+goto :eof
+
+::[DOS_API:listNetworkCard]list al network interface and status in current PC
+::                 call :listNetworkCard
+:listNetworkCard
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+netsh interface show interface
+goto :eof
+
+::[DOS_API:setStaticIp]set static IP on specified interface card
+::                 call :setStaticIp interfaceName ipaddr subnetmask gateway [opt_metric]
+::call e.g       : call :setStaticIp  "Ethernet"    123.123.123.123    255.255.255.0     123.123.123.1    1
+:setStaticIp
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+netsh interface ip set address name="%~1" %~2 %~3 %~4 %~5
+goto :eof
+
+::[DOS_API:setDynamicIp]set dynamic IP on specified interface card -- enable dhcp
+::                 call :setDynamicIp interfaceName
+::call e.g       : call :setDynamicIp  "Ethernet"
+:setDynamicIp
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+netsh interface ip set address name="%~1" dhcp
+goto :eof
+
+
+::******************************inner implement  section**************************************************************************
+
+:download.bitsadmin
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+::using bitsadmin.exe
+::bitsadmin.exe is standard Windows component which is included XP and  2000 SP3 later, support many option, e.g. proxy
+::if not defined optParam set optParam=/download  /priority normal
+echo download command:
+echo bitsadmin.exe /transfer "%~nx2" %optParam% "%~1" "%~2"
+bitsadmin.exe /transfer "%~nx2" %optParam% "%~1" "%~2"
+goto :eof
+
+:download.powershell
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+::using powershell , powershell is very fast to download url but but without download rate and process
+echo download command:
+echo powershell -command "& { (New-Object Net.WebClient).DownloadFile('%~1', '%~2') }"
+powershell -command "& { (New-Object Net.WebClient).DownloadFile('%~1', '%~2') }"
+goto :eof
+
+:download.curl
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+::using curl , curl is very fast to download url without download rate and process
+echo download command:
+echo curl "%~1" -o "%~2"
+curl "%~1" -o "%~2"
+goto :eof
+
+::******************************help  and test  section**************************************************************
 
 ::[DOS_API:Help]display help information
 :Help
@@ -55,53 +167,19 @@ echo test download sucessfully.
 )
 del /f/q "%target_path%"
 
-goto :eof
 
-
-::[DOS_API:download]download a file from one url
-::call e.g  : call :download  'http://shanghai-nfs.cisco.com/builds/Trunk/BUILD_TRUNK_JABBERWIN-RELEASE/12667/archive/CiscoJabberSetup.msi' 'D:\CiscoJabberSetup.msi'"
-:download
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if {"%~2"}=={""} (
-call colorTxt.bat 0c "parameter is not enough. usage example:"
 echo.
-call colorTxt.bat 0b "call %~f0 download 'http://shanghai-nfs.cisco.com/builds/Trunk/BUILD_TRUNK_JABBERWIN-RELEASE/12667/archive/CiscoJabberSetup.msi' 'D:\CiscoJabberSetup.msi'"
+echo show all network cards and status.
+call :listNetworkCard
+
 echo.
-call tools_txtFile.bat ShowCurLineNo "%~f0" mark97
-pause
-goto :End
-)
-set "_targetUrl=%~1"
-set "_targetPath=%~2"
-if not defined downloader set downloader=curl
-call :download.%downloader% "%_targetUrl%" "%_targetPath%"
+echo show current dns
+call :showDNS
+
+echo.
 goto :eof
 
-:download.bitsadmin
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-::using bitsadmin.exe
-::bitsadmin.exe is standard Windows component which is included XP and  2000 SP3 later, support many option, e.g. proxy
-::if not defined optParam set optParam=/download  /priority normal
-echo download command:
-echo bitsadmin.exe /transfer "%~nx2" %optParam% "%~1" "%~2"
-bitsadmin.exe /transfer "%~nx2" %optParam% "%~1" "%~2"
-goto :eof
-
-:download.powershell
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-::using powershell , powershell is very fast to download url but but without download rate and process
-echo download command:
-echo powershell -command "& { (New-Object Net.WebClient).DownloadFile('%~1', '%~2') }"
-powershell -command "& { (New-Object Net.WebClient).DownloadFile('%~1', '%~2') }"
-goto :eof
-
-:download.curl
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-::using curl , curl is very fast to download url without download rate and process
-echo download command:
-echo curl "%~1" -o "%~2"
-curl "%~1" -o "%~2"
-goto :eof
+::*******************************************************************************************************************
 
 :End
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [----- %~nx0] commandLine: %0 %* & @echo.

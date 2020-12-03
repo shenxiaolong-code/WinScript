@@ -1,4 +1,4 @@
-@echo off
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 :Begin
 echo.
 echo a : attach one existing .vhd(virtual harddisk) file 

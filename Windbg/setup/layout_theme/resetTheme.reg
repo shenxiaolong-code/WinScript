@@ -1,0 +1,3 @@
+Windows Registry Editor Version 5.00
+; refer to : https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/loading-a-theme
+[-HKCU\Software\Microsoft\Windbg\Workspaces]

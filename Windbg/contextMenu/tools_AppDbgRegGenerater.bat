@@ -4,7 +4,7 @@
 ::@set _Echo=1
 ::set _Stack=%~nx0
 ::set _Debug=1
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
 
@@ -125,7 +125,8 @@ rem config windbg.exe path
 if not exist "%~fs1"    if not defined modType set  modType=x86
 if      exist "%~fs1"   call tools_isX86X64.bat IsX86OrX64Mod "%~fs1" modType
 where windbg.exe 1>nul 2>nul || call tools_appInstallPath.bat FindPathWindbg _dbgPath
-set "windbgPath=%_dbgPath%\%modType%\windbg.exe"
+if 		defined _dbgPath set "windbgPath=%_dbgPath%\%modType%\windbg.exe"
+if not 	defined _dbgPath for /f "tokens=*" %%i in ( "windbg.exe" ) do set "windbgPath=%%~fs$path:i"
 call tools_error.bat checkFileExist "%windbgPath%" "%~f0" configPath_mark0
 goto :eof
 
@@ -170,7 +171,9 @@ goto :eof
 :MonitorAppExit.AppExitHandler
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 rem %e %i %t %c
+echo.
 echo "%~fs0" %*
+echo.
 set appName=%~1
 set exitPID=%~2
 set killerPID=%~3
@@ -178,6 +181,18 @@ set killerTID=%~4
 set killStatusCode=%~5
 set "_tmpCustomerExitHandlerFile=%LOCALAPPDATA%\%~nx1\AppExitHandler.bat"
 if exist "%_tmpCustomerExitHandlerFile%" call "%_tmpCustomerExitHandlerFile%" %2 %3 %4 %5
+echo appName=%appName%
+echo exitPID=%exitPID%
+echo killerPID=%killerPID%
+echo killerTID=%killerTID%
+echo killStatusCode=%killStatusCode%
+echo you can run command to debug the exiting process now : windbg.exe -p %exitPID%
+echo you can open eventvwr.msc and navigate to Windows Logs ^> Application to see the process exit detail report.
+echo.
+:: windbg.exe -p %exitPID%
+:: eventvwr.msc
+:: https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/registry-entries-for-silent-process-exit
+pause
 goto :eof
 
 ::************************************************************************************************
@@ -187,6 +202,7 @@ goto :eof
 ::e.g.          : MonitorAppExit.Cancel myApp.exe
 :MonitorAppExit.Cancel
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call tools_reg.bat deleteRegDirectory "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\%~nx1"
 call tools_reg.bat deleteRegDirectory "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\SilentProcessExit\%~nx1"
 goto :eof
 
@@ -218,7 +234,7 @@ goto :eof
 :getOutputRegFile
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 set "%~2=%~4"
-if not defined %~2 set "%~2=%~dpn3.reg"
+if not defined %~2 set "%~2=%temp%\flags_reg\%~nx3\%~1.reg"
 for /f "usebackq tokens=*" %%i in ( ` call echo %%%~2%% ` ) do set "_tmpDir=%%~dpi"
 if not exist "%_tmpDir%" md "%_tmpDir%"
 goto :eof

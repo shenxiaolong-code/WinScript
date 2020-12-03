@@ -3,7 +3,7 @@
 
 ::@set _Echo=1
 ::set _Stack=%~nx0
-@if {%_Echo%}=={1} ( @echo on ) else ( @echo off )
+@if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
 
@@ -52,6 +52,18 @@ call :FindPathNotepad _appNotepad
 echo _appNotepad=%_appNotepad%
 
 echo.
+echo test call pythonAppInstalled "Scrapy" bScrapyInstalled
+call tools_appInstallPath.bat pythonAppInstalled "Scrapy" bScrapyInstalled
+if      defined bScrapyInstalled echo Scrapy is installed.
+if not  defined bScrapyInstalled echo Scrapy is NOT installed.
+
+echo.
+echo test call pythonAppInstalled "Scrapy11" bScrapyInstalled
+call tools_appInstallPath.bat pythonAppInstalled "Scrapy11" bScrapyInstalled
+if      defined bScrapyInstalled echo Scrapy11 is installed.
+if not  defined bScrapyInstalled echo Scrapy11 is NOT installed.
+
+echo.
 goto :eof
 
 set %~1=%~s2
@@ -62,7 +74,8 @@ goto :eof
 ::result e.g : set appPath=C:\somepath
 :FindPath7Z
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call :evnVar.check g_ZipDir   %~1
+call :pathVar.check "7z.exe" %~1
+if not defined %~1 call :evnVar.check g_ZipDir   %~1
 if not defined %~1 call tools_path.bat FindAppPathInReg "HKEY_CLASSES_ROOT\Applications\7z.exe\shell\open\command" %~1
 if not defined %~1 call tools_path.bat FindAppPathinDisk "7z.exe" %~1
 call :evnVar.set g_ZipDir   %~1
@@ -73,7 +86,8 @@ goto :eof
 ::result e.g : set appPath=C:\somepath
 :FindPathStig
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call :evnVar.check g_StigDir   %~1
+call :pathVar.check "stig.exe" %~1
+if not defined %~1 call :evnVar.check g_StigDir   %~1
 if not defined %~1 call tools_path.bat FindAppPathinDisk "stig.exe" %~1
 call :evnVar.set g_StigDir   %~1
 goto :eof
@@ -83,7 +97,9 @@ goto :eof
 ::result e.g : set appPath=C:\somepath
 :FindPathWindbg
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call :evnVar.check g_windbgDir   %~1
+:: set "defWindbgPath=C:\Program Files (x86)\Windows Kits\10\Debuggers"
+call :pathVar.check "windbg.exe" %~1 ".."
+if not defined %~1 call :evnVar.check g_windbgDir   %~1
 if not defined %~1 call tools_path.bat FindAppPathInReg "HKEY_CURRENT_USER\Software\Classes\Applications\windbg.exe\shell\open\command" %~1 ".."
 if not defined %~1 call tools_path.bat FindAppPathinDisk "windbg.exe" %~1 ".."
 call :evnVar.set g_windbgDir   %~1
@@ -104,10 +120,33 @@ goto :eof
 ::result e.g : set appPath=C:\somepath
 :FindPathNotepad++
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call :evnVar.check g_NppDir   %~1
+call :pathVar.check "notepad++.exe" %~1
+if not defined %~1 call :evnVar.check g_NppDir   %~1
 if not defined %~1 call tools_path.bat FindAppPathInReg "HKEY_CURRENT_USER\Software\Classes\Applications\notepad++.exe\shell\open\command" %~1
 if not defined %~1 call tools_path.bat FindAppPathinDisk "notepad++.exe" %~1
 call :evnVar.set g_NppDir   %~1
+goto :eof
+
+::[DOS_API:pythonAppInstalled]check whether python extension is installed.
+::usage         : call tools_path.bat pythonAppInstalled pythonAppName  bOutputValue
+::outVar        : bOutputValue
+::example       : set bOutputValue=1
+::              : call tools_path.bat pythonAppInstalled "Scrapy" bScrapyInstalled
+::              : bScrapyInstalled=1
+:pythonAppInstalled
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set %~2=
+for /f "usebackq tokens=1" %%i in ( ` pip list 2^>^&1 ^| find /i "%~1" ` ) do set %~2=1
+goto :eof
+
+:pathVar.check
+:: call :pathVar.check "myApp.exe" appPath  
+:: call :pathVar.check "myApp.exe" appPath  "..\..\otherFolder"
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+where "%~nx1" 1>nul 2>nul || goto :eof
+if not defined disablePathMsg_%~n1 call tools_message.bat warningMsg "'%~nx1' is already in your path. needn't to find its path. define disablePathMsg_%~n1 to disable this warning. "
+for /f "tokens=*" %%i in ( "%~nx1" ) do set "%~2=%%~dp$path:i%~3"
+call tools_path.bat ToNormalPath "%~2"
 goto :eof
 
 :evnVar.check
@@ -116,15 +155,14 @@ if not defined %~1 goto :eof
 call set "_tmpEnvPath=%%%~1%%"
 if {"%~1"}=={"%~2"} if exist "%_tmpEnvPath%" goto :eof
 if exist "%_tmpEnvPath%" set "%~2=%_tmpEnvPath%"
-if not exist "%_tmpEnvPath%"  set %~1_flag=1
 if not exist "%_tmpEnvPath%"  set "%~1=" >nul & start setx %~1 ""  >nul
 goto :eof
 
 :evnVar.set
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if {"%~1"}=={"%~2"} goto :eof
-if not defined %~2 goto :eof
-if not defined %~1_flag goto :eof
+if not 	defined %~2 goto :eof
+if 		defined %~1 goto :eof
 call tools_message.bat enableDebugMsg "%~0" "setx %~1 %%%~2%%"
 call echo call setx %~1 "%%%~2%%"
 call setx %~1 "%%%~2%%"
