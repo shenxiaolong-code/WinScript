@@ -1,9 +1,15 @@
-.if(0==${/d:$arg1}) {
-.echo .reload ${exeModuleName}.exe ;
-.reload ${exeModuleName}.exe ;
-.foreach /ps 99 ( addVal {.shell -ci "x /0 ${exeModuleName}!std::_Ref_count_base*ctor*" more +1 } ) { $$>a<${$arg0} ${addVal}}
-} .else {
-.echo ${$arg0} ${$arg1}
-.foreach /ps 99 ( dummy { .shell -ci "ln ${$arg1}" find /i "memory" | clip } ) {;};
-.foreach /ps 99 ( vsval { .shell -ci "*" cmd.exe /c ${$arg0}\..\getVSVer.bat } ) {;aS ${/v:vsVer} ${vsval}};
+.if(0==${/d:vsVer}) 
+{ 
+	.if(0==${/d:$arg1}) 
+	{
+		.echo .reload ${exeModuleName}.exe ;
+		.reload ${exeModuleName}.exe ;
+		.foreach /ps 99 ( addVal {.shell -ci "x /0 ${exeModuleName}!std::_Ref_count_base*ctor*" more +1 } ) { $$>a<${$arg0} ${addVal}}
+	} .else 
+	{
+		.echo ${$arg0} ${$arg1}
+		.foreach /ps 99 ( dummy { .shell -ci "ln ${$arg1}" find /i "memory" | clip } ) {;};
+		.foreach /ps 99 ( vsval { .shell -ci "*" cmd.exe /c ${$arg0}\..\getVSVer.bat } ) {;aS ${/v:vsVer} ${vsval}};
+	}
 }
+

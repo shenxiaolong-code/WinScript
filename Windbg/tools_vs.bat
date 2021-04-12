@@ -445,6 +445,7 @@ goto :eof
 
 :loadEnvVs.default
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+where nmake.exe 1>nul 2>nul && goto :eof
 set vcvars32Path=
 for /f "usebackq tokens=*" %%i in ( `dir/s/b "%_vsInstallPath%\vcvars32.bat" ` ) do if not defined vcvars32Path set "vcvars32Path=%%~dpi"
 :: echo runing %vcvars32Path%vcvars32.bat

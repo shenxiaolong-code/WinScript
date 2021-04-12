@@ -1,0 +1,21 @@
+.echo ----------------------Loading General breakpoints setting script for UI create ----------------------;
+.echo
+
+.echo breakpoint on OnInitDialog ;
+bp USER32!CreateWindowExA       "kc L4 ; ln $ra; gc;";
+bp USER32!CreateWindowExW       "kc L4 ; ln $ra; gc;";
+bp USER32!CreateWindowIndirect  "kc L4 ; gc;";
+bp USER32!NtUserDestroyWindow   "kc L6 ; gc;";
+bp USER32!TrackPopupMenu        "kc L4 ; gc;";
+bp USER32!AppendMenuW           "kc L4 ; .echo menu name : ; da poi(@esp+0x10) ; gc;";
+
+.foreach /pS 2 /ps 10   (val    { .shell -ci "lmn a  @$scopeip" find "." }       )  { .echo bm ${val}!*::OnInitDialog ; bm ${val}!*::OnInitDialog ;};
+
+.echo
+bl;
+
+.echo
+.echo you can add more general breakpoint for user click : bm modName!*::On*;
+
+.echo
+.echo ----------------------Finish Loading (General breakpoints setting)----------------------;

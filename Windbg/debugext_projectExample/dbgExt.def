@@ -1,0 +1,7 @@
+LIBRARY "dbgExt.DLL"
+
+EXPORTS
+    WinDbgExtensionDllInit
+    ExtensionApiVersion
+    dumpstrings
+    help

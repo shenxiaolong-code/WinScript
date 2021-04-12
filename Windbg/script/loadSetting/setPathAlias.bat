@@ -11,9 +11,11 @@ echo.
 )
 
 set dbgFile=%temp%\%~n0.dbg
+echo set windbg path alais : %dbgFile%
 call :parseClip
 call :processNatvisPath
 call :checkTargetPath
+call :checkUserCustomized
 
 echo.
 type "%dbgFile%" | find /i "aS "
@@ -28,6 +30,27 @@ if defined targetFullPath   goto :eof
 if defined dumpFolderPath   call :processLine.target.add "%dumpFolderPath%\%dumpModuleName%"
 
 if defined _Debug echo targetFullPath=%targetFolderPath%
+goto :eof
+
+:checkUserCustomized
+:: startCmds_user and endCmds_user will be used in startCmds.dbg
+if defined startCmds_user 	call :addWindbgVariable startCmds_user
+if defined endCmds_user 	call :addWindbgVariable endCmds_user
+:: vsVer will be used in LoadSrc_VS.dbg
+if defined vsVer 			call :addWindbgVariable vsVer
+if defined SpecVars			call :checkUserCustomized.SpecVars  %SpecVars:;= %
+goto :eof
+
+:checkUserCustomized.SpecVars
+if defined %~1		call :addWindbgVariable %~1
+if defined %~2		call :addWindbgVariable %~2
+if defined %~3		call :addWindbgVariable %~3
+if defined %~4		call :addWindbgVariable %~4
+if defined %~5		call :addWindbgVariable %~5
+if defined %~6		call :addWindbgVariable %~6
+if defined %~7		call :addWindbgVariable %~7
+if defined %~8		call :addWindbgVariable %~8
+if defined %~9		call :addWindbgVariable %~9
 goto :eof
 
 :processNatvisPath

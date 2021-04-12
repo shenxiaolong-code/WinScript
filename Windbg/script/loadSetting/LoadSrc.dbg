@@ -1,0 +1,7 @@
+.echo +++++++ loading ${$arg0}
+
+.echo
+.echo load microsoft visual studio source ...
+$$>a<${WinScriptPath}\windbg\script\loadSetting\LoadSrc_VS.dbg
+
+.echo ------- exiting ${$arg0}

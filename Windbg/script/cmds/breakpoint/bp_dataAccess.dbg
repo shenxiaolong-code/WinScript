@@ -1,7 +1,6 @@
 .echo ----------------------Loading General breakpoints setting script----------------------;
 .if (${/d:asDef}=0) { $$><C:\E\WinScript\Windbg\script\cmds\alias.dbg;};
-bp WS2_32!recv              "r @$t9=@ebp+0x8; g; .echo WS2_32!recv:;            show @$t9      \"STR asc\" ;     gc;";
-bp WS2_32!send              ".echo WS2_32!send(@ebp+0x8):;                      show @ebp+0x8  \"STR asc\" ;     gc;";
+
 bp KERNELBASE!ReadFile      "r @$t9=@ebp+0x8; g; .echo KERNELBASE!ReadFile:;    show @$t9      \"STR asc\" ;     gc;";
 bp KERNELBASE!WriteFile     ".echo KERNELBASE!WriteFile(@ebp+0x8):;             show @ebp+0x8  \"STR asc\" ;     gc;";
 bp msvcrt!fwrite            ".echo msvcrt!fwrite(@ebp+0x8):;                    show @ebp+0x8  \"STR asc\" ;     gc;";

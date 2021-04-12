@@ -79,31 +79,9 @@ goto :eof
 
 :unzip.msi
 if not {"%~x1"}=={".msi"} call tools_message.bat errorMsg "file MUST be .msi file"
-set "msiLogFile=%~dpxn1_install.log"
-if exist "%msiLogFile%" del /f/q "%msiLogFile%"
-set _tmpMsiCmd=msiexec /a "%~f1" /qb TARGETDIR="%_tmpOutputDir%" /l*v "%msiLogFile%"
-%_tmpMsiCmd%
-call :unzip.msi.checkError "%msiLogFile%"
+set "_msiLogFile=%~dpn1_unzip.log"
+call :msiInstaller.impl /a "%~f1" TARGETDIR="%_tmpOutputDir%"
 goto :eof
-
-:unzip.msi.checkError
-if not exist "%~fs1" goto :eof
-for /f "usebackq tokens=1" %%i in ( ` type "%~fs1" ^| find /c /i "Error 2203" ` ) do set errorCode2203=%%~i
-if {"%errorCode2203%"}=={"0"} goto :eof
-echo.
-echo below error found:
-type "%~fs1" | find /i "Error 2203"
-echo.
-echo it is caused by permission is rejected for folder "C:\Windows\Temp"
-echo please clean the folder "C:\Windows\Temp" to grante the permission
-echo or check the output folder "%_tmpOutputDir%" -- it MUST be existed empty folder.
-echo And run below command again:
-echo %_tmpMsiCmd%
-echo.
-echo press any key to exit.
-pause > nul
-goto :eof
-
 
 ::[DOS_API:zip]compress one zip or folder into one compressed file.
 ::usage     : call :zip <folerOrFile> <outfile>
@@ -137,6 +115,63 @@ set "_tempCab=%temp%\%~n2.cab"
 call makecab.exe "%~f1" "%_tempCab%"
 call :zip.exe.fromCab "%_tempCab%" "%~f2"
 del /q/f "%_tempCab%"
+goto :eof
+
+
+:installWithLog
+call :msiInstaller.check %*
+set "_msiLogFile=%_tmpOutputDir%\%~n1_install.log"
+call :msiInstaller.impl /i "%~f1"
+goto :eof
+
+:uninstallWithLog
+call :msiInstaller.check %*
+set "_msiLogFile=%_tmpOutputDir%\%~n1_uninstall.log"
+call :msiInstaller.impl /x "%~f1"
+goto :eof
+
+:msiInstaller.check
+call tools_error.bat checkFileExist "%~fs1"
+call tools_error.bat checkFileExtName "%~fs1" ".msi"
+call tools_error.bat checkZeroSizeFile "%~fs1"
+set "_tmpOutputDir=%~2"
+if not defined _tmpOutputDir set "_tmpOutputDir=%~dp1"
+if {"%_tmpOutputDir:~-1%"}=={"\"} set "_tmpOutputDir=%_tmpOutputDir:~0,-1%"
+goto :eof
+
+:msiInstaller.impl
+if exist "%_msiLogFile%" del /f/q "%_msiLogFile%"
+set _tmpMsiCmd=msiexec /qb %* /l*v "%_msiLogFile%"
+echo.
+echo %_tmpMsiCmd%
+echo log file : %_msiLogFile%
+echo +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo.
+%_tmpMsiCmd%
+echo.
+echo -------------------------------------------------------------
+echo %_tmpMsiCmd%
+echo.
+call :msiInstaller.checkError "%_msiLogFile%"
+:: if exist "%_msiLogFile%" call tools_txtFile.bat openTxtFile "%_msiLogFile%"
+goto :eof
+
+:msiInstaller.checkError
+if not exist "%~fs1" goto :eof
+for /f "usebackq tokens=1" %%i in ( ` type "%~fs1" ^| find /c /i "Error 2203" ` ) do set errorCode2203=%%~i
+if {"%errorCode2203%"}=={"0"} goto :eof
+echo.
+echo below error found:
+type "%~fs1" | find /i "Error 2203"
+echo.
+echo it is caused by permission is rejected for folder "C:\Windows\Temp"
+echo please confirm the folder "C:\Windows\Temp" to grante the permission
+echo or check the output folder "%_tmpOutputDir%" -- it MUST be existed empty folder.
+echo And run below command again:
+echo %_tmpMsiCmd%
+echo.
+echo press any key to exit.
+pause > nul
 goto :eof
 
 

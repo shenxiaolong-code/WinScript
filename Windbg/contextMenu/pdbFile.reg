@@ -39,8 +39,14 @@ Windows Registry Editor Version 5.00
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\04_extractSrc\command]
 @="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  pdbInfo \"%V\" src"
 
-[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\05_dbhTool]
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\05_readGitStream]
+@="read git source index info"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\05_readGitStream\command]
+@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  pdbInfo \"%V\"  gitStream"
+
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\06_dbhTool]
 @="investigate pdb file by dbh.exe"
 
-[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\05_dbhTool\command]
+[HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\06_dbhTool\command]
 @="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dbhCheck \"%V\""

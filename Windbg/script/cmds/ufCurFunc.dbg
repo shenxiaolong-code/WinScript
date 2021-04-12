@@ -1,0 +1,13 @@
+.echo +++++++ loading ${$arg0}
+.echo
+.echo
+
+.foreach /ps 10 ( val { $$>a<${WinScriptPath}\windbg\script\cmds\common.dbg curFuncAddr ; }) { uf ${val};.echo;.echo current function address:${val};};
+.echo current function call point:
+? @$scopeip;
+.echo;
+.echo Done unassemble function :;
+.foreach /ps 10 ( val { $$>a<${WinScriptPath}\windbg\script\cmds\common.dbg curFuncName ; }) { .echo ${val};};
+
+.echo
+.echo ------- exiting ${$arg0}

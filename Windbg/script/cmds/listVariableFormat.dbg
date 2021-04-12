@@ -1,0 +1,19 @@
+.echo
+.printf /D /op "x this;\r\n"
+x this;
+
+.echo
+.printf /D /op "dv this;\r\n"
+dv this;
+
+.echo
+.printf /D /op "dx this;\r\n"
+dx this;
+
+.echo
+.printf /D /op "dt this;\r\n"
+dt this;
+
+.echo
+.printf /D /op "?? this;\r\n"
+?? this;

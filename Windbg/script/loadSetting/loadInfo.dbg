@@ -50,4 +50,10 @@ vertarget
 .echo cache directory :
 !homedir
 
+.foreach /pS 4 (val { .shell -ci "*" if exist "${startCmds_user}" (echo yes exist) else ( echo not-exist ) } ) 
+{
+.printf /D /op "loading customized startCmds script : ";
+.echo ${startCmds_user}
+}
+
 .echo ------- exiting ${$arg0}

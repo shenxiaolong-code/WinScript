@@ -46,6 +46,50 @@ if      {"%~1"}=={""}   netsh interface ip show config
 :: nslookup
 goto :eof
 
+::[DOS_API:queryFirewallRule] query alll firewall rule list if you forget it. e.g. when name when using disablePing
+::                 call :queryFirewallRule
+::call e.g       : call :queryFirewallRule
+:queryFirewallRule
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+netsh advfirewall firewall show rule name=all
+:: ipconfig /displaydns
+:: nslookup
+goto :eof
+
+::[DOS_API:enablePing] create the ICMPv4 and ICMPv6 exception to allow ping service
+::                 call :enablePing
+::call e.g       : call :enablePing
+:enablePing
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=allow
+netsh advfirewall firewall add rule name="ICMP Allow incoming V6 echo request" protocol=icmpv6:8,any dir=in action=allow
+:: ipconfig /displaydns
+:: nslookup
+goto :eof
+
+::[DOS_API:disablePing] close the ICMPv4 and ICMPv6 exception to disable ping service
+::                 call :disablePing
+::call e.g       : call :disablePing
+:disablePing
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=block
+netsh advfirewall firewall add rule name="ICMP Allow incoming V6 echo request" protocol=icmpv6:8,any dir=in action=block
+:: ipconfig /displaydns
+:: nslookup
+goto :eof
+
+::[DOS_API:pingIP] close the ICMPv4 and ICMPv6 exception to disable ping service
+::                 call :pingIP <IP>  <result>
+::call e.g       : call :pingIP 10.79.100.79   bRet
+:pingIP
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set %~2=
+for /f "usebackq" %%i in ( ` ping %~1 -n 1 ^| find /c /i "Reply from" ` ) do set %~2=%%i
+:: ipconfig /displaydns
+:: nslookup
+if defined _Debug call echo %~2=%%%~2%%
+goto :eof
+
 ::[DOS_API:setDns]set DNS on specified interface card
 ::                 call :setDns interfaceName primaryDns [Opt_secondDns]
 ::call e.g       : call :setDns  "Ethernet" 64.104.14.184

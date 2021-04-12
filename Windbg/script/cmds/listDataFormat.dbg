@@ -1,0 +1,74 @@
+.echo
+.printf /D /oe "dc : Double-word values (4 bytes) and ASCII characters.\r\n";
+.printf /D /op "dc poi(@ebp+8)  L8;\r\n"
+dc poi(@ebp+8)  L8;
+
+
+.echo
+.printf /D /oe "dD : Double-precision floating-point numbers (8 bytes).\r\n";
+.printf /D /op "dD poi(@ebp+8)  L8;\r\n"
+dD poi(@ebp+8)  L8;
+
+.echo
+.printf /D /oe "df : Single-precision floating-point numbers (4 bytes).\r\n";
+.printf /D /op "df poi(@ebp+8)  L8;\r\n"
+df poi(@ebp+8)  L8;
+
+.echo
+.printf /D /oe "dw : Word values (2 bytes).\r\n";
+.printf /D /op "dw poi(@ebp+8)  L8;\r\n"
+dw poi(@ebp+8)  L8;
+
+.echo
+.printf /D /oe "dW : Word values (2 bytes) and ASCII characters.\r\n";
+.printf /D /op "dW poi(@ebp+8)  L8;\r\n"
+dW poi(@ebp+8)  L8;
+
+.echo
+.printf /D /oe "dyb : Binary values and byte values.\r\n";
+.printf /D /op "dyb poi(@ebp+8)  L8;\r\n"
+dyb poi(@ebp+8)  L8;
+
+.echo
+.printf /D /oe "dyd : Binary values and double-word values (4 bytes).\r\n";
+.printf /D /op "dyd poi(@ebp+8)  L8;\r\n"
+dyd poi(@ebp+8)  L8;
+
+.echo
+.echo ----------------------------general used display format--------------------------------------------
+
+.echo
+.printf /D /oe "dd : Double-word values (4 bytes). \r\n";
+.printf /D /op "dd @esp L8;\r\n";
+dd      @esp L8;
+.printf /D /op "dds @esp L8;\r\n";
+dds     @esp L8;
+.printf /D /op "dq @esp L8;\r\n";
+dq      @esp L8;
+.printf /D /op "dqs @esp L8;\r\n";
+dqs     @esp L8;
+.printf /D /op "dp @esp L8;\r\n";
+dp      @esp L8;
+.printf /D /op "dps @esp L8;\r\n";
+dps     @esp L8;
+
+.echo
+.printf /D /oe "da : ASCII characters. \r\n";
+.printf /D /op "da poi(@ebp+8)  L8;\r\n"
+da poi(@ebp+8)  L8;
+
+.echo
+.printf /D /oe "du : Unicode characters.\r\n";
+.printf /D /op "du poi(@ebp+8)  L8;\r\n"
+du poi(@ebp+8)  L8;
+
+.echo
+.printf /D /oe "db : Byte values and ASCII characters.\r\n";
+.printf /D /op "db poi(@ebp+8)  L8;\r\n"
+db poi(@ebp+8)  L8;
+
+.echo
+.printf /D /oe ".formats : display different format data.\r\n";
+.printf /D /op ".formats poi(@ebp+8);\r\n"
+.formats poi(@ebp+8);
+

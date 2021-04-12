@@ -1,0 +1,33 @@
+.echo +++++++ loading ${$arg0}
+
+$$ "set MFC source path of vs2008 , vs2015 , vs2017 or vs2019"
+$$ "supported parameter: VS2008 VS2015 VS2017 VS2019, default value is VS2017"
+$$ .echo example : $$>a<${$arg0} VS2017
+
+.foreach /pS 3 (eVal {!homedir}) { .echo source cache path : ${eVal}\src } ;
+
+.echo
+.echo query visual studio version info :
+$$>a<${WinScriptPath}\windbg\script\loadSetting\getVSVer.dbg
+
+.if(0==${/d:vsVer}) { 
+.echo Fails to query visual studio version.
+.echo Fails to load vs source dir path automatically , you need to load vs source path manually. e.g. load vs2015 source path:
+.foreach /ps 3 (var { .shell -ci "*" echo %WinScriptPath:\=\\%} ) {.printf /D /oe "${var}\\Windbg\\script\\loadSetting\\LoadSrc_VS2015.dbg\r\n"};
+.echo NO result for query "x /0 ${exeModuleName}!std::_Ref_count_base*ctor*";
+} .else {
+.printf "current application ";
+.printf /D /op "${exeModuleName}.exe";
+.printf " is built by visual studio:";
+.printf /D /op "${vsVer}\r\n";
+}
+
+.block {
+$$.echo ${WinScriptPath}
+.if($scmp("${vsVer}","2008")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\LoadSrc_VS2008.dbg ; };
+.if($scmp("${vsVer}","2015")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\LoadSrc_VS2015.dbg ; };
+.if($scmp("${vsVer}","2017")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\LoadSrc_VS2017.dbg ; };
+.if($scmp("${vsVer}","2019")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\LoadSrc_VS2019.dbg ; };
+}
+
+.echo ------- exiting ${$arg0}

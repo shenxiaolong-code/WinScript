@@ -2,7 +2,27 @@ $$ .echo +++++++ loading ${$arg0}
 $$ .echo Run as: $$>a<${$arg0}
 $$ .echo $arg1 ${$arg1}
 
-.foreach /s ( val "once" ) { .shell -ci "*" "${$arg0}\..\common.bat" "${$arg1}" "${$arg2}" "${$arg3}" "${$arg4}" };
+.if($scmp("${$arg1}","curFuncName")==0) 
+{
+	.shell -ci "ln @$scopeip" (find /i "|")>2 & (set /p addrSrc=)<2 & call "${$arg0}\..\common.bat" curFuncName
+} 
+.elsif($scmp("${$arg1}","curFuncAddr")==0) 
+{
+	.shell -ci "ln @$scopeip" (find /i "|")>2 & (set /p addrSrc=)<2 & call "${$arg0}\..\common.bat" curFuncAddr
+} 
+.elsif($scmp("${$arg1}","test")==0) 
+{
+	.echo test : $$>a<${$arg0} ${$arg1}
+} 
+.elsif(0==${/d:$arg1}) 
+{
+	.echo usage example : $$>a<${$arg0} "test"
+	.echo e.g.            $$>a<${$arg0} "curFuncName"
+} 
+.else 
+{
+	.foreach /s ( _t_val "once" ) { .shell -ci "*" "${$arg0}\..\common.bat" "${/f:$arg1}" "${/f:$arg2}" "${/f:$arg3}" "${/f:$arg4}" };
+}
 
 $$ .echo
 $$ .echo ------- exiting ${$arg0}

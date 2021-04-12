@@ -129,8 +129,10 @@ set %~2=
 call tools_error.bat checkParamCount 2 %*
 call tools_error.bat checkPathExist "%~1" "%~f0" gitLocalRootPathMark
 call tools_message.bat enableDebugMsg "%~0" "inputPath : %~f1"
-git -C "%~fs1" config --get remote.origin.url 1>nul 2>nul || goto :eof
-for /f "usebackq tokens=*" %%i in ( ` git -C "%~fs1" rev-parse --show-toplevel ` ) do set _tmpLocalPath=%%i
+call tools_path.bat getFolderPath "%~1" _tmp_gitStdFolder
+:: _tmp_gitStdFolder style : "c:\myrepo\gitFolder"
+git -C "%_tmp_gitStdFolder%" config --get remote.origin.url 1>nul 2>nul || call tools_message.bat errorMsg "'%~1' is not a available git repo"
+for /f "usebackq tokens=*" %%i in ( ` git -C "%_tmp_gitStdFolder%" rev-parse --show-toplevel ` ) do set _tmpLocalPath=%%i
 if defined _tmpLocalPath set %~2=%_tmpLocalPath:/=\%
 call tools_message.bat enableDebugMsg "%~0" "output result : set %~2=%%%~2%%"
 goto :eof

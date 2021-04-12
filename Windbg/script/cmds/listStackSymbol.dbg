@@ -1,0 +1,17 @@
+.echo
+.printf /D /oe "dds : display stack call function.\r\n";
+.echo style : user32!GetMessageW+0x30;
+.printf /D /op "dds @esp L8;\r\n";
+dds @esp L8;
+
+.echo
+.printf /D /oe "ddp : display heap varialbe(object pointer) with virtual function table in current thread stack.\r\n";
+.echo style : 010ff840  010ff8a0 00914b18 CiscoJabber!WTL::CMessageLoop::`vftable';
+.printf /D /op "dds @esp L8;\r\n";
+ddp @esp L8;
+
+.echo
+.printf /D /oe "kd : display stack varialbe(object) with virtual function table in current thread stack.\r\n";
+.echo style : 010ff840  010ff8a0 CiscoJabber!WTL::CMessageLoop::`vftable';
+.printf /D /op "kd 8;\r\n";
+kd 8;

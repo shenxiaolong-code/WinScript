@@ -1,0 +1,11 @@
+.echo ----------------------Loading General breakpoints setting script for system clipboard ----------------------;
+.echo
+
+bp USER32!GetClipboardData              "kc L3 ; gu ; da @eax ;gc;" ;
+bp USER32!SetClipboardData              "kc L3;.printf \"type(CF_TEXT) : 0x%x\\r\\naddr : 0x%x\\r\\n%ma\\r\\n\" , poi(@ebp+0xc) , poi(@ebp+0x10) , poi(@ebp+0x10) ;  .echo; db poi(@ebp+0x10) L0x20; gc; " ;
+
+.echo
+bl;
+
+.echo
+.echo ----------------------Finish Loading (General breakpoints setting)----------------------;

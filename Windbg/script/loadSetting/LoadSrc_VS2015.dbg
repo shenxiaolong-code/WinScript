@@ -1,5 +1,5 @@
 .echo +++++++ loading ${$arg0}
-.echo processing LoadVSSrc_VS2015.dbg ...
+.echo processing LoadSrc_VS2015.dbg ...
 .echo
 
 .if (${/d:VsSrc}!=0) {

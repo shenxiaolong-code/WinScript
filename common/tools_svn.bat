@@ -154,6 +154,27 @@ call tools_message.bat outOfDateAPIMsg svnLog svnLogUI
 call :svnLogUI %*
 goto :eof
 
+::[DOS_API:svnRelocateIP] only relocate svn repo IP , instead of whole url.
+::	          apply scenario : server IP change and left path is stable.
+::usage     : call :svnRelocateIP <svnRepo> <newIP> <userName> <pwd>
+::e.g.        call :svnRelocateIP "d:\mysvnRepoRoot" "10.79.100.79"  xiaolosh  xxxxx
+:svnRelocateIP
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call tools_error.bat checkPathExist "%~1"
+call :svnLocalRootPath "%~1" 			tmpSvnRootPath
+call :svnRootUrl "%tmpSvnRootPath%" 	tmpSvnUrl_old
+call :svnServerIP "%tmpSvnRootPath%" 	tmpIP_old
+call set "tmpSvnUrl_new=%%tmpSvnUrl_old:%tmpIP_old%=%~2%%"
+if defined _Debug echo relocate svn repo : %tmpSvnRootPath%
+if defined _Debug echo old url : %tmpSvnUrl_old%
+if defined _Debug echo new url : %tmpSvnUrl_new%
+:: clean folder "%appdata%\Subversion\auth\svn.ssl.server" if next promption appears again after input p
+set "nonInteractiveOptions=--non-interactive --trust-server-cert-failures=unknown-ca,cn-mismatch,expired,not-yet-valid,other"
+:: e.g. svn relocate --username xiaolosh --password xxxxx "https://10.79.101.212/svn/shenxiaolong"  "E:\work\shenxiaolong"
+if not 	{"%tmpSvnUrl_old%"}=={"%tmpSvnUrl_new%"} call svn relocate --username "%~3" --password "%~4" %nonInteractiveOptions% "%tmpSvnUrl_new%" "%tmpSvnRootPath%"
+if 		{"%tmpSvnUrl_old%"}=={"%tmpSvnUrl_new%"} call tools_message.bat NotifyMsg "the new IP is same with the old IP. nothing is done"
+goto :eof
+
 ::[DOS_API:svnVerCmd] display svn version info in console window by full item path and version number.
 ::call e.g  : call :svnVerCmd "C:\mySvnProject\main.cpp" 183
 :svnVerCmd
@@ -186,7 +207,8 @@ call tools_userInput.bat waitConfirm waitNumber svnVerQueryNum
 goto :eof
 
 ::[DOS_API:svnServerIP] get current svn server root path for current svn path.
-::call e.g  : call :svnServerIP "C:\mySvnProject\main.cpp" 183
+::call e.g  : call :svnServerIP "C:\mySvnProject\main.cpp" retIP
+::			  set "retIP=10.79.100.79"
 :svnServerIP
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call tools_error.bat checkParamCount 2 %*
@@ -195,8 +217,31 @@ for /f "usebackq tokens=*" %%i in ( ` svn info "%~f1" --show-item repos-root-url
 call :svnServerIP.setOutput %~2 %_tmpSrvIp:/= %
 goto :eof
 
+::[DOS_API:svnRootUrl] get svn root folder url.
+::call e.g  : call :svnRootUrl "C:\mySvnProject\main.cpp" svnRootUrl
+::		      set "svnRootUrl=https://10.79.100.79/svn/shenxiaolong"
+:svnRootUrl
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call tools_error.bat checkParamCount 2 %*
+call tools_error.bat checkPathExist "%~1"
+set %~2=
+for /f "usebackq tokens=*" %%i in ( ` svn info "%~f1" --show-item repos-root-url ` ) do if not defined %~2 set "%~2=%%~i"
+goto :eof
+
+::[DOS_API:svnUrl] get svn file or folder url.
+::call e.g  : call :svnUrl "C:\mySvnProject\main.cpp" svnUrl
+::            set "svnUrl=https://10.79.100.79/svn/shenxiaolong/setupEnvironment/gitCmdWrapper"
+:svnUrl
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call tools_error.bat checkParamCount 2 %*
+call tools_error.bat checkPathExist "%~1"
+set %~2=
+for /f "usebackq tokens=*" %%i in ( ` svn info "%~f1" --show-item=url --no-newline ` ) do if not defined %~2 set "%~2=%%~i"
+goto :eof
+
 ::[DOS_API:svnLocalRootPath] get current svn root directory path in any svn path.
 ::call e.g  : call :svnLocalRootPath "." svnRoot
+::            set "svnRoot=C:\mySvnProject"
 :svnLocalRootPath
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call tools_error.bat checkParamCount 2 %*

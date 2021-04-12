@@ -1,0 +1,36 @@
+.echo
+.printf /D /op "kb L4;\r\n"
+kb L4;
+
+.echo
+.printf /D /op "kc L4;\r\n"
+kc L4;
+
+.echo
+.printf /D /op "kp L4;\r\n"
+kp L4;
+
+.echo
+.printf /D /op "kP L4;\r\n"
+kP L4;
+
+.echo
+.printf /D /op "kv L4;\r\n"
+kv L4;
+
+.echo
+.printf /D /op "kn L4;\r\n"
+kn L4;
+
+.echo
+.printf /D /op "kf L4;\r\n"
+kf L4;
+
+.echo
+.printf /D /op "kL;\r\n"
+kL;
+
+.echo
+.printf /D /op "kM L4;\r\n"
+kM L4;
+

@@ -32,7 +32,7 @@ body
   {"attach new process"} {".echo .attach Pid"}
   {"create new process(admin/x64/x86)"} {".echo  .createdir d:\myworkingDir\test; .echo .create C:\Windows\notepad.exe"}
   {"open new dump file"} {".echo .opendump D:\work\dump_1.dmp ; .echo g;"}  
-  {"detach current debug session(live or dump)"} {".echo .detach"}
+  {"detach current debug session(live or dump)"} {".echo .detach;.detach;"}
  {"-------------------------------"}
 
 
@@ -51,7 +51,7 @@ body
  {"-------------------------------"}
 
 
-{"-----------------reload panel----------------"}{".cmds; .cur;"}
+{"-----------------reload panel----------------"}{".cmds;"}
 
 
 {"[Logging]"}
@@ -155,8 +155,8 @@ body
   {"reload current module without verify symbol"} {".foreach /pS 3 /ps 10 (val { .shell -ci "lmn a  @$scopeip" find "." }) { .reload /i ${val};}"}
   {"unload current module"} {".foreach /pS 3 /ps 10 (val { .shell -ci "lmn a  @$scopeip" find "." }) { ;aS ${/v:curMod} ${val} ;.reload /u ${val};}"}
   {"load current module without symbol which is unloaded just now"} {".if(0!=${/d:curMod}){ .reload ${curMod} } .else { .echo no unloaded modue is recorded.; } "}
-  {"goto module"} {" .shell -ci "lmv a @$scopeip;" find /i "Image path:" | clip & cmd.exe /c ${WinScriptPath}\windbg\script\cmds\common.bat gotoFileFromClip "Image path: " "}
-  {"goto symbol"} {" .shell -ci "!chksym @$scopeip;" find /i "Loaded pdb is" | clip & cmd.exe /c ${WinScriptPath}\windbg\script\cmds\common.bat gotoFileFromClip "Loaded pdb is " "}
+  {"goto module"} {" .shell -ci "lmv a @$scopeip;" (find /i "Loaded symbol image file:")>2 & (set /p batVar=)<2 & cmd.exe /c ${WinScriptPath}\windbg\script\cmds\common.bat gotoFileFromVar "*Loaded symbol image file: " "}
+  {"goto symbol"} {" .shell -ci "!chksym @$scopeip;" (find /i "Loaded pdb is ")>2 & (set /p batVar=)<2 & cmd.exe /c ${WinScriptPath}\windbg\script\cmds\common.bat gotoFileFromVar "*Loaded pdb is " "}
   {"goto target"} {" .shell -ci "*" explorer.exe /select, "${targetFullPath}""}
  {"current modue info"}
   {"module basic info (lmv)"} {"lmv a @$scopeip;"}
@@ -305,57 +305,32 @@ body
   {"search myfunc function call in every module"} {".echo !for_each_module # myfunc @#Base @#End"}
  {"-------------------------------"}
 
+{"data display formats"}
+ {"list all data d* format"}            {"$$>a<${WinScriptPath}\windbg\script\cmds\listDataFormat.dbg;"}
+ {"list all stack k* formats"}          {"$$>a<${WinScriptPath}\windbg\script\cmds\listStackFormat.dbg;"}
+ {"list all variable display formats"}  {"$$>a<${WinScriptPath}\windbg\script\cmds\listVariableFormat.dbg;"}
+ {"list raw thread stack symbols"}      {"$$>a<${WinScriptPath}\windbg\script\cmds\listStackSymbol.dbg;"}
 
-{"[jabber specific]"}
- {"new dump analysis session"}{".shell -ci "*" cmd.exe /c start ${WinScriptPath}\Companys\cisco\contextMenu\jabberPRT.bat "${$CurrentDumpFile}" analysis"}
- {"jabber version"} {".jver"} 
- {"jabber crash thread"} {".foreach /pS 3 /ps 10 ( val { .shell -ci "~#kv" find /i "UnhandledExceptionFilter" } ) { .cxr poi(${val}+4) }"}
- {"search crash in log"}{".echo topLevelRuntimeExpectionFilter|hangDetectionLoop|startJabberPrt is copied into clipboard; .jlog;"}
- {"jabber prt thread"} {"~#;~#kP;"}
- {"fix current jabber pdb symbol"}{".jfix ;"}
- {"jabber global data"}
-  {"PluginRuntime"} {"dx ContactsSearchPlugin!ContactsSearchPlugin::g_instance->pluginRuntime;"}
-  {"all Plugins"} {"dx ContactsSearchPlugin!ContactsSearchPlugin::g_instance->pluginRuntime->m_pluginContainer._Ptr->loadedPlugins._Ptr;"}
-  {"service Factory"} {"dx ServicesFramework!CSFUnified::ServiceFactory::instance._Ptr->unifiedFactory._Ptr;"}
-  {"all service"} {"dx ServicesFramework!CSFUnified::ServiceFactory::instance._Ptr->unifiedFactory._Ptr->services._Ptr->typeNameMap;"}
-  {"all featureSet"} {"dx ServicesFramework!CSFUnified::ServiceFactory::instance._Ptr->unifiedFactory._Ptr->featureSets._Ptr->typeNameMap;"}
- {"message queue"}
-  {"ServicesDispatcher"} {".printf /ow "last executed csf::Task name : %ma\r\nTasks in queue:\r\n" , @@C++(((ServicesFramework!CSFUnified::ServiceFactoryImpl*)ServicesFramework!CSFUnified::ServiceFactory::instance._Ptr)->unifiedFactory._Ptr->servicesDispatcher._Ptr->m_lastTaskName._Mypair._Myval2._Bx._Ptr);dx ServicesFramework!CSFUnified::ServiceFactory::instance._Ptr->unifiedFactory._Ptr->servicesDispatcher._Ptr->queuedTasks._Ptr->_taskQueue;"}
-  {"PluginEventDispatcher"} {"dx ContactsSearchPlugin!ContactsSearchPlugin::g_instance->pluginRuntime->m_pluginEventDispatcher._Ptr->events._Ptr->c;"}
-  {"WindowsMessageQueueHelper"} {"dx JabberUtils!jabberutils::WindowsMessageQueueHelper::virtualMessageQueue.virtualMessageQueue;"}
-  {"timer queue"} {"dx PluginUtils!pluginutils::TimerUtils::idToTimerContext._Ptr;"}
- {"-------------------------------"}
-
-
-{"[All Pseudo-Registers]"} {".hh pseudo-registers"}
- {"list all available Pseudo-Registers value"}                          {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg;"}
- {"return address on current stack ($ra)"}                              {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $ra       ;"}
- {"current local context instruction address (@$scopeip)"}               {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg @$scopeip  ;"}
- {"current process entry function address ($exentry)"}                  {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $exentry  ;"}
- {"return value register ($retreg)"}                                    {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $retreg   ;"}
- {"return value of the last function ($callret)"}                       {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $callret  ;"}
- {"current call stack depth address ($csp)"}                            {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $csp      ;"}
- {"current frame index ($frame)"}                                       {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $frame    ;"}
- {"current process address ($proc)"}                                    {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $proc     ;"}
- {"current thread address ($thread)"}                                   {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $thread   ;"}
- {"process environment block ($peb)"}                                   {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $peb      ;"}
- {"thread environment block ($teb)"}                                    {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $teb      ;"}
- {"process PID ($tpid)"}                                                {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $tpid     ;"}
- {"current thread id ($tid)"}                                           {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $tid      ;"}
- {"corresponding breakpoint address ($bpX)"}                            {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $bp3      ;"}
- {"current debugger running time ($dbgtime)"}                           {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $dbgtime  ;"}
- {"instruction address register ($ip)"}                                 {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $ip       ;"}
- {"current event instruction address ($eventip)"}                       {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $eventip  ;"}
- {"last evaluated expression ($exp)"}                                   {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $exp      ;"}
- {"address size ($ptrsize)"}                                            {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $ptrsize  ;"}
- {"number of bytes in one page of memory ($pagesize)"}                  {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $pagesize ;"}
- {"below might be NOT available on current CPU structure."}
-  {"last executed instruction($ea) "}                                   {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $ea      ;"}
-  {"second executed instruction($ea2)"}                                 {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $ea2     ;"}
-  {"previous event instruction address ($previp)"}                      {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $previp  ;"}
-  {"instruction address related to the current event ($relip)"}         {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg $relip   ;"}
- {"-------------------------------"}
-
+{"Automatic Pseudo-Registers -- refered by @$"}{".hh pseudo-registers"}
+ {"list all available Pseudo-Registers value"}  {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg;"}
+ {"last expression value           : @$exp"} {"dx @$exp ;"}
+ {"last function return address    : @$ra"} {"dx @$ra ;ln @$ra ;"}
+ {"last function return value      : @$callret"} {"dx @$callret;"}
+ {"current function frame number   : @$frame"} {"dx @$frame;"} 
+ {"current function address        : @$scopeip"} {"dx @$scopeip ;ln @$scopeip ;"}
+ {"exe module entry function       : @$exentry"} {"dx @$exentry;ln @$exentry;"}
+ {"No.N breakpoint address(@$bp2)  : @$bpN"} {" ln @$bp0 ; .echo ; .echo .open -a @$bp0 ;"} 
+ {"process and thread"}
+  {"process address (PEB/EPROCESS block): @$proc / @$peb "}{"dx @$proc;"}
+  {"thread address (TEB/ETHREAD block)  : @$thread / @$teb"}{"dx @$thread;"}
+  {"current process ID (PID)            : @$tpid"}{"dx @$tpid;"}
+  {"current thread ID (TID)             : @$tid"}{"dx @$tid;"}
+ {"automatic aliases -- refered by ${}"}
+  {"current appropriate 64 bit NT symbols name : ${$ntnsym}"}{".echo ${$ntnsym};"}
+  {"current appropriate 64 bit NT symbols name : ${$ntwsym}"}{".echo ${$ntwsym};"}
+  {"current auto NT symbols name               : ${$ntsym}"}{".echo ${$ntsym};"}
+  {"current dump file name                     : ${$CurrentDumpFile}"}{".echo ${$CurrentDumpFile};"}
+  {"current dump file directory path           : ${$CurrentDumpPath}"}{".echo ${$CurrentDumpPath};"}  
 
 {"[dx command] : case sensetive"}
  {"list Debugger"}{"dx -r1 Debugger"}

@@ -1,9 +1,9 @@
 .echo +++++++ loading ${$arg0}
 
 $$ "设置vs2008的MFC源文件路径"
-$$ as lss  $$>a<E:\personal\windbg\script\loadSetting\LoadVSSrc_VS2008.dbg
+$$ as lss  $$>a<E:\personal\windbg\script\loadSetting\LoadSrc_VS2008.dbg
 
-.echo processing LoadVSSrc_VS2008.dbg ...
+.echo processing LoadSrc_VS2008.dbg ...
 .echo
 
 .if (${/d:VsSrc}!=0) {

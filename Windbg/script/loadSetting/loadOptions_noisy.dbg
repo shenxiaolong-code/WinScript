@@ -5,8 +5,8 @@
 .echo switch to masn mode, because scmp operator is only available in masm mode
 .expr /s masm
 
-.if($scmp("${$arg1}","on")=0) { $$>a<${WinScriptPath}\windbg\script\loadSetting\loadNoisyOn.dbg ; };
-.if($scmp("${$arg1}","off")=0) { $$>a<${WinScriptPath}\windbg\script\loadSetting\loadNoisyOff.dbg ; };
+.if($scmp("${$arg1}","on")=0) { $$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions_noisyOn.dbg ; };
+.if($scmp("${$arg1}","off")=0) { $$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions_noisyOff.dbg ; };
 .if($scmp("${$arg1}","on")!=0 & $scmp("${$arg1}","off")!=0) { .printf /D /oe "Wrong parameter, only 'on' or 'off' is supported." }
 
 .echo

@@ -1,7 +1,12 @@
 .echo +++++++ loading ${$arg0}
 .echo set analysis dump file option
 
+.echo curremt dump file[in ${$CurrentDumpPath}]:;
+.echo ${$CurrentDumpFile};
+.echo;
 
+.echo
+.printf /D /op "now you can use ${/v:.exp} command to analysis exception in current dump file."; 
 
 .echo
 .echo ------- exiting ${$arg0}

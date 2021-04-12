@@ -13,16 +13,21 @@ if {%1}=={} call :Test  & goto End
 call :%1 %2 %3 %4 %5 %6 %7 %8 %9
 goto End
 
-::[DOS_API:getName]get process ID by process name
-::usage     : call :getName processName outVar
-::call e.g. : call :getName "notepad.exe" 
-::          : call :getName "notepad.exe" outVar
-::          : call :getName 1254
-::          : call :getName 1254 outVar
-:getName
+::[DOS_API:getProductID]get process name by process ID
+::usage     : call :getProductID inProductName  outputProductID
+::call e.g. : call :getProductID "Webex Teams"  outputProductID
+::            set outputProductID=HKEY_USERS\S-1-5-21-3509152278-4230339519-3976194755-1001\Software\Microsoft\Installer\Products\85C074E92A6990D4483B2618251A7911
+:getProductID
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if {"%~1"}=={""} call tools_message.bat errorMsg "process full ID or full name is reuired." "%~f0" "getName.mark"
-call :imageNameProcess getName %*
+set "%~2="
+call tools_userAccount.bat getuserSID _tmpUserSID
+if not defined _tmpUserSID call tools_message.bat errorMsg "Fails to find current user ID." "%~fs0" "getProductID.mark1"
+for /f "usebackq tokens=*" %%i in ( ` @reg query %regKey% ` ) do if not defined %~2 call :getProductID.test "%~1" %~2 %%~i 
+goto :eof
+
+:getProductID.test
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+for /f "usebackq tokens=1,2,*" %%a in (` @reg query "%~3" /v ProductName 2^>nul `) do if  {"%%~c"}=={"%~1"} set "%~2=%~3"
 goto :eof
 
 ::[DOS_API:getNameByPID]get process name by process ID
@@ -30,7 +35,8 @@ goto :eof
 ::call e.g. : call :getNameByPID "notepad.exe"
 :getNameByPID
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call :getName %*
+if {"%~1"}=={""} call tools_message.bat errorMsg "process full ID or full name is reuired." "%~f0" "getName.mark"
+call :imageNameProcess getName %*
 goto :eof
 
 ::[DOS_API:findAppMainPid] find main process for one multiple process application
@@ -168,6 +174,15 @@ taskkill /T /f /im "%~nx1" || call tools_message.bat errorMsg "fails to killProc
 timeout 1 1>nul
 goto :eof
 
+::[DOS_API:killProcess.processListFile]kill process by process name
+::usage     : call :killProcess.processListFile processListFile
+::call e.g. : call :killProcess.processListFile "D:\list.txt"
+:killProcess.processListFile
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if not exist "%~f1" goto :eof
+for /f "usebackq eol=; tokens=*" %%i in ( %~fs1 ) do if not {%%i}=={} call :killProcess "%~nx1"
+goto :eof
+
 ::[DOS_API:processinfo] Display process information by process ID
 ::usage     : call :processinfo ProcessID
 ::call e.g. : call :processinfo 5463
@@ -212,6 +227,10 @@ goto :eof
 echo.
 echo test call :Help
 call :Help
+echo.
+echo test call :getProductID "Webex Teams"  outputProductID
+call :getProductID "Webex Teams"  outputProductID
+echo outputProductID=%outputProductID%
 echo.
 echo test call :startProcess notepad.exe
 call :startProcess notepad.exe

@@ -11,6 +11,13 @@ if not  exist "%~f1" md "%~f1"
 if not  exist "%~f1" echo Fails to create folder "%~f1"
 goto :eof
 
+:gitRepo
+if not  exist "%~f1" goto :END
+set NotAdmin=1
+call %WinScriptPath%\Windbg\tools_windbg.bat pdbInfo "%~f1" gitStream
+set NotAdmin=
+goto :eof
+
 :gitBlame
 :: gitBlame "E:\work\sourceCode\Jabber140" "j:\jabber\products\jabber-win\src\plugins\contactssearchplugin\contacttree.cpp(340)+0x2a"
 set "srcInfo=%~2"
@@ -56,15 +63,47 @@ call :gotoFile "%filePath%"
 echo. | clip
 goto :eof
 
+:gotoFileFromVar
+:: echo %0 %*
+:: echo batVar=%batVar%
+:: batVar=    Loaded symbol image file: C:\WINDOWS\SYSTEM32\ntdll.dll
+for /f "tokens=*" %%1 in ( "%batVar%" ) do set "pathString=%%~1"
+if defined _Debug echo pathString=%pathString%
+call set "filePath=%%pathString:%~1=%%"
+::echo Open module : "%filePath%"
+call :gotoFile "%filePath%"
+goto :eof
+
 :gotoFolder
 explorer.exe "%~f1"
+goto :eof
+
+:curFuncName
+::echo "%addrSrc%"
+for /f "tokens=1 delims=+" %%i in ( "%addrSrc%" ) do set "addrFunc=%%i"
+for /f "tokens=1*" %%i in ( "%addrFunc%" ) do set "funcName=%%j"
+::echo funcName:%funcName%
+::echo offset:%offset%
+::echo "%funcName: =%"
+:: if it is template function, the error will occur.
+:: e.g. set "addrSrc=(677b8b40)   WCLDll!AT::CSubClassMgr<AT::CWndMsgMap,HWND__ *>::SendProcMessage+0x5e   |  (677b8bd0)   WCLDll!AT::CWclScrollImpl<AT::CWclWin>::SendScrollRangeMessage"
+:: if add "" to avoid error, the uf/x command will be invalid
+:: suggest to use curFuncAddr with uf/x command
+echo "%funcName: =%"
+goto :eof
+
+:curFuncAddr
+::echo "%addrSrc%"
+for /f "tokens=1 delims=^|" %%i in ( "%addrSrc%" ) do set "addrFunc=%%i"
+set fucAddr=0x%addrFunc:~1,8%
+echo %fucAddr%
 goto :eof
 
 :debugNewSession
 for /f "usebackq delims=' tokens=2" %%1 in (` powershell Get-Clipboard` ) do set "newCmds=%%1"
 set "dummVar=%newCmds: -logo =" & call :debugNewSession.parseLog %
 if defined _Debug echo %newCmds%
-start "" %newCmds%
+if not defined NoRunNewSession start "" %newCmds%
 echo. | clip
 goto :eof
 

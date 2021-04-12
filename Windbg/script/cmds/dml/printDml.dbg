@@ -1,1 +1,0 @@
-.printf /D "Click <link cmd=\"lmDvm ${$arg1} \">${$arg1}</link> to check extensions DLL.\r\n"

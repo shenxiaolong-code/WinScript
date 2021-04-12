@@ -1,10 +1,14 @@
 ::Author    : Shen Xiaolong((xlshen@126.com))
 ::Copyright : free use,modify,spread, but MUST include this original two line information(Author and Copyright).
+::usage     : call ftpUrlHandler.bat <ftp_resource_url> [optional_download_folder]
+::example   : call ftpUrlHandler.bat "ftp://cmbu@cmbu-ftp.cisco.com/FTPServer/users/xiaolosh/temp" "c:\ftpDownloadFolder"
+::			: call ftpUrlHandler.bat "ftp://cmbu@cmbu-ftp.cisco.com/FTPServer/users/xiaolosh/temp"
 
 @if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 cls
 echo %0 %*
-set browerMode=1
+
+if not defined browerMode set browerMode=1
 call :parseFtpUrl "%~1"
 call :setOutputFolder %*
 call :setRecordFilePath %*
@@ -19,7 +23,7 @@ echo %*
 ) > "%ftpUrl%"
 )
 
-if not exist "%reOpenFtpPath%" echo %0 %* > "%reOpenFtpPath%"
+if not exist "%reOpenFtpPath%" echo call "%%WinScriptPath%%\common\userCases\ftpUrlHandler.bat" "%~1" "%%~dp0." > "%reOpenFtpPath%"
 call :openFtpUrl
 start "" "%outputFolder%"
 goto :End
@@ -67,7 +71,8 @@ call set _ftpPath=%%_ftpPath:/%_tmpName%=%%
 goto :eof
 
 :setOutputFolder
-set "outputFolder=%temp%\Ftp_Download\%_ftpPath:/=\%"
+set "outputFolder=%~f2"
+if not defined outputFolder set "outputFolder=%temp%\Ftp_Download\%_ftpPath:/=\%"
 if not exist "%outputFolder%\" md "%outputFolder%"
 goto :eof
 

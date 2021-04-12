@@ -1,5 +1,5 @@
 .echo +++++++ loading ${$arg0}
-.echo processing LoadVSSrc_VS2019.dbg ...
+.echo processing LoadSrc_VS2019.dbg ...
 .echo
 
 .if (${/d:VsSrc}!=0) {
@@ -7,7 +7,7 @@ ad ${/v:VsSrc};
 }
 
 .echo set vs2019 install path to VsSrc
-.foreach /ps 99 /s ( val "dummy" ) { .shell -ci "*" cmd.exe /c ${$arg0}\..\LoadVSSrc_VS2019.bat "${targetFullPath}" }
+.foreach /ps 99 /s ( val "dummy" ) { .shell -ci "*" cmd.exe /c ${$arg0}\..\LoadSrc_VS2019.bat "${targetFullPath}" }
 $$>a<${temp}\vsInstallDir.txt
 
 .echo

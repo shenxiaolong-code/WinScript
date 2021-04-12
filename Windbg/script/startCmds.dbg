@@ -1,6 +1,3 @@
-$$ if any 2nd parameter exist , this script will be loaded forcely
-.if (${/d:runFlag}=0 | ${/d:$arg1})
-{
 .echo 
 .echo +++++++ loading ${$arg0}
 .echo
@@ -41,24 +38,61 @@ $$>a<${WinScriptPath}\windbg\script\loadSetting\loadNatvis.dbg
 $$>a<${WinScriptPath}\windbg\script\loadSetting\loadSymbol.dbg
 
 .echo
-$$>a<${WinScriptPath}\windbg\script\loadSetting\LoadVSSrc.dbg
+$$>a<${WinScriptPath}\windbg\script\loadSetting\LoadSrc.dbg
 
 .echo
 $$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions.dbg
 
 .echo
-$$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptionsNoisy.dbg off
+$$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions_noisy.dbg off
+
+.if($scmp("${/f:$CurrentDumpFile}","")==0) {
+.echo
+.echo config windbg option for dump analysis mode.
+$$>a<${WinScriptPath}\Windbg\script\loadSetting\loadOptions_dbgLive.dbg
+} .else { 
+.echo
+.echo config windbg option for dump analysis mode.
+$$>a<${WinScriptPath}\Windbg\script\loadSetting\loadOptions_dmp.dbg
+};
+
+.block {
+.echo
+.echo checking whether there is user customized start script : ${startCmds_user}
+.foreach /pS 4 (val { .shell -ci "*" if exist "${startCmds_user}" (echo yes exist) else ( echo not-exist ) } ) 
+{
+.printf /D /op "loading customized startCmds script : ";
+.echo ${startCmds_user}
+$$>a<${startCmds_user}
+}
+.echo Done.
+}
 
 .echo
 $$>a<${WinScriptPath}\windbg\script\loadSetting\loadInfo.dbg
 
+.if(${/d:endCmds_user}) {
+.echo
+.printf /D /op "loading customized final script :";
+.echo ${startCmds_user}
+$$>a<${endCmds_user}
+}
+
+.if($scmp("${/f:$CurrentDumpFile}","")!=0) {
+.echo
+.echo analysising exception in ${$CurrentDumpFile};
+$$>a<${WinScriptPath}\windbg\script\cmds\checkException.dbg;
+};
+
+.echo
+.printf /D "Click <link cmd=\".pan\">.pan</link> to show available command panel.\r\n"
+.block {
+.pan;
 }
 
 .echo
-aS ${/v:runFlag} 1;
+.echo all automation script is loaded.
+}
 
 .echo
 .echo ------- exiting ${$arg0}
-} .else {
-.echo ${$arg0} has been loaded , add parameter 'f' to load it again forcely ;
-}

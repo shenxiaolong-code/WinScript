@@ -23,7 +23,7 @@ title %~n0 %*
 call :setPath "%~fs0"
 call tools_error.bat checkAdmin %~fs0 %*
 
-set supportedDbgCmds=;loadEnvWindbg;dbgPid;dbgAppName;dbgNewInstance;genDump;analysisDmp;dumpCheck;reduceCache;downloadPdb;readPdb;writePdb;pdbInfo;dbhCheck;
+set supportedDbgCmds=;loadEnvWindbg;config;dbgPid;dbgAppName;dbgNewInstance;genDump;analysisDmp;dumpCheck;reduceCache;downloadPdb;readPdb;writePdb;pdbInfo;dbhCheck;
 ::call :checkParameter dbgPid 2734
 ::call :checkParameter dbgAppName 
 ::call :checkParameter dbgAppName "notepad.exe"
@@ -374,7 +374,7 @@ goto :eof
 :downloadPdb
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call tools_error.bat checkPathExist "%~fs1" "%~fs0" downloadPdb_mark
-call :config.environmetnVariable.set_NT_SYMBOL_PATH %*
+call :config %*
 ::symchk always use x64 bit
 echo call "%WindbgPath%\x64\symchk.exe" /v /if "%~fs1"
 call "%WindbgPath%\x64\symchk.exe" /v /if "%~fs1"
@@ -387,8 +387,8 @@ call :pdbFile.verifyPdbFile %*
 set "iniFile=%~f2"
 if not defined iniFile call :pdbFile.srcsrvFilePath %* iniFile
 call :readPdb.generateSrcsrv %* "%iniFile%"
-call tools_error.bat checkFileExist "%iniFile%"
-if not defined NoOpenPdbIni call tools_txtFile.bat openTxtFile "%iniFile%"
+if not defined NoCheckPdbIniExist call tools_error.bat checkFileExist "%iniFile%"
+if not defined NoOpenPdbIni       call tools_txtFile.bat openTxtFile "%iniFile%"
 goto :eof
 
 :readPdb.generateSrcsrv
@@ -443,6 +443,13 @@ goto :eof
 call :pdbFile.verifyPdbFile %*
 call :pdbInfo.%~2 "%~f1" 
 call tools_message.bat noPauseMsg "%~0"
+goto :eof
+
+:pdbInfo.gitStream
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set "gitStreamFile=%~dpn1_srcsrvGit.txt"
+call pdbstr.exe -r -p:"%~fs1" -s:srcsrvGit > "%gitStreamFile%"
+type "%gitStreamFile%"
 goto :eof
 
 :pdbInfo.raw
@@ -555,6 +562,14 @@ set ls
 echo use %%ls%% to show windbg tool set .
 goto :eof
 
+:config
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call :config.environmetnVariable.setCacheDir %*
+call :config.environmetnVariable.setDebuggerExtSearchPath %*
+call :config.environmetnVariable.setIniFile
+call :config.environmetnVariable.set_NT_SYMBOL_PATH %*
+goto :eof
+
 ::*****************************************************************************************************************************
 :setPath
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
@@ -587,22 +602,7 @@ goto :eof
 :config.checkStartScript
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if not defined _appName call tools_message.bat errorMsg "_appName is not defined" "%~fs0" config.checkStartScript_mark
-if not defined startScript call :config.checkStartScript.%~1 %2 %3 %4 %5 %6 %7 %8 %9
-call tools_error.bat checkFileExist "%startScript%"
-goto :eof
-
-:config.checkStartScript.live
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if defined windbgScriptPath_%_appName% call set "windbgScriptPath=%%windbgScriptPath_%_appName%%%"
-if not defined windbgScriptPath set "windbgScriptPath=%WinScriptPath%\Windbg\script\startCmds.dbg"
-set startScript=%windbgScriptPath%
-goto :eof
-
-:config.checkStartScript.dmp
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if defined windbgScriptPath_%_appName% call set "windbgScriptPath=%%windbgScriptPath_%_appName%%%"
-if not defined windbgScriptPath set "windbgScriptPath=%WinScriptPath%\Windbg\script\startCmds_dmp.dbg"
-set startScript=%windbgScriptPath%
+if defined windbgScriptPath_%_appName% call set "startCmds_user=%%windbgScriptPath_%_appName%%%"
 goto :eof
 
 :config.dbgOption.gengerate
@@ -617,18 +617,16 @@ set param_NoSaveWorkspace=-Q
 set testedThemeFile=%WinScriptPath%\Windbg\setup\layout_theme\dark_theme.wew
 if not defined themeFile    if exist "%testedThemeFile%"  set themeFile=%testedThemeFile%
 if defined themeFile set param_themeFile=-WF "%themeFile%"
-set dbgOption=%* %param_NoSaveWorkspace% %param_NoBreakInThread% %param_NoInitBp% %param_NoExitBp% %param_themeFile% %param_logFile% -c "$$>a<%startScript%;"
+set dbgOption=%* %param_NoSaveWorkspace% %param_NoBreakInThread% %param_NoInitBp% %param_NoExitBp% %param_themeFile% %param_logFile% -c "$$>a<%WinScriptPath%\Windbg\script\startCmds.dbg;"
 echo call tools_message.bat enableDebugMsg "%~0" "dbgOption=%dbgOption:"='%"
 call tools_message.bat enableDebugMsg "%~0" "dbgOption=%dbgOption:"='%"
-
-call :config.environmetnVariable.setIniFile
 goto :eof
 
 :config.dbgOption.live
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if {%bDbgChildProcess%}=={1} set param_DbgChildProcess=-o
 call :config.dbgOption.live.%*
-call :config.checkStartScript "live"
+call :config.checkStartScript
 call :config.dbgOption.gengerate %param_DbgChildProcess%
 goto :eof
 
@@ -641,7 +639,7 @@ call "%windbgPath%\x64\dumpchk.exe" "%~fs1"
 call tools_message.bat errorMsg "dump file '%~nx1' is corrupted."
 )
 for /f "tokens=*" %%1 in ( "%exePath%" ) do set "_appName=%%~n1"
-call :config.checkStartScript "dmp"
+call :config.checkStartScript
 call :config.dbgOption.gengerate
 goto :eof
 
@@ -669,9 +667,13 @@ call genNameByTime.bat _logDT
 set "logFile=%~dpn1_windbg_%_logDT%.log"
 goto :eof
 
-:config.environmetnVariable
+:config.environmetnVariable.setCacheDir
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call :config.environmetnVariable.set_NT_SYMBOL_PATH %*
+if exist "%~fs1" set "_DBGHELP_HOMEDIR=%~fs1"
+if defined _DBGHELP_HOMEDIR goto :eof
+if not defined defWindbgCacheDir set defWindbgCacheDir=C:\symbols
+if not exist "%defWindbgCacheDir%" md "%defWindbgCacheDir%"
+if not defined _DBGHELP_HOMEDIR set "_DBGHELP_HOMEDIR=%defWindbgCacheDir%"
 goto :eof
 
 :config.environmetnVariable.setDebuggerExtSearchPath
@@ -692,18 +694,8 @@ goto :eof
 
 :config.environmetnVariable.set_NT_SYMBOL_PATH
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call :config.environmetnVariable.setCacheDir *
 if not defined _NT_SYMBOL_PATH_MY call tools_message.bat NotifyMsg "no user-defined symbol path variable _NT_SYMBOL_PATH_MY"
 if not defined _NT_SYMBOL_PATH set "_NT_SYMBOL_PATH=srv*;cache*%_DBGHELP_HOMEDIR%;SRV*http://msdl.microsoft.com/download/symbols;SRV*http://referencesource.microsoft.com/symbols;%_NT_SYMBOL_PATH_MY%;"
-goto :eof
-
-:config.environmetnVariable.setCacheDir
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if exist "%~fs1" set "_DBGHELP_HOMEDIR=%~fs1"
-if defined _DBGHELP_HOMEDIR goto :eof
-if not defined defWindbgCacheDir set defWindbgCacheDir=C:\symbols
-if not exist "%defWindbgCacheDir%" md "%defWindbgCacheDir%"
-if not defined _DBGHELP_HOMEDIR set =%defWindbgCacheDir%
 goto :eof
 
 :config.applyWindbgMode

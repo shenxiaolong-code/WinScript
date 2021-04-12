@@ -64,7 +64,7 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call tools_error.bat checkPathExist "%~fs1" "%~fs0" peView_mark
 call :implCmd "%ToolRootPath%\PC_tools\devTools\PEview\PEview.exe" "%~fs1"
-call :implCmd "%ToolRootPath%\PC_tools\devTools\process_tools\processhacker-2.39-bin\x64\peview.exe" "%~fs1"
+call :implCmd "%ToolRootPath%\PC_tools\devTools\process_tools\processhacker_239\x64\peview.exe" "%~fs1"
 goto :eof
 
 ::[DOS_API:listProcess] list all running process who include this module.

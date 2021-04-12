@@ -1,0 +1,15 @@
+.echo ----------------------Loading General breakpoints setting script for system clipboard ----------------------;
+.echo
+
+$$  NOTE : see example SetClipboardData
+$$  if using .printf in breakpoint command string, MUST escape special chars in quote char. 
+$$  if using .printf in breakpoint command string, the next command MUST be .echo , instead of gc else and command can NOT run correctly. the .echo command will end the .printf command.
+
+bp USER32!GetClipboardData              "kc L3 ; gu ; da @eax ;gc;" ;
+bp USER32!SetClipboardData              "kc L3;.printf \"type(CF_TEXT) : 0x%x\\r\\naddr : 0x%x\\r\\n%ma\\r\\n\" , poi(@ebp+0xc) , poi(@ebp+0x10) , poi(@ebp+0x10) ;  .echo; db poi(@ebp+0x10) L0x20; gc; " ;
+
+.echo
+bl;
+
+.echo
+.echo ----------------------Finish Loading (General breakpoints setting)----------------------;

@@ -141,6 +141,37 @@ call echo %%cmds_%~n0%%
 call tools_message.bat errorMsg "path[%~1] doesn't exist. script exit."
 goto :eof
 
+::[DOS_API:checkFileExtName] check whether the file has expected file name
+::call e.g  : call :checkFileExtName filePath  expectedExtName
+::          : call :checkFileExtName "C:\mySvnProject\main.cpp"  ".CPP"
+::            call :checkFileExtName "C:\mySvnProject\main.CPP"  ".cpp"
+:checkFileExtName
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call :checkParamCount 2 %*
+set "fileExtName=%~x1"
+set "fileExtNameExpected=%~x2"
+if {"%fileExtName%"}=={"%fileExtNameExpected%"} goto :eof
+if defined fileExtName          if not defined fileExtNameExpected  call :checkFileExtName.error %*
+if defined fileExtNameExpected  if not defined fileExtName          call :checkFileExtName.error %*
+call tools_string.bat toLower fileExtName
+call tools_string.bat toLower fileExtNameExpected
+if not {"%fileExtName%"}=={"%fileExtNameExpected%"} call :checkFileExtName.error %*
+goto :eof
+
+:checkFileExtName.error
+call tools_message.bat errorMsg "%~nx1 has not expeted file type '%~2'."  "%~fs0" "checkFileExtName.mark"
+goto :eof
+
+::[DOS_API:checkZeroSizeFile] check whether the file size is zero ( 0 ).
+::call e.g  : call :checkZeroSizeFile filePath
+::          : call :checkZeroSizeFile "C:\mySvnProject\main.cpp"
+::            call :checkZeroSizeFile "C:\mySvnProject\main.CPP"
+:checkZeroSizeFile
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call :checkFileExist %*
+if {"%~z1"}=={"0"} call tools_message.bat errorMsg "file '%~f1' size is zero." "%~fs0" "checkZeroSizeFile.mark"
+goto :eof
+
 ::[DOS_API:checkFileExist] show file doesn't exist error
 ::call e.g  : call :checkFileExist "C:\mySvnProject\main.cpp"
 ::          : call :checkFileExist "C:\mySvnProject\main"
@@ -174,6 +205,7 @@ goto :eof
 ::            call :runAsAdmin "%~f0" "uniqueMark2"
 :checkAdmin
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if defined NotAdmin goto :eof
 net session 1>nul 2>nul
 if not %errorLevel%==0 (
 call colorTxt.bat 0b "MUST run this script with administrator privilege"
@@ -266,6 +298,7 @@ goto :eof
 ::            check at least has 5 parameters  
 :checkParamCount
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if defined quickMode goto :eof
 if {"%~1"}=={""} goto :eof
 set /a _tmpMinParamNum=%~1+1
 call :ParamCount.get %*

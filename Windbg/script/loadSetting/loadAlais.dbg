@@ -21,16 +21,16 @@ aS ${/v:.?}      $$>a<${WinScriptPath}\windbg\script\cmds\searchCmd.dbg ;
 aS ${/v:.?.}     .frame_ebpfix ;
 
 
-aS ${/v:.dv}     dv /t /i /A ;
+aS ${/v:.dv}     dv /t /i /A /V ;
 aS ${/v:.k}      kPL ;
 aS ${/v:.f}      .frame /c ;
 aS ${/v:.bl}     bl /L ;
-aS ${/v:.x}      ".echo use x /s 0x10 to specify size, use /f to show function, use /d to show data ; x /v /A" ;
+aS ${/v:.x}      ".echo use x /s 0x10 to specify size, use /f to show function, use /d to show data ; x /v /A /d" ;
 aS ${/v:.lm}     !lmi ;
 
 
-aS ${/v:.on}        $$>a<${WinScriptPath}\windbg\script\loadSetting\loadNoisyOn.dbg ;
-aS ${/v:.off}       $$>a<${WinScriptPath}\windbg\script\loadSetting\loadNoisyOff.dbg ;
+aS ${/v:.on}        $$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions_noisyOn.dbg ;
+aS ${/v:.off}       $$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions_noisyOff.dbg ;
 aS ${/v:.cmds}      .foreach /ps 3 (var { .shell -ci "*" echo %WinScriptPath:\=\\%} ) {.printf /D "<exec cmd=\".cmdtree ${var}\\Windbg\\script\\loadSetting\\cmdTree.dbg\">open cmd panel</exec>\r\n"} ;
 aS ${/v:.cur}       .foreach /ps 3 (var { .shell -ci "*" echo %WinScriptPath:\=\\%} ) {.printf /D "<exec cmd=\".cmdtree ${var}\\Windbg\\script\\loadSetting\\cmdTree_cur.dbg\">open currently panel</exec>\r\n"} ;
 aS ${/v:.pan}       $$>a<${WinScriptPath}\windbg\script\cmds\openCmdPanel.dbg ;
@@ -50,7 +50,7 @@ aS ${/v:..tlist}    .shell -ci "*" cmd.exe /c "${windbgFolderPath}\tlist.exe" ;
 
 .if(${/d:dbgLive})
 {
-aS ${/v:.bpstr}         $$>a<${WinScriptPath}\windbg\script\cmds\breakpoint\bpWhenStrMatch.dbg ;
+aS ${/v:.bpstr}         $$>a<${WinScriptPath}\windbg\script\cmds\breakpoint\bp_whenStrMatch.dbg ;
 $$ below statement will cause script exit exception when failing to access @$peb -- it needs ntdll.dll symbol.
 $$ setPathAlias.dbg will do the necessary path parse work. here needn't again.
 $$ aS /c ${/v:targetFullPath} .printf "%mu", @@c++(@$peb->ProcessParameters->ImagePathName.Buffer);

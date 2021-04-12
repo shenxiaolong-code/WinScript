@@ -1,0 +1,15 @@
+.echo ----------------------Loading General breakpoints setting script for registry access ----------------------;
+.echo
+
+bp KERNELBASE!RegCreateKeyExA      		".echo KERNELBASE!RegCreateKeyExA   : 75BF5D40 is called;"
+bp KERNEL32!RegCreateKeyExAStub      	".echo KERNEL32!RegCreateKeyExAStub : 763257A0 is called;"
+bp advapi32!RegCreateKeyExAStub      	".echo advapi32!RegCreateKeyExAStub : 7697E750 is called;"
+bp KERNELBASE!RegCreateKeyExW        	".echo KERNELBASE!RegCreateKeyExW   : 75BD38A0 is called;"
+bp KERNEL32!RegCreateKeyExWStub      	".echo KERNEL32!RegCreateKeyExWStub : 763257C0 is called;"
+bp advapi32!RegCreateKeyExWStub      	".echo advapi32!RegCreateKeyExWStub : 7697E220 is called;"
+
+.echo
+bl;
+
+.echo
+.echo ----------------------Finish Loading (General breakpoints setting)----------------------;

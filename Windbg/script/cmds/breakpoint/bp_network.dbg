@@ -1,0 +1,15 @@
+.echo ----------------------Loading General breakpoints setting script for network send/receive ----------------------;
+.echo
+
+bp WS2_32!send          " kc L3 ; .printf \"data len:%d\\r\\n\" , poi(@esp+0xc) ; db poi(@esp+0x8) L?(poi(@esp+0xc)) ; .echo ;  gc ; "
+bp WS2_32!sendto        " kc L3 ; .printf \"data len:%d\\r\\n\" , poi(@esp+0xc) ; db poi(@esp+0x8) L?(poi(@esp+0xc)) ; .echo ;  gc ; "
+bp WS2_32!WSASend       " kc L3 ; .printf \"data len:%d\\r\\n\" , poi(@esp+0xc) ; db poi(@esp+0x8) L?(poi(@esp+0xc)) ; .echo ;  gc ; "
+bp WS2_32!WSASendTo     " kc L3 ; .printf \"data len:%d\\r\\n\" , poi(@esp+0xc) ; db poi(@esp+0x8) L?(poi(@esp+0xc)) ; .echo ;  gc ; "
+bp WS2_32!WSASendMsg    " kc L3 ; ?? (WSAMSG*)(poi(@esp+0x8)) ; "
+bp WS2_32!recv          " kc L3 ; db poi(@ebp+0x8) ;    gc; ";
+bp WS2_32!send          " kc L3 ; db poi(@ebp+0x8) ;    gc; ";
+
+.echo
+bl;
+.echo
+.echo ----------------------Finish Loading (General breakpoints setting)----------------------;

@@ -1,0 +1,20 @@
+.echo ----------------------Loading General breakpoints setting script for system interaction ----------------------;
+.echo
+
+bp SHELL32!ShellExecuteA            ".echo SHELL32!ShellExecuteA : 762BE1D0 is called;";
+bp SHELL32!ShellExecuteW            ".echo SHELL32!ShellExecuteW : 7620D100 is called;";
+bp KERNEL32!WinExec                 ".echo KERNEL32!WinExec : 75E6DAB0 is called;";
+bp ucrtbase!system                  ".echo ucrtbase!system : 75FDD060 is called;";
+bu msvcrt!system                    ".echo msvcrt!system : 76B83DC0 is called;";
+bp KERNELBASE!CreateProcessA        ".echo KERNELBASE!CreateProcessA : 76838220 is called;";
+bp KERNELBASE!CreateProcessW        ".echo KERNELBASE!CreateProcessW : 76798900 is called;";
+bp KERNEL32!CreateProcessAStub      ".echo KERNEL32!CreateProcessAStub : 75E44060 is called;";
+bp KERNEL32!CreateProcessWStub      ".echo KERNEL32!CreateProcessWStub : 75E29F90 is called;";
+bp user32!SetClipboardData          ".echo user32!SetClipboardData is called;";
+bp user32!GetClipboardData          ".echo user32!GetClipboardData is called;";
+
+.echo
+bl;
+
+.echo
+.echo ----------------------Finish Loading (General breakpoints setting)----------------------;
