@@ -100,9 +100,6 @@ body
  {"-------------------------------"}
 
 
-{"-----------reset call stack (.cxr)---------------"}{".cxr;"}
-
-
 {"[Process info]"}
  {"Process structure"} {"dx @$peb"}
  {"Process being debugged"} {"|"}
@@ -203,8 +200,9 @@ body
 
 {"[Exception]"}
  {"exception info"} {"-------------------------------"}
-  {"Exception code"} {".exr -1"}
-  {"Exception stacks"} {".ecxr"}
+  {"Check exception(.exp)"} {".exp"}
+  {"reset stack(.cxr)"} {".cxr;kP;"}
+  {"find possible exception context(time-consuming cmd)"}{".shell -ci "~*kp;" find /i "_EXCEPTION_POINTERS" "}
   {"last error in current thread"} {"!gle"}
   {"last error in all threads"} {"!gle -all"}
   {"explain error code example"} {"!error 0x1"}

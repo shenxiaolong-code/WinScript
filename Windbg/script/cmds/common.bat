@@ -82,14 +82,15 @@ goto :eof
 ::echo "%addrSrc%"
 for /f "tokens=1 delims=+" %%i in ( "%addrSrc%" ) do set "addrFunc=%%i"
 for /f "tokens=1*" %%i in ( "%addrFunc%" ) do set "funcName=%%j"
-::echo funcName:%funcName%
-::echo offset:%offset%
 ::echo "%funcName: =%"
 :: if it is template function, the error will occur.
 :: e.g. set "addrSrc=(677b8b40)   WCLDll!AT::CSubClassMgr<AT::CWndMsgMap,HWND__ *>::SendProcMessage+0x5e   |  (677b8bd0)   WCLDll!AT::CWclScrollImpl<AT::CWclWin>::SendScrollRangeMessage"
 :: if add "" to avoid error, the uf/x command will be invalid
-:: suggest to use curFuncAddr with uf/x command
-echo "%funcName: =%"
+:: here using the set /p to output possible template function name , and using @!"funcName" to represent the template function name in windbg script.
+:: e.g. uf @!"${curFN}"
+:: if here is special function , e.g. templateFunc<T1, T2> whose name has blank char, we remove the blank char because the windbg script might is using the .foreach command.
+:: echo "%funcName: =%"
+set /p "=%funcName: =%"<nul&echo.
 goto :eof
 
 :curFuncAddr
@@ -128,6 +129,15 @@ goto :eof
 if defined %~2 goto :eof
 echo %~2 >> "%manifestFilter%"
 set %~2=%~1
+goto :eof
+
+:queryVSVer
+::echo %0 %*
+for /f "eol=; tokens=*" %%i in ('powershell Get-Clipboard') do set "_windbgCLip=%%i"
+::echo _windbgCLip=%_windbgCLip%
+if not {"%_windbgCLip:Microsoft Visual Studio 14.0=%"}=={"%_windbgCLip%"} echo 2015
+if not {"%_windbgCLip:Microsoft Visual Studio 9.0=%"}=={"%_windbgCLip%"} echo 2008
+if not {"%_windbgCLip:2017=%"}=={"%_windbgCLip%"} echo 2017
 goto :eof
 
 :END

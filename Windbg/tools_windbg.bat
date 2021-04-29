@@ -12,7 +12,7 @@ rem @title %0 %*
 
 ::config current debug parameters
 if not defined bNoBreakInThread  set bNoBreakInThread=1
-if not defined bNoInitBp         set bNoInitBp=1
+if not defined bNoInitBp         set bNoInitBp=0
 if not defined bDbgChildProcess  set bDbgChildProcess=1
 if not defined bNoExitBp         set bNoExitBp=1
 if not defined bEnableLog        set bEnableLog=1
@@ -47,37 +47,10 @@ goto :eof
 ::*****************************************************************************************************************************
 :dbgPid
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-set curPid=%~1
-if     defined curPid       call :dbgPid.checkPID curPid %curPid%
-if not defined curPid       call :dbgPid.waitPID  curPid
-if not defined dbgOption    call :config.dbgOption.live  attachPid %~1
-call :dbgPid.info %~1
-call :dbgPid.attachPid %~1
-goto :eof
-
-:dbgPid.waitPID
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-set waitStringPrompt=please input existingg process ID to debug :
-call tools_userInput.bat waitNumber %~1
-call :dbgPid.checkPID %~1 %%%~1%%
-if not defined %~1 call :dbgPid.waitPID %*
-goto :eof
-
-:dbgPid.checkPID
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call tools_process.bat isProcessExist "%~2" pidExist
-if not {"%pidExist%"}=={"1"}  call tools_message.bat NotifyMsg "process[pid:%~2] doesn't exist."
-if not {"%pidExist%"}=={"1"}  call set %~1=
-goto :eof
-
-:dbgPid.info
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-@echo **************************************************************************************
-call tools_process.bat processinfo %1
-@echo.
-@echo debug start option : %dbgOption%
-@echo **************************************************************************************
-@echo.
+call :dbgPid.verifyPID %*
+call :config.dbgOption.live  attachPid %curPid%
+call :dbgPid.showInfo %curPid%
+call :dbgPid.attachPid %curPid%
 goto :eof
 
 :dbgPid.attachPid
@@ -87,6 +60,43 @@ if not {%windbgMode%}=={""} call :config.applyWindbgMode "%windbgMode%"
 call tools_process.bat getProcessCmdLine  %1 _tmpCmdLine
 cd /d "%_tmpCmdLine%\.."
 call :windbg.load -T "attach process:%1" %dbgOption% -p %1
+goto :eof
+
+:dbgPid.showInfo
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+@echo **************************************************************************************
+call tools_process.bat processinfo %1
+@echo.
+@echo debug start option : %dbgOption%
+@echo **************************************************************************************
+@echo.
+goto :eof
+
+:dbgPid.verifyPID
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set curPid=
+::MS bug : JIT always deliver parameter -p , e.g. 
+:: E:\work\shenxiaolong\core\WinScript\Windbg\tools_windbg.bat dbgPid -p 15328
+if not 	{"%~2"}=={""} if {"%~1"}=={"-p"} 	set curPid=%~2
+if 		{"%~2"}=={""} 						set curPid=%~1
+if     defined curPid       call :dbgPid.verifyPID.checkExist 	curPid 	%curPid%
+if not defined curPid       call :dbgPid.verifyPID.waitPID  	curPid
+goto :eof
+
+:dbgPid.verifyPID.waitPID
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set waitStringPrompt=please input existingg process ID to debug :
+call tools_userInput.bat waitNumber %~1
+call :dbgPid.verifyPID.checkExist %~1 %%%~1%%
+if not defined %~1 call :dbgPid.verifyPID.waitPID %*
+goto :eof
+
+:dbgPid.verifyPID.checkExist
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call tools_process.bat isProcessExist "%~2" pidExist
+if {"%pidExist%"}=={"1"} goto :eof
+call set %~1=
+call tools_message.bat NotifyMsg "process[pid:%~2] doesn't exist."
 goto :eof
 
 ::*****************************************************************************************************************************
@@ -148,7 +158,7 @@ goto :eof
 set waitStringPrompt=there are %ProcessNum% instances^(%~1^) are runing,pls select the process ID: 
 type %displayTmpFile%
 if {"%~1"}=={""} (
-for /f "usebackq delims=: tokens=1" %%i in ( ` type "%displayTmpFile%" ` ) do call :dbgAppName.multipleProcess.selectProcess.genSelOpt %%i
+for /f "usebackq delims=: tokens=1" %%i in ( ` type "%displayTmpFile%" ` ) do call :dbgAppName.multipleProcess.selectProcess.generateChoiceOpts %%i
 call tools_userInput.bat waitSelect %selOpt% selChar
 ) else (
 call set selChar=%~1
@@ -158,7 +168,7 @@ set processLine=%%j
 )
 goto :eof
 
-:dbgAppName.multipleProcess.selectProcess.genSelOpt
+:dbgAppName.multipleProcess.selectProcess.generateChoiceOpts
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if not defined selOpt (
 set selOpt=%1
@@ -185,7 +195,8 @@ if not defined _instancePath call :dbgNewInstance.waitInstancePath _instancePath
 if not defined AppParam set AppParam=%2 %3 %4 %5 %6 %7 %8 %9
 
 set bNoInitBp=0
-if not defined dbgOption call :config.dbgOption.live  newInstancePath "%~f1"
+call :config.dbgOption.onExePathFound "%~f1"
+call :config.dbgOption.live  newInstancePath "%~f1"
 if not defined AppParam set AppParam=%2 %3 %4 %5 %6 %7 %8 %9
 call :dbgNewInstance.info "%~f1"
 call :dbgNewInstance.load "%~f1"
@@ -374,7 +385,7 @@ goto :eof
 :downloadPdb
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call tools_error.bat checkPathExist "%~fs1" "%~fs0" downloadPdb_mark
-call :config %*
+call :config loadEnvironmetnVariable %*
 ::symchk always use x64 bit
 echo call "%WindbgPath%\x64\symchk.exe" /v /if "%~fs1"
 call "%WindbgPath%\x64\symchk.exe" /v /if "%~fs1"
@@ -394,6 +405,7 @@ goto :eof
 :readPdb.generateSrcsrv
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call :readPdb.backup %*
+if defined _Debug echo read srcsrv stream from %~f1
 pdbstr.exe -r -p:"%~fs1" -s:srcsrv > "%~f2"
 if {"%~z2"}=={"0"} (
 @echo warning : size is 0 [%~fs2]
@@ -421,6 +433,7 @@ goto :eof
 :writePdb.writeSrcsrv
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call :writePdb.backup %*
+if defined _Debug echo write srcsrv '%~f2' stream to %~f1
 pdbstr.exe -w -p:"%~fs1" -i:"%~fs2" -s:srcsrv
 goto :eof
 
@@ -486,7 +499,7 @@ goto :eof
 
 :pdbFile.srcsrvFilePath
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call set "%~2=%~dpn1_srcsrv.ini"
+call set "%~2=%~dpn1.ini"
 goto :eof
 
 ::*****************************************************************************************************************************
@@ -564,10 +577,20 @@ goto :eof
 
 :config
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call :config.environmetnVariable.setCacheDir %*
-call :config.environmetnVariable.setDebuggerExtSearchPath %*
-call :config.environmetnVariable.setIniFile
-call :config.environmetnVariable.set_NT_SYMBOL_PATH %*
+call :config.%~1 %2 %3 %4 %5 %6 %6 %8 %9
+goto :eof
+
+:config.loadEnvironmetnVariable
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call :environmentVariable.setCacheDir %*
+call :environmentVariable.setDebuggerExtSearchPath %*
+call :environmentVariable.setIniFile
+call :environmentVariable.set_NT_SYMBOL_PATH %*
+goto :eof
+
+:config.setWindbgEvnPath
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call :windbgEvnPath.setVar %*
 goto :eof
 
 ::*****************************************************************************************************************************
@@ -592,17 +615,64 @@ goto :eof
 
 :findExePath.FromPid
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-set ExecutablePath=
-for /f "usebackq tokens=*" %%i in ( ` wmic process where "handle=%~1" get ExecutablePath /format:list ^| find /i ".exe" ` ) do set %%~i
-set "%~2=%ExecutablePath%"
+set %~2=
+::set ExecutablePath=
+:: for /f "usebackq tokens=*" %%i in ( ` wmic process where "handle=%~1" get ExecutablePath /format:list ^| find /i ".exe" ` ) do set %%~i
+::set "%~2=%ExecutablePath%"
+for /f "usebackq tokens=*" %%i in ( ` wmic process where processid^=%~1 get ExecutablePath ^| more +1 ` ) do if not defined %~2 set "%~2=%%~fsi"
 goto :eof
 
 ::*****************************************************************************************************************************
-
-:config.checkStartScript
+:windbgEvnPath.getVar
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if not defined _appName call tools_message.bat errorMsg "_appName is not defined" "%~fs0" config.checkStartScript_mark
-if defined windbgScriptPath_%_appName% call set "startCmds_user=%%windbgScriptPath_%_appName%%%"
+if defined %~1 goto :eof
+:: MS AeDebug has one issue : it doesn't load default environmetn Variable. here is workaround
+call :windbgEvnPath.varFile.getDefaultPath windbgEnvVarFile
+if not exist "%windbgEnvVarFile%" call tools_message.bat warningMsg "customized startCmds file doesn't exist : %windbgEnvVarFile%"
+if not exist "%windbgEnvVarFile%" goto :eof
+for /f "usebackq tokens=*" %%i in ( ` type "%windbgEnvVarFile%" ^| find /i "%~1" ` ) do if not defined %~1 set "%%~i"
+goto :eof
+
+:windbgEvnPath.setVar
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call setx %~1 "%~2"
+set "%~1=%~2"
+call :windbgEvnPath.varFile.getDefaultPath windbgEnvVarFile
+if not exist "%windbgEnvVarFile%\.." md "%windbgEnvVarFile%\.."
+if 		{"%~2"}=={""} call :windbgEvnPath.varFile.clearVar  %~1   "%windbgEnvVarFile%"
+if not 	{"%~2"}=={""} call :windbgEvnPath.varFile.addVar %*
+goto :eof
+
+:windbgEvnPath.varFile.clearVar
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if not exist "%~f2" goto :eof
+set "_tmpBackupName=%~n2_bak.txt"
+set "_tmpBackupFile=%~dp2%_tmpBackupName%"
+if exist "%_tmpBackupFile%" del /f "%_tmpBackupFile%"
+rename "%~f2" "%_tmpBackupName%"
+type "%_tmpBackupFile%" | find /v "%~1" > "%~f2"
+del /f "%_tmpBackupFile%"
+goto :eof
+
+:windbgEvnPath.varFile.addVar
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if not exist "%windbgEnvVarFile%" (
+call :windbgEvnPath.varFile.addVar.impl %*
+goto :eof
+)
+call :windbgEvnPath.varFile.clearVar  %~1 "%windbgEnvVarFile%"
+call :windbgEvnPath.varFile.addVar.impl %*
+goto :eof
+
+:windbgEvnPath.varFile.addVar.impl
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if 		exist "%windbgEnvVarFile%" call echo %~1^=%~2>>"%windbgEnvVarFile%"
+if not 	exist "%windbgEnvVarFile%" call echo %~1^=%~2> "%windbgEnvVarFile%"
+goto :eof
+
+:windbgEvnPath.varFile.getDefaultPath
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set "%~1=%USERPROFILE%\windbg\windbgEnvVar.txt"
 goto :eof
 
 :config.dbgOption.gengerate
@@ -625,49 +695,74 @@ goto :eof
 :config.dbgOption.live
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if {%bDbgChildProcess%}=={1} set param_DbgChildProcess=-o
+if defined dbgOption goto :eof
 call :config.dbgOption.live.%*
-call :config.checkStartScript
 call :config.dbgOption.gengerate %param_DbgChildProcess%
 goto :eof
 
 :config.dbgOption.dmp
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if not defined logFile call :config.dbgOption.logFile.appendDT "%~f1"
 call :findExePath.FromDump "%~fs1" exePath
-if not defined exePath (
-call "%windbgPath%\x64\dumpchk.exe" "%~fs1"
-call tools_message.bat errorMsg "dump file '%~nx1' is corrupted."
-)
-for /f "tokens=*" %%1 in ( "%exePath%" ) do set "_appName=%%~n1"
-call :config.checkStartScript
+call :config.dbgOption.dmp.checkExePath	%*
+call :config.dbgOption.onExePathFound  	"%exePath%"
+call :config.dbgOption.setLogFilePath 	"%~f1"  _dmp
 call :config.dbgOption.gengerate
 goto :eof
 
 :config.dbgOption.live.attachPid
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call :findExePath.FromPid %~1 exePath
-call :config.dbgOption.live.attachPid.combine "%exePath%" %~1
-goto :eof
-
-:config.dbgOption.live.attachPid.combine
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-set "_appName=%~n1"
-if not defined logFile set "logFile=%~dpn1_windbg_%~2.log"
+if defined exePath call :config.dbgOption.onExePathFound "%exePath%"
+if not defined logFile set "logFile=%temp%\windbg_PID\%_appName%_%~1.log"
+if not exist "%logFile%\.." md "%logFile%\.."
 goto :eof
 
 :config.dbgOption.live.newInstancePath
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-set "_appName=%~n1"
-if not defined logFile call :config.dbgOption.logFile.appendDT "%~f1"
+call :config.dbgOption.onExePathFound "%~f1"
+call :config.dbgOption.setLogFilePath "%~f1" _app
 goto :eof
 
-:config.dbgOption.logFile.appendDT
+:config.dbgOption.dmp.checkExePath
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call genNameByTime.bat _logDT
-set "logFile=%~dpn1_windbg_%_logDT%.log"
+if defined exePath goto :eof
+call "%windbgPath%\x64\dumpchk.exe" "%~fs1"
+call tools_message.bat errorMsg "dump file '%~nx1' is corrupted."
 goto :eof
 
-:config.environmetnVariable.setCacheDir
+:config.dbgOption.setLogFilePath   	path  	optSuffix
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if defined logFile goto :eof
+call genNameByTime.bat tmpDT
+set "logFile=%~dpn1_windbg%~2_%tmpDT%.log"
+goto :eof
+
+:config.dbgOption.onExePathFound    exePath
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set "_appName=%~n1"
+call :environmentVariable.startCmds
+call :environmentVariable.userRepo
+goto :eof
+
+:environmentVariable.userRepo
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if defined userRepo goto :eof
+if not defined _appName call tools_message.bat errorMsg "_appName is not defined" "%~fs0" config.checkStartScript_mark
+if not defined userRepo_%_appName% call :windbgEvnPath.getVar "userRepo_%_appName%"
+if 	   defined userRepo_%_appName% call set "userRepo=%%userRepo_%_appName%%%"
+if defined _Debug echo userRepo=%userRepo%
+goto :eof
+
+:environmentVariable.startCmds
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if defined startCmds_user goto :eof
+if not defined _appName call tools_message.bat errorMsg "_appName is not defined" "%~fs0" config.checkStartScript_mark
+if not defined startCmds_%_appName% call :windbgEvnPath.getVar "startCmds_%_appName%"
+if 	   defined startCmds_%_appName% call set "startCmds_user=%%startCmds_%_appName%%%"
+if defined _Debug echo startCmds_user=%startCmds_user%
+goto :eof
+
+:environmentVariable.setCacheDir
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if exist "%~fs1" set "_DBGHELP_HOMEDIR=%~fs1"
 if defined _DBGHELP_HOMEDIR goto :eof
@@ -676,7 +771,7 @@ if not exist "%defWindbgCacheDir%" md "%defWindbgCacheDir%"
 if not defined _DBGHELP_HOMEDIR set "_DBGHELP_HOMEDIR=%defWindbgCacheDir%"
 goto :eof
 
-:config.environmetnVariable.setDebuggerExtSearchPath
+:environmentVariable.setDebuggerExtSearchPath
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 ::C:\PROGRA~2\WI3CF2~1\10\DEBUGG~1\x86\windbg.exe
 rem set _NT_DEBUGGER_EXTENSION_PATH to path will cause that wrong path is put on front of debugger extension search path.
@@ -686,13 +781,13 @@ rem bad : set "_NT_DEBUGGER_EXTENSION_PATH=%path%"
 rem OK  : set "_NT_DEBUGGER_EXTENSION_PATH=%windbgPath%\%windbgMode%"
 goto :eof
 
-:config.environmetnVariable.setIniFile
+:environmentVariable.setIniFile
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if not defined SRCSRV_INI_FILE  if exist "%WinScriptPath%\Windbg\setup\srcSrv.ini" set SRCSRV_INI_FILE=%WinScriptPath%\Windbg\setup\srcSrv.ini
+if not defined SRCSRV_INI_FILE  if exist "%WinScriptPath%\Windbg\setup\symSrv\srcSrv.ini" set SRCSRV_INI_FILE=%WinScriptPath%\Windbg\setup\symSrv\srcSrv.ini
 @echo use source server config file : %SRCSRV_INI_FILE%
 goto :eof
 
-:config.environmetnVariable.set_NT_SYMBOL_PATH
+:environmentVariable.set_NT_SYMBOL_PATH
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if not defined _NT_SYMBOL_PATH_MY call tools_message.bat NotifyMsg "no user-defined symbol path variable _NT_SYMBOL_PATH_MY"
 if not defined _NT_SYMBOL_PATH set "_NT_SYMBOL_PATH=srv*;cache*%_DBGHELP_HOMEDIR%;SRV*http://msdl.microsoft.com/download/symbols;SRV*http://referencesource.microsoft.com/symbols;%_NT_SYMBOL_PATH_MY%;"

@@ -33,6 +33,7 @@ aS ${/v:.on}        $$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions_
 aS ${/v:.off}       $$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions_noisyOff.dbg ;
 aS ${/v:.cmds}      .foreach /ps 3 (var { .shell -ci "*" echo %WinScriptPath:\=\\%} ) {.printf /D "<exec cmd=\".cmdtree ${var}\\Windbg\\script\\loadSetting\\cmdTree.dbg\">open cmd panel</exec>\r\n"} ;
 aS ${/v:.cur}       .foreach /ps 3 (var { .shell -ci "*" echo %WinScriptPath:\=\\%} ) {.printf /D "<exec cmd=\".cmdtree ${var}\\Windbg\\script\\loadSetting\\cmdTree_cur.dbg\">open currently panel</exec>\r\n"} ;
+aS ${/v:.pver}      .foreach /pS 2 /ps 3  (var {.shell -ci "lmvm ${exeModuleName}"  find /i "File version"}) { .echo ${var} } ;
 aS ${/v:.pan}       $$>a<${WinScriptPath}\windbg\script\cmds\openCmdPanel.dbg ;
 aS ${/v:.ddump}     .block {.dump /o /mapwd "${targetFolderPath}\${exeModuleName}_1.dmp"};
 aS ${/v:.stack}     .printf "top[@$teb->NtTib.StackBase]      : 0x%p\r\ncur[@$teb->NtTib.StackLimit]     : 0x%p\r\nbuttom[@$teb->DeallocationStack] : 0x%p\r\n\r\nStack      : [0x%p - 0x%p] , max  size : 0x%x\r\nused stack : [0x%p - 0x%p] , used size : 0x%x\r\n" , @@C++(@$teb->NtTib.StackBase) ,@@C++(@$teb->NtTib.StackLimit) , @@C++(@$teb->DeallocationStack) ,@@C++(@$teb->DeallocationStack)  , @@C++(@$teb->NtTib.StackBase) , @@C++(@$teb->NtTib.StackBase) - @@C++(@$teb->DeallocationStack) ,@@C++(@$teb->NtTib.StackLimit) , @@C++(@$teb->NtTib.StackBase) , @@C++(@$teb->NtTib.StackBase) - @@C++(@$teb->NtTib.StackLimit) ;
@@ -45,6 +46,7 @@ aS ${/v:.info}      $$>a<${WinScriptPath}\windbg\script\loadSetting\loadInfo.dbg
 aS ${/v:.reglist}   $$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg ;
 aS ${/v:.gdi}       $$>a<${WinScriptPath}\windbg\script\cmds\dump\DumpGDI.dbg ;
 aS ${/v:.mods}      $$>a<${WinScriptPath}\windbg\script\cmds\enumModEntry.dbg ;
+aS ${/v:.goto}      .block { .shell -ci "*" explorer.exe /select, "${targetFullPath}" };
 aS ${/v:..tlist}    .shell -ci "*" cmd.exe /c "${windbgFolderPath}\tlist.exe" ;
 
 
@@ -54,7 +56,7 @@ aS ${/v:.bpstr}         $$>a<${WinScriptPath}\windbg\script\cmds\breakpoint\bp_w
 $$ below statement will cause script exit exception when failing to access @$peb -- it needs ntdll.dll symbol.
 $$ setPathAlias.dbg will do the necessary path parse work. here needn't again.
 $$ aS /c ${/v:targetFullPath} .printf "%mu", @@c++(@$peb->ProcessParameters->ImagePathName.Buffer);
-$$ aS ${/v:.dir}           .shell -ci "*" explorer.exe /select,"${targetFullPath}"
+$$ aS ${/v:.dir}         .block { .shell -ci "*" explorer.exe /select,"${targetFullPath}" };
 }
 
 .if(${/d:dbgDmp}) 

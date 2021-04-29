@@ -8,7 +8,7 @@ $$ .echo example : $$>a<${$arg0} VS2017
 
 .echo
 .echo query visual studio version info :
-$$>a<${WinScriptPath}\windbg\script\loadSetting\getVSVer.dbg
+$$>a<${WinScriptPath}\windbg\script\loadSetting\queryVSVer.dbg
 
 .if(0==${/d:vsVer}) { 
 .echo Fails to query visual studio version.
@@ -20,14 +20,9 @@ $$>a<${WinScriptPath}\windbg\script\loadSetting\getVSVer.dbg
 .printf /D /op "${exeModuleName}.exe";
 .printf " is built by visual studio:";
 .printf /D /op "${vsVer}\r\n";
-}
-
-.block {
-$$.echo ${WinScriptPath}
-.if($scmp("${vsVer}","2008")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\LoadSrc_VS2008.dbg ; };
-.if($scmp("${vsVer}","2015")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\LoadSrc_VS2015.dbg ; };
-.if($scmp("${vsVer}","2017")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\LoadSrc_VS2017.dbg ; };
-.if($scmp("${vsVer}","2019")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\LoadSrc_VS2019.dbg ; };
+.echo
+$$>a<${WinScriptPath}\windbg\script\loadSetting\src_visualStudio\LoadSrc_VS_switch.dbg
+.echo
 }
 
 .echo ------- exiting ${$arg0}

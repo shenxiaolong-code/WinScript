@@ -185,17 +185,24 @@ if not exist "%_tmpPath%" call tools_message.bat errorMsg "can't find %~1 by sea
 call :FindAppPathinDisk.appendRelPath "%~2" "%_tmpPath%" %~3
 goto :eof
 
-::[DOS_API:FindAppPathByExt]find default application for specified file extension name.
-::usage      : call :FindAppPathByExt "extName" appPath
-::call e.g   : call :FindAppPathByExt ".txt" appPath
-::result e.g : set appPath=D:\UserApps\npp.7.4.2.x32\notepad++.exe
+::[DOS_API:FindAppPathByExt]find the default execute file path by the file extension name. e.g. .sln file
+::usage      : call :FindAppPathByExt extNameOrFileFullPath  openExePath
+::             call :FindAppPathByExt ".sln"  openExePath
+::             call :FindAppPathByExt "E:\work\sourceCode\JabberGit\products\jabber-win\src\jabber-client\JabberClient.sln"  openExePath
+::result e.g : set "openExePath=C:\Program Files (x86)\Common Files\Microsoft Shared\MSEnv\VSLauncher.exe"
 :FindAppPathByExt
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call tools_error.bat checkParamCount 2 %*
-call :FindAppPathByExt.queryType "%~1" _fileType
-call tools_message.bat enableDebugMsg "%~0" "echo _fileType=%_fileType%"
-if not defined _fileType call tools_error.bat  errorMsg  "No type is defined with file type '%~1'."
-call :FindAppPathByExt.queryApp "%_fileType%" "%~2"
+set "%~2="
+set "_tmpExtName=%~x1"
+if not defined _tmpExtName call tools_message.bat errMsg "empty extension is not allowned"
+call tools_message.bat enableDebugMsg "%~0" "echo _tmpExtName=%_tmpExtName%"
+:: .sln=VisualStudio.Launcher.sln
+for /f "usebackq tokens=*" %%i in ( ` assoc %_tmpExtName% ` ) do set "accoc%%i"
+if not defined accoc%_tmpExtName%  goto :eof
+call set "_tmpFileType=%%accoc%_tmpExtName%%%"
+:: VisualStudio.Launcher.sln="C:\Program Files (x86)\Common Files\Microsoft Shared\MSEnv\VSLauncher.exe" "%1"
+for /f usebackq^ tokens^=2^ delims^=^" %%a in ( ` ftype %_tmpFileType% ` ) do set "%~2=%%~fsa"
 call tools_message.bat enableDebugMsg "%~0" "call echo %~2=%%%~2%%"
 goto :eof
 
@@ -497,20 +504,6 @@ set rp=%~3
 if not defined rp set rp=.
 call set "%~1=%~dp2%rp%"
 call tools_path.bat ToShortPath "%~1"
-goto :eof
-
-
-:FindAppPathByExt.queryType
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-for /F "usebackq tokens=*" %%i in ( ` assoc %~1 ` ) do call set %%i
-call set %~2=%%%~1%%
-goto :eof
-
-:FindAppPathByExt.queryApp
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-for /F "usebackq tokens=1" %%i in ( ` ftype %~1 ` ) do set %%i
-call set t1=%%%~1%%
-call set %~2=%t1:"=%
 goto :eof
 
 :FindFileVersion.trim

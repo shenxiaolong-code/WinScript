@@ -1,9 +1,10 @@
 windbg ANSI Command Tree 1.0
 title {"command for current range : @$scopeip"}
 body
-{"-----------------reload panel----------------"}{".cur "}
 
 {"Check exception(.exp)"} {".exp"}
+{"reset stack(.cxr)"} {".cxr;kP;"}
+{"current application version(.pver)"}{".pver"}
 {"List current function source file path"} {"ln @$scopeip;"}
 {"try to show whole except stacks"} {".reload /u ${$ntsym}.dll ; .reload ; .cxr ;"}
 {"second exception"}
@@ -24,9 +25,11 @@ body
  {"list current source code"} {"lsa @$scopeip"} 
  {"current local context instruction address (@$scopeip)"} {"? @$scopeip  ;"}
 
+{"-----------------reload panel----------------"}{".cur "}
+
 {""}
-{"parameter and variables in current function contexts(x)"}{".x"}
-{"parameter and variables in current function address(dv /f)"} {"dv /f @$scopeip"}
+{"local variables in current function(x)"}{".x"}
+{"local variables offset of register(dv /f)"} {"dv /f @$scopeip"}
 {"global variable in current module"}{".foreach ( val { lm1m a @$scopeip ; }) {.echo x ${val}!*dynamic initializer for*;x ${val}!*dynamic initializer for*;};"}
 {"global variable in function scope(getInstance)"}{".foreach ( val { lm1m a @$scopeip ; }) {.echo x ${val}!*::getInstance;x ${val}!*::getInstance;};"}
 {"more data ..."}

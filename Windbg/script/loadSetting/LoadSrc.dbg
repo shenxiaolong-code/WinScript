@@ -1,7 +1,19 @@
 .echo +++++++ loading ${$arg0}
 
 .echo
-.echo load microsoft visual studio source ...
-$$>a<${WinScriptPath}\windbg\script\loadSetting\LoadSrc_VS.dbg
+.echo Auto load microsoft visual studio source is disabled for performance issue  ...
+.echo you can load it in your in your customized start cmd script file.
+$$ $$>a<${WinScriptPath}\windbg\script\loadSetting\src_visualStudio\LoadSrc_VS_auto.dbg
+
+.if(1==${/d:vsVer}) {
+$$ $$>a<${WinScriptPath}\windbg\script\loadSetting\src_visualStudio\LoadSrc_VS_switch.dbg
+}
+
+.if(${/d:userRepo}) {
+.echo
+.printf /D /op "loading source code :";
+.echo ${userRepo}
+.srcpath+ "${userRepo}";
+}
 
 .echo ------- exiting ${$arg0}

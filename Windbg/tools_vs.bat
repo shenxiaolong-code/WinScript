@@ -6,7 +6,7 @@
 ::set _Debug=1
 @if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
-@title %0 %*
+@title %0 %* 2>nul
 @echo %~fs0 %*
 
 ::*****************************************************************************************************************************
@@ -15,7 +15,7 @@ title %~n0 %*
 call :setPath "%~fs0"
 rem call tools_error.bat checkAdmin %~fs0 %*
 
-set supportedDbgCmds=;dbgPid;dbgAppName;dbgNewInstance;analysisDmp;vsInstallPath;findVSPath;loadEnvVs;loadEnvVsMenu;CMakeGen;
+set supportedDbgCmds=;dbgPid;dbgAppName;dbgNewInstance;analysisDmp;vsInstallPath;findVSPath;loadEnvVs;openVs;loadEnvVsMenu;CMakeGen;
 ::call :checkParameter dbgPid 2734
 ::call :checkParameter dbgAppName 
 ::call :checkParameter dbgAppName "notepad.exe"
@@ -500,6 +500,45 @@ echo compiler info , type cl /? to check all compiler options
 rem cl.exe
 goto :eof
 
+:: ***************************************************************************************************************************
+:openVs  "slnFilePath"  "srcFilePath"  "LineNo"
+if      {"%~1"}=={""}   call tools_process.bat isProcessExist "devenv.exe" bVsExist
+::alway open new vs
+if not  {"%~1"}=={""}   set bVsExist=0
+echo.
+set "slnFile=%~f1"
+set "localSrc=%~2"
+set "_srcLine=%~3"
+if {"%bVsExist%"}=={"0"} call :openVs.newVs
+if {"%bVsExist%"}=={"1"} call :openVs.runningVs
+
+rem "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\devenv.exe" "D:\sourceCode\jabberGit126\products\jabber-win\src\jabber-client\JabberClient.sln" /Command "Edit.Goto 140" "D:\shared_desktop-500eiav\temp\boost_1_70_0\libs\iostreams\src\zstd.cpp"
+rem "C:\Program Files (x86)\Common Files\Microsoft Shared\MSEnv\VSLauncher.exe" "D:\sourceCode\jabberGit126\products\jabber-win\src\jabber-client\JabberClient.sln" /Command "Edit.Goto 140" "D:\shared_desktop-500eiav\temp\boost_1_70_0\libs\iostreams\src\zstd.cpp"
+rem start "" "D:\sourceCode\jabberGit128\products\jabber-win\src\jabber-client\JabberClient.sln" /Command "Edit.Goto 140" "D:\shared_desktop-500eiav\temp\boost_1_70_0\libs\iostreams\src\zstd.cpp"
+goto :eof
+
+:openVs.newVs
+:: echo open file in new visual studio ...
+if 		defined _srcLine call :openVs.impl "%slnFile%" /Command "Edit.Goto %_srcLine%" "%localSrc%"
+if not 	defined _srcLine call :openVs.impl "%slnFile%"
+goto :eof
+
+:openVs.runningVs
+rem vs bug : vs2017 can't goto the line correctly : devenv.exe /Edit "theCpp.cpp" /Command "Edit.Goto 25"
+:: echo open file in current running visual studio ...
+if 		defined _srcLine call :openVs.impl /Edit "%localSrc%" /Command "Edit.Goto %_srcLine%"
+if not 	defined _srcLine call :openVs.impl "%slnFile%"
+goto :eof
+
+:openVs.impl
+call tools_path.bat FindAppPathByExt ".sln" devenvPath
+rem where devenv.exe 1>nul 2>nul || set "path=C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE;%path%"
+if not exist "%devenvPath%" echo can't find "%devenvPath%" & pause & exit /b 1
+if defined _Debug echo devenvPath : %devenvPath%
+echo "%devenvPath%" %*
+start "" "%devenvPath%" %*
+if not defined NoTimeOut call timeout /t 20
+goto :eof
 ::*****************************************************************************************************************************
 
 :END

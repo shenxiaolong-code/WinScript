@@ -1,0 +1,11 @@
+.echo +++++++ loading ${$arg0}
+
+.if(1==${/d:vsVer}) {
+$$.echo ${WinScriptPath}
+.if($scmp("${vsVer}","2008")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\src_visualStudio\LoadSrc_VS2008.dbg ; };
+.if($scmp("${vsVer}","2015")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\src_visualStudio\LoadSrc_VS2015.dbg ; };
+.if($scmp("${vsVer}","2017")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\src_visualStudio\LoadSrc_VS2017.dbg ; };
+.if($scmp("${vsVer}","2019")=0)     { $$>a<${WinScriptPath}\windbg\script\loadSetting\src_visualStudio\LoadSrc_VS2019.dbg ; };
+}
+
+.echo ------- exiting ${$arg0}

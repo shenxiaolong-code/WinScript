@@ -7,8 +7,8 @@
 @if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 rem title length limited to 256 chars , else dos will report "Not enough memory resources are available to process this command"
-rem @title %0 %*
-where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
+@title %0 %* 2>nul
+@where "%~nx0" 1>nul 2>nul || @set "path=%~dp0;%path%"
 
 set cmds_%~n0="%~fs0" %*
 if {"%~1"}=={""} call :Test NoOutput & goto End

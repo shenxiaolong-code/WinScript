@@ -2,12 +2,18 @@
 .echo
 .echo
 
-.foreach /ps 10 ( val { $$>a<${WinScriptPath}\windbg\script\cmds\common.dbg curFuncAddr ; }) { uf ${val};.echo;.echo current function address:${val};};
-.echo current function call point:
-? @$scopeip;
+.foreach /ps 10 ( val { $$>a<${WinScriptPath}\windbg\script\cmds\common.dbg curFuncName ; }) { ; aS ${/v:curFN} ${val}; } ;
+
+.block {
+.echo uf ${curFN};
+uf @!"${curFN}"
+
+.echo
+.printf "current function call point: @$scopeip\r\n%ly\r\n" , @$scopeip
 .echo;
-.echo Done unassemble function :;
-.foreach /ps 10 ( val { $$>a<${WinScriptPath}\windbg\script\cmds\common.dbg curFuncName ; }) { .echo ${val};};
+.echo Done unassemble function : uf @!"${curFN}";
+ad ${/v:curFN} ;
+}
 
 .echo
 .echo ------- exiting ${$arg0}

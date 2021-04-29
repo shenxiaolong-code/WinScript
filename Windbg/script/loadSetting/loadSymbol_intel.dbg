@@ -1,0 +1,11 @@
+.echo +++++++ loading ${$arg0}
+.echo
+
+$$ https://software.intel.com/content/www/us/en/develop/topics/gamedev/graphics-drivers.html?spredfast-trk-id=sf206635768
+$$ https://software.intel.com/sites/downloads/symbols/igd10iumd64.dll/
+
+.echo
+.echo loading Intel Graphics driver module symbols......
+.sympath+ "SRV*https://software.intel.com/sites/downloads/symbols/";
+
+.echo ------- exiting ${$arg0}

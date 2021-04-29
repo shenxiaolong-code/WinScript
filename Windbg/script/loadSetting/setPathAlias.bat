@@ -36,6 +36,8 @@ goto :eof
 :: startCmds_user and endCmds_user will be used in startCmds.dbg
 if defined startCmds_user 	call :addWindbgVariable startCmds_user
 if defined endCmds_user 	call :addWindbgVariable endCmds_user
+:: userRepo will be used in LoadSrc.dbg
+if defined userRepo 		call :addWindbgVariable userRepo
 :: vsVer will be used in LoadSrc_VS.dbg
 if defined vsVer 			call :addWindbgVariable vsVer
 if defined SpecVars			call :checkUserCustomized.SpecVars  %SpecVars:;= %
