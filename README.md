@@ -7,7 +7,8 @@ batch script programming support lib, used in my automatization tools/jobs.
   One-clicking to collect all necessary information on our customer side.
 
 - similar with many advanced programming languages  
-  this library provides features by function with input/output parameters, it always is code-reused.
+  this library provides features by function with input/output parameters, it always is code-reused.  
+  relation : module -> function -> input parmeter -> output parameter + return code
 
 # feature
 1.   Self-documentation: generate module API documents automatically.
