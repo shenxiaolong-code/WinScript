@@ -1,5 +1,5 @@
 # WinScript
-Productivity tools : windows batch script programming support lib, used in my automatization tools/jobs.
+windows batch script programming support lib, used in my automatization tools/jobs.
 
 # purpose
 - This library is used in my regular work automatization:  
