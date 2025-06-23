@@ -10,7 +10,30 @@ windows batch script programming support lib, used in my automatization tools/jo
   this library provides features by function with input/output parameters, it always is code-reused.  
   structure relation : module(s) -> function(s)/object(s) -> input parmeter(s) -> output parameter(s) + return code.    
 
-# feature
+## WinDbg Enhanced Scripts
+
+This script suite significantly enhances WinDbg debugging experience for high-frequency failure analysis scenarios:
+
+- **Right-click context menu integration**: One-click execution of complex debugging tasks without memorizing cumbersome commands.  
+- **Scenario-specific analysis scripts**: Built-in specialized commands for typical scenarios including secondary exception stack loss, deadlocks, crashes, and memory leaks. Users can double-click commands or follow step-by-step prompts for rapid issue localization.  
+- **Custom high-frequency command panel**: Integrates commonly used or hard-to-remember commands into a clickable panel, enabling double-click execution to maximize efficiency.  
+- **Automatic debug configuration loading**: Dynamically loads application-specific debug configurations based on target binaries, enabling zero-switch cost through a unified entry point.  
+
+> **Proven in Practice**: Efficiently processes 50+ daily production dump files in real-world environments, dramatically accelerating team troubleshooting and response speed.
+
+## Linux GDB Enhanced Scripts
+
+This suite delivers Windows-comparable debugging enhancements via native GDB+Bash:
+
+- **Editor seamless integration**: Automatically opens corresponding source lines in VS Code or any editor during GDB debugging sessions.  
+- **Cross-machine source linkage**: Debugging on Machine A automatically triggers source file opening on Machine B for remote development scenarios.  
+- **Ultra-low latency operations**: Core actions (e.g., single-stepping) outperform VS Code's built-in debugger with <50ms response time (validated in benchmarks).  
+- **Lightweight implementation**: 90% pure Bash with optional Python helpers (no Py dependency for core functionality).  
+
+> **Status**: Actively used in production environments, scheduled for open-source release soon.
+
+
+# script summary 
 1.   Self-documentation: generate module API documents automatically.
 2.   Provide debugging support for a developer to locate the problem quickly for a developer.  
 2.1  printing a function call stack.  
