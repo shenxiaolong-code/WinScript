@@ -1,0 +1,15 @@
+
+
+# ssh login without password config example file.
+# copy this file to window file : %USERPROFILE%\.ssh\config
+# and modify it to fit your environment.
+# here ~ equals to %USERPROFILE%
+
+Host 192.168.0.103
+  HostName 192.168.0.103
+  User xlshen
+  IdentityFile ~/.ssh/id_ed25519
+  Port 22
+
+
+

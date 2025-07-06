@@ -1,0 +1,24 @@
+
+gdb --configuration
+This GDB was configured as follows:
+   configure --host=x86_64-pc-linux-gnu --target=x86_64-pc-linux-gnu
+             --with-auto-load-dir=$debugdir:$datadir/auto-load
+             --with-auto-load-safe-path=$debugdir:$datadir/auto-load
+             --with-expat
+             --with-gdb-datadir=/home/utils/gdb-12.1-2/share/gdb (relocatable)
+             --with-jit-reader-dir=/home/utils/gdb-12.1-2/lib/gdb (relocatable)
+             --without-libunwind-ia64
+             --with-lzma
+             --without-babeltrace
+             --without-intel-pt
+             --with-mpfr
+             --without-xxhash
+             --with-python=/home/utils/Python/builds/3.9.13-20220804
+             --with-python-libdir=/home/utils/Python/builds/3.9.13-20220804/lib
+             --without-debuginfod
+             --without-guile
+             --disable-source-highlight
+             --with-separate-debug-dir=/home/utils/gdb-12.1-2/lib/debug (relocatable)
+
+("Relocatable" means the directory can be moved with the GDB installation
+tree, and GDB will still find it.)

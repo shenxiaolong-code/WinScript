@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# rm ${HOME}/.bashrc
+# ln -s ${BASH_DIR}/init/bashrc_pure  ${HOME}/.bashrc
+# docker script MUST locate out-side-of user home directory.    
+
+# if the .bashrc can't be load automatically , the system might need the ~/.profile
+# https://apple.stackexchange.com/questions/12993/why-doesnt-bashrc-run-automatically
+# rm ${HOME}/.profile
+# ln -s ${BASH_DIR}/init/bashrc_pure  ${HOME}/.profile
+
+# https://stackoverflow.com/questions/9671027/sanitize-environment-with-command-or-bash-script
+# env -i /path/to/main_script.sh
+# exec -c $0
+# env - /bin/bash
+# env -i bash -c echo "reset bash env"
+
+# https://unix.stackexchange.com/questions/5609/how-do-i-clear-bashs-cache-of-paths-to-executables
+# bash does cache the full path to a command
+# type svnsync
+# To clear the entire cache:
+# hash -r
+
+if [[ $- == *i* ]] ; then    
+    [[ ! -v PATH_BAK ]]             && PATH_BAK=$PATH
+    [[ ! -v LIBRARY_PATH_BAK ]]     && LIBRARY_PATH_BAK=$LIBRARY_PATH
+    [[ ! -v LD_LIBRARY_PATH_BAK ]]  && LD_LIBRARY_PATH_BAK=${LD_LIBRARY_PATH}
+    [[ ! -v PYTHONPATH_BAK ]]       && PYTHONPATH_BAK=$PYTHONPATH
+    
+    PATH=$PATH_BAK
+    LIBRARY_PATH=$LIBRARY_PATH_BAK
+    LD_LIBRARY_PATH=$LD_LIBRARY_PATH_BAK
+    PYTHONPATH=$PYTHONPATH_BAK
+    # To load pure bash env
+    # vscode ternmial is set by : "terminal.integrated.inheritEnv": false,    
+    echo -e "# +++++++++ loading ${BASH_SOURCE[0]}:${LINENO}  \e[0;30m:  ${BASH_SOURCE[1]##*/}:${BASH_LINENO[0]} \e[0;0m"
+    # for performance, we use hardcode, instead of using BASH_DIR=$(dirname "$(realpath ${BASH_SOURCE[0]})")
+    source  $(dirname $(realpath ${BASH_SOURCE[0]}))/script_path_config.sh
+    # echo "# +++++++++ loading ${HOME}/.bashrc"
+    source   ${BASH_DIR}/init/bash_main.sh  "$@"
+    # ${EXT_DIR}/bash_env/init/bash_main.sh
+    # echo "# --------- leaving ${HOME}/.bashrc"
+    echo -e "# --------- leaving ${BASH_SOURCE[0]}:${LINENO}  "
+fi

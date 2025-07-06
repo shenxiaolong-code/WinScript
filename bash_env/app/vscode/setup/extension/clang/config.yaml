@@ -1,0 +1,6 @@
+  # https://confluence.nvidia.com/display/TegraGraphics/VS+Code+useful+tips
+# ln -s  ${BASH_DIR}/app/vscode/setup/extension/clang/config.yaml  $HOME/.config/clangd/config.yaml
+
+CompileFlags:
+  Remove: [ -W*, -V8* ]
+  Add: [ -U__linux__, -D__aarch64__, -D__QNX__, -D__QNXNTO__, -D__LITTLEENDIAN__ ]

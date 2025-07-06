@@ -1,0 +1,17 @@
+K 15
+svn:realmstring
+V 43
+<https://10.19.180.209:443> VisualSVN Server
+K 8
+username
+V 6
+xlshen
+K 8
+password
+V 8
+aaAA11!!
+K 8
+passtype
+V 6
+simple
+END

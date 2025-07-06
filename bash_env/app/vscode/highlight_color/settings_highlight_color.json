@@ -1,0 +1,47 @@
+{
+    // copy setting into : C:\Users\xiaolongs\AppData\Roaming\Code\User\settings.json
+    
+    "highlight.decorations": {
+        "rangeBehavior": 3
+    },                                  // Default decorations from which all others inherit from
+    "highlight.regexFlags": "gmi",      // Default flags used when building the regexes
+    "highlight.minDelay": 50,           // Minimum number of milliseconds to wait before highlighting the document after a change, used for throttling
+    "highlight.maxMatches": 250,        // Maximum number of matches to decorate per regex, in order not to crash the app with accidental cathastropic regexes
+    "highlight.regexes": {
+        "(// *TODO:?)(.*)": {
+            "decorations": [
+                {
+                    "backgroundColor": "#1e1e1e",
+                    "color": "#d2c213",
+                    "fontWeight": "bold",
+                    "overviewRulerColor": "#bb45b7"
+                },
+                {
+                    "backgroundColor": "#1e1e1e",
+                    "color": "#e232eb"
+                }
+            ]
+        },
+        "(/home/[^ :]+)": {
+            //"filterFileRegex": ".*.txt$",                   // only apply .txt file
+            "filterFileRegex": ".*(.txt|.log|.md)$", // only apply .txt and .log file  , match line end
+            // "filterFileRegex": ".*(?<!.txt)$",             // all files only exclude .txt file
+            "decorations": [
+                {
+                    "backgroundColor": "#1e1e1e",
+                    "color": "#2f9288"
+                },
+            ],
+        },
+        // match line start
+        "^([a-zA-Z0-9][^:#]+) : ": {
+            "filterFileRegex": ".*(.txt|.log|.md)$", // only apply .txt and .log file  , match line end
+            "decorations": [
+                {
+                    "backgroundColor": "#1e1e1e",
+                    "color": "#e232eb"
+                }
+            ]
+        },
+    },
+}

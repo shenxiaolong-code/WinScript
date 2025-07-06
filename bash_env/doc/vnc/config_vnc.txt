@@ -1,0 +1,111 @@
+quick cmd:
+kill vnc :
+vncserver -kill :1
+
+create vnc:
+amdvnc --start --size=1024x768 --local --shared
+
+list vnc : vncserver -list
+
+server : vncserver
+client : vncviewer
+
+vnc easy : 右上角电源按钮 -> 最下排第一个button (setting)
+禁止锁屏 : privacy -> screen lock : off
+禁止休眠 : Power -> Blank : Never
+全屏     : Device -> Display -> Resolution : 自由调整看效果
+大字体          ： Universal access -> Large text : on
+高对比度(更清晰) ： Universal access -> High contrast : on		//不建议，图片失真
+光标闪烁         : Universal Access ->  Cursor Blinking : On
+鼠标中键复制     : Universal Access ->  Mouse Keys : On
+
+配置控制台窗口外观易用性：
+setting -> Edit Current Profile :
+Mouse : 勾选 Copy on select
+        勾选 Paste from selection
+Advanced : Blinking cursor
+           cursor shape : I-Beam
+           Custom cursor color : select red
+           
+配置terminal窗口外观易用性：
+edit -> preferences :
+General     : Theme variant ： Dark
+shortcuts   : Copy      : Ctrl+C 
+              paste     : Ctrl+V
+              slect all : Ctrl+A
+Profile     : Text :  Cursor :  Cursor shape : I-Beam
+                                Cursor blinking : Enabled
+
+
+vncconfig -nowin &      // non-GUI config vnc
+vncconfig &             // GUI config vnc
+
+---------------------------------  configure vnc setting on linux side  ----------------------------------------------------
+1.   vncserver -geometry 1200x750
+     setup vnc screen size : it will affect your vnc screen size and font size
+Or   setup vnc which can be shared with others.
+     amdvnc --start --size=1024x768 --local --shared
+1.1. prompt password : use one simple password which is different with your NT password , because it will be shared with others.
+     e.g. 123456
+1.2  Verify: Would you like to enter a view-only password (y/n)
+     answer : n
+1.3  output : New 'srdcws1087:5 (xiaoshen)' desktop is srdcws1087:5
+     here 5 is the created vnc client connection ID.
+     -- it will be used in vnc client.
+     -- it will be used when need to kill it. e.g. the screen/font size is not suitalbe in vnc client.
+        kill current vnc setting : 
+        vncserver -kill :5
+1.4 [opt] re-set a better screen size vnc setting after kill the old vnc client (step 1.3)
+    vncserver -geometry 1900x1050
+    output : New 'srdcws1087:5 (xiaoshen)' desktop is srdcws1087:5
+    the vnc connection id 5 is reused.
+1.5 check & view the vnc materials
+    cd .vnc
+    ls
+    default material :
+    config passwd srdc1087:5.log srdc1087:5.pid xstartup xstartup_IT
+
+---------------------------------  vnc client connect linux server  ----------------------------------------------------
+run : "C:\Program Files\RealVNC\VNC Viewer\vncviewer.exe"
+2.  vnc connect : srdcws1087:5
+    here 5 is vnc connection ID which is created in step 1.3
+2.1 connect
+2.2 or double-click the existed connected icon in the history list.
+2.3 NOTE : vncviewer password is not NT domain password. it is shared pub password : 123456
+
+---------------------------------  re-config the vnc environment (GUI)  ----------------------------------------------------
+for the raw default vnc environment , it is ugly and it is hard to use.
+we can copy others environment to get better custmized environment.
+3.1.show current vnc UI config.
+    xst      //or  xsta
+    default output : xstartup xstartup_IT xstdcmap
+3.2.backup current vnc setting
+    cp xstartup backup_xstartup_210512
+3.3.copy other's vnc config
+    cp ~bhwu/.vnc/xstartup   ./xstartup
+3.4.kill current loaded vnc session.
+    vncserver -kill :5
+3.5.re-set vnc screen size
+    vncserver -geometry 1900x1050
+    
+
+---------------------------------  other vnc command  ----------------------------------------------------    
+vncserver -list
+  list all available vnc client
+    
+    
+   
+   
+
+
+
+
+
+
+
+
+
+
+
+
+

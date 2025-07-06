@@ -1,0 +1,18 @@
+https://sourceware.org/gdb/onlinedocs/gdb/Pretty-Printing.html#Pretty-Printing
+https://www.kurokatta.org/grumble/2018/05/gdb-pretty
+
+show installed printer info : info type-printers
+local example :   info auto-load
+/usr/share/gdb/auto-load/usr/lib/x86_64-linux-gnu/libisl.so.22.0.1-gdb.py
+/usr/share/gdb/auto-load/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28-gdb.py
+
+example by python :
+https://interrupt.memfault.com/blog/automate-debugging-with-gdb-python-api
+
+set print pretty
+info pretty-printer
+
+
+/usr/share/gcc/python/libstdcxx/v6/__init__.py
+/usr/share/gcc/python/libstdcxx/v6/printers.py
+/usr/share/gcc/python/libstdcxx/v6/xmethods.py

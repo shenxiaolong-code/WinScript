@@ -1,0 +1,27 @@
+bash_script_i
+echo
+
+# periodic task
+# crontab -e to edit the crontab file
+# crontab -l
+# syntax: minute hour day month day_of_week command
+#         mm     hh   dd  mt    wd          command
+# every 18:00 task
+0 18 * * * /path/to/your/script.sh
+# every Tuesday 17:00 task
+0 17 * * 2 /path/to/your/script.sh
+
+
+
+# async one time task
+echo "/path/to/your/script.sh" | at now + 1 minutes
+echo "/path/to/your/script.sh" | at 18:00
+(sleep 60 && echo "test run") &
+
+
+# sync one time task
+sleep 300 && echo /path/to/your/script.sh
+
+
+echo
+bash_script_o

@@ -1,0 +1,59 @@
+
+# This is a configuration file for clangd. See clangd --help for the list of
+# ctrl+,   ->  clangd -> remote
+# ${HOME}/.vscode-server/data/User/globalStorage/llvm-vs-code-extensions.vscode-clangd/install/18.1.3/clangd_18.1.3/bin/clangd
+
+# ln -s ${BASH_DIR}/app/vscode/setup/extension/clang/.clangd        ./.clangd
+# ln -s ${BASH_DIR}/app/vscode/setup/extension/clang/.clangd        <repo_root_folder>/.clangd 
+# ln -s ${BASH_DIR}/app/vscode/setup/extension/clang/.clangd        ${EXT_DIR}/repo/.clangd
+
+
+CompileFlags:                   # Tweak the parse settings
+  Add: [
+    -std=c++17,                                                             # 使用 C++17 标准
+    -Wall,                                                                  # 启用所有警告
+    -Wextra,                                                                # 启用额外的警告
+    -I/usr/include,                                                         # 添加系统头文件路径
+    -I/usr/local/include                                                    # 添加本地头文件路径
+    -I/data/workspace-fast_kernel/cutlass/include
+    -I/data/workspace-fast_kernel/llvm-solid/build/install/include
+    -I/home/scratch.svc_compute_arch/release/cuda_toolkit/internal/latest/include
+    -DCUTLASS_ENABLE_TENSOR_CORE_MMA=1
+    -cuda-path=/home/scratch.svc_compute_arch/release/cuda_toolkit/internal/latest
+    # -Wno-unused-variable                                                  # 禁用未使用变量的警告
+  ]
+  Remove: [
+    -Werror                                 # 移除将警告视为错误的选项
+    -forward-unknown-to-host-compiler       # 移除禁用未使用变量的警告
+    -generate-code=                         # 移除生成代码的选项
+    -rdc=                                   # 移除 RDC 选项
+  ]
+
+Diagnostics:
+  UnusedIncludes: Strict                    # 严格标记未使用的包含
+
+ClangTidy:
+  Add: [
+    performance*,                           # 启用性能相关的检查
+    readability*                            # 启用可读性相关的检查
+    readability-reference-to-constructed-temporary          # 启用特定的检查
+    modernize*                              # 启用现代化相关的检查
+  ]
+  Remove: [
+    modernize-use-trailing-return-type      # 移除特定的检查
+  ]
+
+Index:
+  Background: Build                         # 启用后台索引
+  StandardLibrary: Yes                      # 启用标准库的索引
+
+
+InlayHints:
+  Designators: No
+  Enabled: Yes
+  ParameterNames: No
+  DeducedTypes: Yes
+
+Hover:
+  ShowAKA: Yes
+

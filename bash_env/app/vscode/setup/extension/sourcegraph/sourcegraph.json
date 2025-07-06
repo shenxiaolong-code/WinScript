@@ -1,0 +1,23 @@
+// seems below setting is not working
+{
+    "extensions": {
+        "sourcegraph/open-in-vscode": true
+    },
+    "vscode.open.basePath": "${EXT_DIR}/repo",
+    "sourcegraph.url": "https://sourcegraph.com",
+    "sourcegraph.accessToken": "sgp_fd1b4edb60bf82b8_4d09e245233aa306650cda633b7ad1c726b202c2",
+    "vscode.open.replacements": {
+        "sourcegraph-": ""
+    },
+    "vscode.open.osPaths": {
+        "windows": "C:/work/nv_repo/",
+        "linux": "${EXT_DIR}/repo"
+    },
+    "vscode.open.remoteHost": "xiaolongs@computelab-303.nvidia.com",
+    "vscode.open.uncPath": true,
+    "openInEditor": {
+        "editorIds": [
+            "vscode"
+        ]
+    }
+}

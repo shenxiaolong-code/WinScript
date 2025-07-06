@@ -1,0 +1,27 @@
+
+# https://stackoverflow.com/questions/3984134/how-to-write-a-cron-that-will-run-a-script-every-day-at-midnight
+# crontab -l        # list schedule task 
+# crontab -r        # Remove all cron jobs
+
+# Syntax: 
+#   mm hh dd mt wd  command
+# 
+#   mm minute 0-59
+#   hh hour 0-23
+#   dd day of month 1-31
+#   mt month 1-12
+#   wd day of week 0-7 (Sunday = 0 or 7)
+#   command: what you want to run
+#   all numeric values can be replaced by * which means all
+
+
+# every mid-night to clean the system.
+# 00 00 * * * source ${BASH_DIR}/bin/clean_system.sh
+
+# every Saturday mid-night to clean the system.  need : chmod +x ${BASH_DIR}/bin/clean_system.sh
+00 00 * * 6 source ${BASH_DIR}/bin/clean_system.sh
+
+
+# ${BASH_SOURCE[0]%/*}/schedule_job_by_crontab.sh:6
+# ${BASH_SOURCE[0]%/*}/schedule_job_by_crontab.txt
+

@@ -1,0 +1,16 @@
+
+# install python prerequisites packages
+# the supported format
+# version is higher than xxx : pip>=23.1.2
+# version is equal to xxx : numpy==1.19.5
+# version is not specified : grpcio
+
+# pip>=23.1.2
+# wheel>=0.40.0
+# setuptools>=68.0.0
+numpy==24.0
+ninja2
+# nvidia-ml-py==10.418.84
+# grpcio
+# grpcio-tools
+# requests

@@ -1,0 +1,9 @@
+Client: p4sw
+Root: ${EXT_DIR}/tmp/p4_download_workspace
+View: //sw/rel/gpu_drv/r575/r575_00/drivers/common/build/baseGuardwords.txt    /gpu_drv/r575/r575_00/drivers/common/build/baseGuardwords.txt
+View: //sw/rel/gpgpu/toolkit/r12.9/compiler/drivers/common/build/baseGuardwords.txt    /gpgpu/toolkit/r12.9/compiler/drivers/common/build/baseGuardwords.txt
+
+# Client: your_client_name                                                      # customied your client name
+# Root: /path/to/your/local/workspace                                           # Replace with your local workspace path
+# View: //depot/path/...  <relative_path_to_Root>/...                           # download folder from p4
+# View: //depot/path/.../xxx.txt  <relative_path_to_Root>/.../xxx.txt           # download file from p4

@@ -1,0 +1,28 @@
+{    
+    "configurations": [
+    {
+      "name": "(gdb) Launch",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${EXT_DIR}/build/sm90_20220331_0103_dev_cask_sdk/install/bin/cask-sdk-cask-tester",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${EXT_DIR}/repo/linux_pratice/cpp_test",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+          {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+          },
+          {
+              "description":  "Set Disassembly Flavor to Intel",
+              "text": "-gdb-set disassembly-flavor intel",
+              "ignoreFailures": true
+          }
+      ]
+    }
+    ]
+}

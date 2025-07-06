@@ -1,0 +1,67 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+
+# NVIDIA GitLab 项目特定规则
+# dynamic-kernel-generator 仓库规则
+**/gitlab-master.nvidia.com:12051/dlarch-fastkernels/dynamic-kernel-generator/**/*
+!**/gitlab-master.nvidia.com:12051/dlarch-fastkernels/dynamic-kernel-generator/**/bloom/**
+!**/gitlab-master.nvidia.com:12051/dlarch-fastkernels/dynamic-kernel-generator/**/script/**
+!**/gitlab-master.nvidia.com:12051/dlarch-fastkernels/dynamic-kernel-generator/**/cmake/**
+!**/gitlab-master.nvidia.com:12051/dlarch-fastkernels/dynamic-kernel-generator/**/CMakeLists.txt
+!**/gitlab-master.nvidia.com:12051/dlarch-fastkernels/dynamic-kernel-generator/**/*.cmake
+!**/gitlab-master.nvidia.com:12051/dlarch-fastkernels/dynamic-kernel-generator/**/*.cmake.in
+
+# LLVM-Solid 仓库规则
+**/gitlab-master.nvidia.com:12051/dlarch-fastkernels/cask-dependencies/llvm-solid.git/**/*
+!**/gitlab-master.nvidia.com:12051/dlarch-fastkernels/cask-dependencies/llvm-solid.git/**/mlir/**
+!**/gitlab-master.nvidia.com:12051/dlarch-fastkernels/cask-dependencies/llvm-solid.git/**/llvm/**
+!**/gitlab-master.nvidia.com:12051/dlarch-fastkernels/cask-dependencies/llvm-solid.git/**/cmake/**
+!**/gitlab-master.nvidia.com:12051/dlarch-fastkernels/cask-dependencies/llvm-solid.git/**/bloom/**
+
+# 依赖目录
+node_modules/
+venv/
+.env/
+__pycache__/
+
+# 日志文件
+*.log
+logs/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE 配置
+.idea/
+.vscode/
+.svn
+.git
+.github
+*.swp
+*.swo
+
+# 临时文件
+tmp/
+temp/
+
+# 大型数据文件
+*.csv
+*.xlsx
+*.json
+!package.json
+!package-lock.json
+
+# 其他二进制文件
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
+*.pdf
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.mp4
+*.mov
+*.avi

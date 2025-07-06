@@ -1,0 +1,19 @@
+{
+    "[cpp]": {
+        "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd"
+    },
+    "clangd.path": "${EXT_DIR}/myDepency/clang/clangd",
+    "clangd.arguments": [
+        "--pretty",
+        "--clang-tidy",
+        "--all-scopes-completion",
+        "--completion-style=detailed",
+        "--log=error",
+        "--j=4",                                                               // Multi-thread parsing
+        "--header-insertion=never",
+        "--background-index",
+        "--compile-commands-dir=${workspaceFolder}",                           // Point to the actual folder path of the compile_commands.json file you generated
+        "--pch-storage=disk"
+    ],
+    "C_Cpp.intelliSenseEngine": "disabled",                                    // This is critical. C/C++ IntelliSense needs to be disabled
+}

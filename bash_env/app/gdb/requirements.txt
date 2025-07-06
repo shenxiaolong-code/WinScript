@@ -1,0 +1,12 @@
+
+# install python prerequisites packages
+# the supported format
+# version is higher than xxx : pip>=23.1.2
+# version is equal to xxx : numpy==1.19.5
+# version is not specified : grpcio
+
+# subprocess
+datetime
+argparse
+
+

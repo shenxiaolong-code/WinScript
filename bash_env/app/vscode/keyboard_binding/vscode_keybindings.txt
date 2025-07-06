@@ -1,0 +1,27 @@
+
+#
+# open this vscode setting file : ctrl+shift+p : shortcuts : open keyboard shortcuts(JSON) 
+# /"C:\Users\xiaolongs\AppData\Roaming\Code\User\keybindings.json"
+#
+# Place your key bindings in this file to override the defaults
+# open this setting file : ctrl+shift+p : shortcuts : open keyboard shortcuts(JSON) 
+# https://code.visualstudio.com/docs/getstarted/keybindings
+# run command vscode.commands.executeCommand : https://code.visualstudio.com/api/extension-guides/command
+# used variable(e.g. ${file}) :   https://code.visualstudio.com/docs/editor/variables-reference
+# https://vscode-docs.readthedocs.io/en/stable/customization/keybindings/
+
+[
+    {
+        // color output the folder path and file path in current active file of vscode
+        "key": "ctrl+l",
+        "command": "workbench.action.terminal.sendSequence",
+        // \u000D is return key to run command
+        // "args": { "text": "cat '${file}' | grep '/home/' \u000D" },
+        // "args": { "text": "cat '${file}' | grep '/home/' | sed 's#\\(/home/[^ ]*\\.[^ ]*\\)#\\x1B[32m\\1\\x1B[39m#g'\u000D" },
+        // "args": { "text": "cls ; cat -n '${file}' | grep '/home/' | sed 's#\\(/home/[^ ]*\\.[^ ]*\\)#\\x1B[32m\\1\\x1B[39m#g'| sed 's#\\(/home/[^:]*\\):#\\x1B[31m\\1\\x1B[39m:#g'\u000D" },
+        
+        // "args": { "text": "source ${HOME}/linuxScript/app/vscode/keyboad_binding/on_filePath_received.csh ListFiles ${file}  \u000D" },
+        "args": { "text": "source ${BASH_DIR}/app/vscode/keyboard_binding/on_filePath_received.sh ListFiles ${file} ${lineNumber}  \u000D" },
+        //"when": "terminalFocus"
+    },
+]

@@ -1,0 +1,16 @@
+
+!import os !print(f"\nloading {os.environ['HOME']}/bash_env/app/pdb/load_breakpoint.pdb ...\n")
+
+# set system breakpoint
+# setting the value of the PYTHONBREAKPOINT environment variable
+# https://machinelearningmastery.com/setting-breakpoints-and-exception-hooks-in-python/
+# import os
+# os.environ['PYTHONBREAKPOINT'] = '0'
+# PYTHONBREAKPOINT=ipdb.set_trace
+
+b ${REPO_DIR_CASK6}/frameworks/xmma/codegen/templates/cask5_adapter/cask5_adapter.hpp.j2:65
+
+!import os !print( "\nDone : {os.environ['HOME']}/bash_env/app/pdb/load_breakpoint.pdb \n")
+
+
+

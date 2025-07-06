@@ -1,0 +1,45 @@
+
+
+-bash: fork: retry: Resource temporarily unavailable
+如果出现了这个错误，将会导致致命的问题，vscode组件随机不能工作了。
+
+vscode bug:
+1. ms python extension will trigger vscode tenminal bug. -- not install
+   code --force --install-extension   ms-python.python              // don't install this extension
+2. if a file is "join in group" , open it again from cmd line "code <file_path>" , it will trigger vscode tenminal bug.
+
+???
+怎么解决 "-bash: fork: retry: Resource temporarily unavailable" issue ?
+这个问题就是当前用户启动的进程太多了，可以用下列命令查看什么进程启动太多了：
+e.g.
+$ ps -a | grep $USER
+xiaolon+ 2321822       1  0 Aug15 ?        00:00:00 ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/python ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/black -q cask/bloom/testing/perf/main.py ...
+xiaolon+ 2321825       1  0 Aug15 ?        00:00:00 ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/python ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/black -q cask/bloom/testing/perf/main.py ...
+xiaolon+ 2321826       1  0 Aug15 ?        00:00:00 ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/python ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/black -q cask/bloom/testing/perf/main.py ...
+xiaolon+ 2321827       1  0 Aug15 ?        00:00:00 ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/python ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/black -q cask/bloom/testing/perf/main.py ...
+xiaolon+ 2321828       1  0 Aug15 ?        00:00:00 ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/python ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/black -q cask/bloom/testing/perf/main.py ...
+....
+xiaolon+ 4145870       1  0 Aug08 ?        00:00:00 ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/python ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/black -q cutlass/bloom/testing/helper/utils/get_failure_tests.py ...
+xiaolon+ 4145871       1  0 Aug08 ?        00:00:00 ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/python ${HOME}/.cache/trunk/tools/black/24.8.0-2fd8629f2f8f4479b194b6b0318f2282/bin/black -q cask/tools/checkers/client/client_checker.py ...
+
+进程数量非常大，需要把它们都kill掉，可以用下列命令辅助提取进程ID：
+ps -a | grep $USER | grep /black/ | cut -d' ' -f 2
+然后一次性杀掉
+$ kill -9 2321822  2321825  2321826  2321827  2321828  2321829  2321830 ...
+为了再次祸端重启，把 ${HOME}/.cache/trunk/ 这个目录删除掉 (从路径上看明显是一个缓存目录，不会影响系统正常运行)。
+
+删除这个目录时，可能会碰到 ${HOME}/.cache/trunk 内的某文件被锁定的情况，可以用下列命令查看哪个进程锁定了这个文件：
+fuser -v <file_path>
+fuser -v ${HOME}/.cache/trunk
+然后把锁定文件的进程全部kill掉，再删除这个目录。一定要确保这个目录被删除了
+
+当这样处理后，再用下列命令来检查当前用户的进程数量，确保其在合理的范围内：
+ps -a | grep $USER 
+
+
+如果这样还不行，把 VScode 重启一下，应该就可以了。
+
+如果还不行，就考虑卸载 VScode 重装一下。
+步骤参照 ： ${BASH_DIR}/app/vscode/bin/vscode_uninstall.sh
+
+

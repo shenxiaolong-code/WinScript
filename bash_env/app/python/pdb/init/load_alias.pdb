@@ -1,0 +1,38 @@
+!import os !print(f"\nloading {os.environ['HOME']}/bash_env/app/pdb/load_alias.pdb ...\n")
+
+# Print instance variables (usage "pi classInst")
+alias pi for k in %1.__dict__.keys(): print(f"%1.{k} = {%1.__dict__[k]}")
+
+# Print member of self
+alias ps pi self
+
+# Print the locals.
+alias pl p_ locals() local:
+
+# print the imported module file path , list module x
+# https://stackoverflow.com/questions/729583/getting-filefile-path-of-imported-module
+# print(os.path.abspath(my_module.__file__))
+# some of the modules would throw AttributeError when using __file__ attribute to find the path
+alias lmx2   print(os.path.abspath(%1.__file__))
+alias lmx3   %1.__path__
+alias lmx   utils.showModulePath(%1)
+
+# list python class source code
+# print os.path.dirname(os.path.abspath(inspect.getsourcefile(DummyClass))
+alias xxt   print os.path.dirname(os.path.abspath(inspect.getsourcefile(%1))
+
+# show global variable and value
+alias xxv   globals()
+
+# show local variable and value.  dir()  only show local variable name without value.
+alias dv    locals()
+
+alias rc    os.system(' find /${HOME}/bash_env/app/pdb -maxdepth 1 -type f -print ')
+
+import os
+alias cls   os.system('clear')
+
+!import os !print(f"\nDone : {os.environ['HOME']}/bash_env/app/pdb/load_alias.pdb ...\n")
+
+
+

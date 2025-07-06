@@ -1,0 +1,11 @@
+
+#!/bin/sh
+
+# 全局钩子的逻辑
+echo "执行全局 post-commit 钩子"
+
+# 检查并调用项目特定的 post-commit 钩子
+if [ -f .git/hooks/post-commit ]; then
+    echo "调用项目特定的 post-commit 钩子"
+    .git/hooks/post-commit
+fi

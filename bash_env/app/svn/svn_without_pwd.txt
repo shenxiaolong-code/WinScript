@@ -1,0 +1,27 @@
+
+检测当前的svn用的是哪个协议认证方式
+svn info | grep URL
+# URL: https://192.168.0.102/svn/xxxx
+# URL: svn+ssh://192.168.0.102/svn/xxxx
+
+
+对于 https 协议：
+打开 ~/.subversion/servers 文件，在 [global] 部分添加以下内容：
+# 如果存在就修改，没有就添加
+# 这将允许 SVN 存储明文密码。
+# 如果没有 ~/.subversion/servers 文件，可以手动创建。
+[global]
+store-plaintext-passwords = yes
+store-passwords = yes
+
+
+对于 svn+ssh 协议：
+# 生成 SSH 密钥对
+# 如果没有 ~/.ssh 目录，可以手动创建。
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+# 生成 SSH 密钥对
+ssh-keygen -t rsa
+# 生成 SSH 密钥对，并将公钥内容 rsa.pub 添加到服务器的 authorized_keys 文件中。
+# 测试 SSH 连接是否正常
+ssh -T xlshen@192.168.0.102

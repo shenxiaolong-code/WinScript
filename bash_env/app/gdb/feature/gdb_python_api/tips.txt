@@ -1,0 +1,21 @@
+
+
+可以在下面脚本中：
+${BASH_DIR}/app/gdb/feature/pretty_printer/enhance_callstack_bt_frame_filter.py:104
+${BASH_DIR}/app/gdb/cuda_gdb/hide_library_function_in_callstack_bt.py:104
+${EXT_DIR}/myDepency/gdb_pretty_printer/gdb_python_api/gdb_util/backtrace.py:63
+
+对于 device 函数，调用 fltC++ 来转换函数：
+def convert_name(name):
+    if re.match(r'^(_ZN7|_ZN4|__device_stub__ZN)', name):
+        print(f'\033[92m{inspect.stack()[0][1]}:{inspect.stack()[0][2]}\033[0m')
+        result = subprocess.check_output(['cu++filt', '-p', name]).decode('utf-8').strip()
+        return result
+    else:
+        return name
+
+可能高亮某些特殊的函数：比如各种关键入口函数
+entry_pattern = r'main|xxxx|.*::TestBody|.*::launch'
+if re.match(entry_pattern, name):
+    print(f'\033[93m{inspect.stack()[0][1]}:{inspect.stack()[0][2]}\033[0m')
+    name = f'\033[91m {name} \033[0m'

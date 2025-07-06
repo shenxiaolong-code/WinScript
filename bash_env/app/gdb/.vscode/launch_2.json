@@ -1,0 +1,31 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+    {
+        "name": "(gdb) Launch",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/install/bin/cask-sdk-cask-tester",
+        "args": ["run","sm90_xmma_gemm_f16f16_f16f32_f32_tn_n_tilesize64x64x64_stage4_gmmastage3_warpgroupsize1x1x1_hgmma64x64x16","--a.batches","1","--a.rows","256","--b.rows","64","--b.cols","256","--no_apply_relu","--with_bias","--array_count","2","--fill","range(5)","--ref_check_mode","1","--iterations","1","--warm_ups","0","--valpha.stride.batches","0","--bias.stride.batches","0","--alpha_scaling.scale","0.1","--beta_scaling.scale","1","--skyline","16","--cga_tile.m","2","--cga_tile.n","2","--cga_tile.k","1"],
+        "stopAtEntry": false,
+        "miDebuggerArgs": "-q -ex quit; wait() { fg >/dev/null; }; /bin/gdb -q --interpreter=mi",
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "setupCommands": [
+            {
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            },
+            {
+                "description":  "Set Disassembly Flavor to Intel",
+                "text": "-gdb-set disassembly-flavor intel",
+                "ignoreFailures": true
+            }
+        ],
+}

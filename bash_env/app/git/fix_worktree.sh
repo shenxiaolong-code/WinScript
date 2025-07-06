@@ -1,0 +1,5 @@
+
+git worktree prune
+rd ${EXT_DIR}/repo/cask_root/kernel_store/worktree_update_simt_supported_range_to_unbound update_simt_supported_range_to_unbound
+md ${EXT_DIR}/repo/cask_root/kernel_store/worktree_update_simt_supported_range_to_unbound update_simt_supported_range_to_unbound
+git worktree add -f ${EXT_DIR}/repo/cask_root/kernel_store/worktree_update_simt_supported_range_to_unbound update_simt_supported_range_to_unbound

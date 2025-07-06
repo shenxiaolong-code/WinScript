@@ -1,0 +1,17 @@
+
+
+# jump/jmp to address
+
+>>> info registers rip
+rip            0x501a0e            0x501a0e <cask6::tester::FunctionallyRefines<cask6::TensorAttributes>(cask6::Span<cask6::TensorAttributes const>, cask6::Span<cask6::TensorAttributes const>)+132 at ${EXT_DIR}/repo/kernel_store/cask/tools/tester/src/tester_util.cpp:404>
+
+>>> info line ${EXT_DIR}/repo/kernel_store/cask/tools/tester/src/tester_util.cpp:404
+Line 404 of "${EXT_DIR}/repo/kernel_store/cask/tools/tester/src/tester_util.cpp" starts at address 0x501a0e <_ZN5cask66tester19FunctionallyRefinesINS_16TensorAttributesEEEbNS_4SpanIKT_EES6_+132 at ${EXT_DIR}/repo/kernel_store/cask/tools/tester/src/tester_util.cpp:404> and ends at 0x501a15 <_ZN5cask66tester19FunctionallyRefinesINS_16TensorAttributesEEEbNS_4SpanIKT_EES6_+139 at ${EXT_DIR}/repo/kernel_store/cask/tools/tester/src/tester_util.cpp:402>.
+
+>>> info line ${EXT_DIR}/repo/kernel_store/cask/tools/tester/src/tester_util.cpp:403
+Line 403 of "${EXT_DIR}/repo/kernel_store/cask/tools/tester/src/tester_util.cpp" starts at address 0x5019d3 <_ZN5cask66tester19FunctionallyRefinesINS_16TensorAttributesEEEbNS_4SpanIKT_EES6_+73 at ${EXT_DIR}/repo/kernel_store/cask/tools/tester/src/tester_util.cpp:403> and ends at 0x5019e9 <_ZN5cask66tester19FunctionallyRefinesINS_16TensorAttributesEEEbNS_4SpanIKT_EES6_+95 at ${EXT_DIR}/repo/kernel_store/cask/tools/tester/src/tester_util.cpp:403>.
+
+# set i=6
+set $rip = 0x5019d3
+# jump 0x5019d3                     # not working
+

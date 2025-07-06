@@ -1,0 +1,166 @@
+对于C++开发人员来说，windows 转 linux C++ 开发， 主要有三个方面的不同
+1. 代码编辑器的差别
+2. 编译项目的差别
+3. 工具脚本的差别
+
+而要熟悉这些差别，对于个人来说，最适宜的就是在windows上有一套linux的开发环境，即可以享受windows的便利，又可以熟悉linux的开发环境。
+这个环境就是 ： virtualbox + ubuntu + vscode remote-ssh
+这套环境不同于 WSL 或者 git bash ，它是一个完整的真实linux开发环境，而不是一个模拟环境。
+
+需要的工具：
+1. virtualbox
+2. ubuntu 镜像
+3. vscode
+
+建议的windows环境： 高性能的电脑 和 专业版的 Windows 11 系统（因为需要安装虚拟机软件）
+工具下载或者收集：
+1. [virtualbox](https://www.virtualbox.org/)
+   virtualbox 的好处是其开源免费，简单易用，并且支持多种操作系统。下载地址：
+   https://download.virtualbox.org/virtualbox/7.1.10/VirtualBox-7.1.10-169112-Win.exe
+2. utuntn : https://releases.ubuntu.com/22.04/
+   推荐下载 Ubuntu 22.04 LTS 64bit，这是一个长期支持版本，稳定性好。
+   并且建议下载服务器版，不要下载桌面版，因为服务器版更轻量，脱离图形界面更接近真实的开发环境。
+   https://releases.ubuntu.com/22.04/ubuntu-22.04.5-live-server-amd64.iso 
+   [ubuntu 桌面版镜像](https://ubuntu.com/download/desktop)
+3. [vscode](https://code.visualstudio.com/)
+
+
+安装配置步骤
+1. 安装 virtualbox
+   双击下载的安装包，按照提示使用管理员权限安装即可。安装完成后，打开 virtualbox。
+2. 创建虚拟机
+   在 virtualbox 中，点击“新建”
+2.1 输入虚拟机名称（如“Ubuntu Server”），选择类型为“Linux”，subtype为Ubunt，版本为“Ubuntu (64-bit)”。
+   虚拟光盘 : 选择“使用现有的虚拟光盘文件”，然后浏览到下载的 Ubuntu 镜像文件（ubuntu-22.04.5-live-server-amd64.iso）。
+   注意： 当指定虚拟光盘时，那个自动安装才有效。 首次接触时，建议自动安装，这样可以避免手动安装的复杂性。（我首次安装时，一直碰到找不到网络的情况）
+2.2 自动安装中，设置自定义的
+   用户名，密码，重复密码，主机名等。并且勾选增强功能。
+   这儿假设用户名是 xlshen
+   勾选增强功能是为了能够直接共享外面的文件夹到虚拟机中。
+   注意：如果不勾选增强功能，虚拟机将无法访问主机的文件系统。
+2.3 可选优化配置：
+   选择“VDI”格式，动态分配存储空间。
+   然后分配合适的内存（建议至少2GB），创建虚拟硬盘（建议至少20GB），
+   完成后点击“创建”。 
+   注意：上面创建的配置，在 配置虚拟机 中都可以修改的。
+
+3. 修改虚拟机配置
+   在虚拟机列表中，选中刚创建的虚拟机，点击“设置”。
+3.1 必须的配置 
+   在“存储”选项卡中，点击“空的光驱”，选择下载的 Ubuntu 镜像文件（ubuntu-22.04.5-live-server-amd64.iso）。
+   在“网络”选项卡中，选择“桥接适配器”，这样虚拟机可以直接使用主机的网络连接。 否则可能找不到网络。
+   在“共享文件夹”选项卡中，添加一个共享文件夹（如“D:\vbox\scratch”），并勾选“自动挂载”和“固定分配”。
+   假设指定的虚拟虚拟环境中的挂载点名称是： scratch
+   这样可以在虚拟机中访问主机的文件系统，方便文件传输。
+3.2 可选优化配置：
+   在“系统”选项卡中，取消勾选“软盘”。
+   在“显示”选项卡中，分配合适的视频内存（建议128MB）。
+4. 启动虚拟机
+   在虚拟机列表中，选中刚创建的虚拟机，点击“启动”。虚拟机将从 Ubuntu 镜像启动，进入安装界面。
+   这里的教程是基于自动安装的方式，自动安装会自动配置网络和用户等信息，适合初学者。
+   等待自动安装完成后，虚拟机将自动重启。然后手工输入前面设置的用户名和密码登录。
+4.1. 如果前面没有设置自动安装，虚拟机启动后，将进入手动安装界面。
+   手动安装界面支持使用上下光标键选择菜单项，使用回车键确认选择。
+   在安装界面，选择“Install Ubuntu Server”。按照提示选择语言、键盘布局、网络配置等。
+   完成后，选择“安装第三方软件”，然后选择“使用整个磁盘”进行安装。
+   确认后，开始安装 Ubuntu。安装完成后，重启虚拟机并移除安装介质。
+
+5. 配置 Ubuntu linux 环境
+5.1 获取 Ubuntu linux 环境 ip 地址
+   ip a   # inet 192.168.0.103/24 metric ...
+   显示其IPv4地址是 192.168.0.103
+   前面设置的用户名是 xlshen，则这儿的远程登陆名就是 : xlshen@192.168.0.103
+5.2 在 Windows 上测试 SSH 连接
+   在 Windows 上打开命令提示符，输入以下命令测试 SSH   
+   ssh xlshen@192.168.0.103   # ssh: connect to host 192.168.0.103 port 22: Connection refused
+   可见 Ubuntu linux 环境的 SSH 服务没有启用。这是一个基本服务，我们需要手动安装和配置。
+
+5.3 安装常用工具
+   在虚拟机中，打开终端，输入以下命令更新软件包列表
+5.3.1 启用 ssh 服务
+   # enable ssh in linux
+   sudo apt update
+   sudo apt install openssh-server
+   sudo systemctl enable ssh  # 设置开机自启
+   sudo systemctl start ssh   # 启动 ssh 服务
+   sudo systemctl status ssh  # 查看 ssh 服务状态，确认 SSH 服务正在运
+   测试 SSH 连接 ： 在 Windows 上打开命令提示符，输入以下命令测试 SSH
+   ssh xlshen@192.168.0.103   # OK
+
+5.3.2 安装解压缩工具
+   这些工具在后面的配置中都会用到，这儿提前安装。
+   sudo apt update
+   sudo apt install bzip2 tar unzip -y
+
+5.3.3 安装增强功能: 导入外部文件夹
+5.3.3.1 切换到当前的虚拟机窗口，安装增强功能（Guest Additions）
+   在VirtualBox窗口菜单选择“设备”→“插入Guest Additions CD镜像”。
+   这将挂载增强功能的 ISO 镜像到虚拟机中。
+5.3.3.2 把光驱设备映射到 /mnt 目录
+   在虚拟机中，打开终端，输入以下命令挂载光驱设备：
+   sudo mount /dev/cdrom /mnt          # 挂载光驱, 报告只读信息，这是正常的
+   sudo /mnt/VBoxLinuxAdditions.run    # 运行增强功能安装脚本
+   这将安装增强功能，包括共享文件夹、剪贴板共享等。
+   安装完成后，重启虚拟机。
+
+5.3.4 mount 主机的共享文件夹到虚拟机
+5.3.4.2.  手动挂载共享文件夹（假设前面设置的挂载点共享名为 scratch ）：
+5.3.4.2.1 创建挂载点：
+          sudo mkdir /mnt/scratch
+5.3.4.2.2 挂载共享文件夹：
+          sudo mount -t vboxsf scratch /mnt/scratch
+5.3.4.2.3  之后即可在 /mnt/scratch 访问主机共享内容
+          ls /mnt/scratch
+5.3.4.2.4 如遇权限问题，可将用户加入 vboxsf 组：
+          sudo usermod -aG vboxsf $USER
+    那么现在虚拟机中 /mnt/scratch 就等同于主机的 D:\vbox\scratch 文件夹，其目录数据是实时同步的。
+    注意：如果没有安装增强功能，可能无法挂载共享文件夹。   
+
+5.3.5 安装常用开发工具
+   ```bash
+   sudo apt update
+   sudo apt upgrade -y
+   sudo apt install build-essential cmake gdb subversion git vim zsh Python Clang -y
+   ```
+   这将安装编译工具(cmake)、调试器(dbg)、版本控制工具(svn.git)和编辑器(vim), Python, clang等。
+
+6 配置 VSCode 远程开发
+6.1 在 Windows 上安装 VSCode
+   下载并安装 [Visual Studio Code](https://code.visualstudio.com/)
+6.2 安装 Remote-SSH 插件
+   打开 VSCode，点击左侧扩展图标，搜索并安装 "Remote - SSH" 插件。
+6.3 配置 SSH 连接
+   在 VSCode 中，按下 `Ctrl + Shift + P` 打开命令面板，输入 "Remote-SSH: Add New SSH Host"。
+   输入连接字符串 xlshen@192.168.0.103
+   然后按提示输入 SSH 密码 ，在提示的远程平台环境中，选择 "Linux"。
+6.4 正常情况下，vscode就连接到了远程的虚拟机中。
+   建议： 在 vscode 连接前，一定要先用 命令行测试 SSH 连接是否正常:
+   ssh xlshen@192.168.0.103  # 只有在测试成功的情况下，才可以进行vscode的远程连接。
+6.5 在 vscode 的首次远程 remote-ssh 连接中，其会自动在虚拟机中远程安装远程的vscode-server。
+   这需要一些时间，等待安装完成后，VSCode 将自动连接到远程虚拟机。
+   安装过程中，我们可以点击提示信息中的 details 链接，查看安装日志。
+   安装过程中，会创建 ~/.vscode-server 目录，并在其中安装远程服务器组件。 我们也可以在单独的ssh终端中查看这个目录及其内容。
+   安装 vscode-server 的原理： 通过ssh在linux中直接运行安装脚本，并解析安装的log来确定安装是否成功。
+6.6 安装 vscode-server 的过程中，可能会出现假死现象，我们只要通过单独的ssh终端中查看~/.vscode-server 目录，只要其中出了下面的几个目录，就可以退出vscode远程连接，然后重试  `Ctrl + Shift + P` 打开命令面板，输入 "Remote-SSH: Add New SSH Host" =>  xlshen@192.168.0.103 即可正常连接远程虚拟机了
+    code-2901c5ac6db8a986a5666c3af51ff804d05af0d4 cli data extensions
+
+7  免密登陆远程虚拟机
+7.1  在 Windows 上打开命令提示符，输入以下命令生成 SSH 密钥对：
+     ssh-keygen -t rsa -b 4096 -C "vbox-ssh-key"
+     这将生成一个 RSA 密钥对，默认保存在 ：
+     %USERPROFILE%\.ssh\id_rsa
+     %USERPROFILE%\.ssh\id_rsa.pub
+7.2 将公钥复制到虚拟机中：
+    在vscode中，打开 ${HOME}/.ssh/authorized_keys 文件 (比如 ：${HOME}/.ssh/authorized_keys ),把 %USERPROFILE%\.ssh\id_rsa.pub 的内容添加到该文件中
+7.3 配置config文件
+    在vscode中，打开 %USERPROFILE%\.ssh\config 文件 (比如 ：C:\Users\xiaolong\.ssh\config ),添加以下内容：
+    Host 192.168.0.103
+      HostName 192.168.0.103
+      User xlshen
+      IdentityFile ~/.ssh/id_rsa
+      Port 22
+7.4 测试免密登录
+    在 Windows 上打开命令提示符，输入以下命令测试 SSH 连接：
+    ssh xlshen@92.168.0.103
+    如果配置正确，将直接登录到虚拟机，而不需要输入密码。
+    在vscode中，打开命令面板，输入 "Remote-SSH: Connect to Host"，选择 "xlshen@192.168.0.103"，正常情况下不再需要输入密码，就可以直接连接到远程虚拟机了。   

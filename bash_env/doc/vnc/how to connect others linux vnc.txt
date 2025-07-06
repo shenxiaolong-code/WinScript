@@ -1,0 +1,17 @@
+lsf_bsub -Is -q regr_high -R "rusage[mem=15000] select[type==RHEL7_64]" -P ariel-ver-soc -J VNC vncviewer
+You could use above command to start the vnc with lsf
+
+连接某些 linux vnc : 先登陆 ATLETX server 
+
+连接印度同事的vnc :
+    lsf_bsub -Is -q regr_high -R "rusage[mem=15000] select[type==RHEL7_64]" -P ariel-ver-soc -J VNC vncviewer
+
+    在连接对话框中输入：
+    VNC:lhipc52:1
+    PWD:test123
+
+连接其它cp block的linux vnc :
+    vncviewer
+
+    在连接对话框中输入：
+    fand08:35,123456 

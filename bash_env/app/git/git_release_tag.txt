@@ -1,0 +1,31 @@
+
+
+# checkout the release tag : release/cask/6.1  ( needn't prefix origin/ )
+# don't use --single-branch, it will cause : can't create a local branch based on a remote branch ( e.g. pick-cherry-pick-branch , cherry-pick-f71f9b2f )
+# no local repo :
+# git clone -b release/cask/6.1     ssh://git@gitlab-master.nvidia.com:12051/dlarch-fastkernels/dynamic-kernel-generator.git    tag_dkg_release_cask61
+# git clone -b release/dkg/25.02    ssh://git@gitlab-master.nvidia.com:12051/dlarch-fastkernels/dynamic-kernel-generator.git    tag_dkg_release_2502
+# git clone -b release/cutlass-dsl-4.0-ctk-12.9    ssh://git@gitlab-master.nvidia.com:12051/dlarch-fastkernels/dynamic-kernel-generator.git    cutlass_dsl_40_ctk_129
+
+# exist local repo : (suggested)
+# git checkout release/cask/6.1
+# mdwt release_tag_cask61 release/cask/6.1
+# mdwt cutlass_dsl_40_ctk_129 release/cutlass-dsl-4.0-ctk-12.9
+
+# update the release tag :
+# git fetch origin
+# git reset --hard origin/release/cask/6.1
+
+# clone_git_release_tag  release/cask/6.1
+function clone_git_release_tag(){
+    local release_tag=$1
+    local remote_repo_path=$2
+    local local_repo_path=${3:-$(pwd -L)/tag_$(echo ${release_tag##*/} | sed "s#/#_#g" | sed "s#\.##g")}
+    dumpcmd "git clone -b ${release_tag} ${remote_repo_path} ${local_repo_path}"
+    git clone -b ${release_tag} ${remote_repo_path} ${local_repo_path}
+    dumpinfo "remove the upstream branch"
+    git branch --unset-upstream 
+}
+alias gtag=clone_git_release_tag
+
+

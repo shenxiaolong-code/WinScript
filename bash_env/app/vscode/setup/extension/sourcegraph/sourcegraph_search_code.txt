@@ -1,0 +1,26 @@
+
+
+sourcegraph -- quickly search source code
+https://sourcegraph.com/users/xlshen-bdnwf/settings/tokens
+
+web search :
+https://sourcegraph.com/search
+vscode extension:
+https://marketplace.visualstudio.com/items?itemName=sourcegraph.sourcegraph
+
+
+username :
+xlshen-bdnwf
+
+token:
+sgp_fd1b4edb60bf82b8_4d09e245233aa306650cda633b7ad1c726b202c2
+
+
+usage example:
+curl \
+  -H 'Authorization: token sgp_fd1b4edb60bf82b8_4d09e245233aa306650cda633b7ad1c726b202c2' \
+  -d '{"query":"query { currentUser { username } }"}' \
+  https://sourcegraph.com/.api/graphql
+
+
+

@@ -1,0 +1,51 @@
+
+# ln -s ${HOME}/bash_env/app/git/gitconfig  ${HOME}/.gitconfig
+# open this file by cmdline : git config --global -e
+
+[user]
+	name = xiaolong shen
+	email = xiaolongs@nvidia.com
+
+[core]
+	editor = cursor --wait
+	pager = 
+	whitespace = trailing-space,space-before-tab
+[diff]
+	tool = vscode
+[difftool "vscode"]
+	cmd = "cursor --wait --diff  "
+[merge]
+	tool = diffmerge
+[mergetool "vscode"]
+  cmd = cursor --wait $MERGED
+
+
+[mergetool "diffmerge"]
+	trustexitcode = true
+[difftool "mydiff"]
+	# cmd = /usr/bin/diff \"$LOCAL\" \"$REMOTE\"
+	cmd = cursor --diff \"$LOCAL\" \"$REMOTE\"
+[alias]
+	root = rev-parse
+	rebase-continue = !GIT_EDITOR=true git rebase --continue
+[credential]
+	helper = store
+[pager]
+	stash = false
+	config = false
+	branch = less -S
+[pull]
+	rebase = true
+[advice]
+	skippedCherryPicks = false
+[http]
+	sslverify = false
+[safe]
+	directory = ${EXT_DIR}/repo/dkg_root/dynamic-kernel-generator
+	directory = ${EXT_DIR}/repo/dkg_root/debug_dkg
+	directory = ${EXT_DIR}/repo/dkg_root/debug_setup_public_llvm_ci
+	directory = ${EXT_DIR}/repo/dkg_root/dkg_integrate_mono_kernel_store
+[rerere]
+	enabled = true
+[apply]
+	whitespace = fix
