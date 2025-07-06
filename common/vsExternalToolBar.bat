@@ -83,7 +83,7 @@ goto :eof
 ::******************************git section**************************************************************************
 
 :log.git
-call :impl call %WinScriptPath%\..\..\setupEnvironment\gitCmdWrapper\logUI.cmd %*
+call :impl call %myWinScriptPath%\..\..\setupEnvironment\gitCmdWrapper\logUI.cmd %*
 goto :eof
 
 :diff.git
@@ -93,7 +93,7 @@ call :impl start TortoiseGitProc.exe /command:repostatus /path:"%ItemPath%"
 goto :eof
 
 :blame.git
-call :impl call %WinScriptPath%\..\..\setupEnvironment\gitCmdWrapper\blame.cmd %*
+call :impl call %myWinScriptPath%\..\..\setupEnvironment\gitCmdWrapper\blame.cmd %*
 goto :eof
 
 :revert.git
@@ -108,7 +108,7 @@ goto :eof
 
 ::******************************svn section**************************************************************************
 :log.svn
-call :impl call %WinScriptPath%\..\..\setupEnvironment\gitCmdWrapper\logUI.cmd
+call :impl call %myWinScriptPath%\..\..\setupEnvironment\gitCmdWrapper\logUI.cmd
 goto :eof
 
 :diff.svn
@@ -117,7 +117,7 @@ start TortoiseGitProc.exe /command:repostatus /path:"%ItemPath%"
 goto :eof
 
 :blame.svn
-call %WinScriptPath%\..\..\setupEnvironment\gitCmdWrapper\blame.cmd %*
+call %myWinScriptPath%\..\..\setupEnvironment\gitCmdWrapper\blame.cmd %*
 goto :eof
 
 :revert.svn

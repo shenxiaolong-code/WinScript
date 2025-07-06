@@ -5,13 +5,13 @@
 .foreach /ps 2 ( var { .echo search command } ) 
 {
 .echo available extend cmd:
-.shell -ci "*" find /i "${$arg1}" ${WinScriptPath}\Windbg\script\test\extCmds.txt ;
+.shell -ci "*" find /i "${$arg1}" ${myWinScriptPath}\Windbg\script\test\extCmds.txt ;
 }
 
 .foreach /ps 2 ( var { .echo search command } ) 
 {
 .echo available mex cmd:
-.shell -ci "*" find /i "${$arg1}" ${WinScriptPath}\Windbg\script\test\mexCmds.txt ;
+.shell -ci "*" find /i "${$arg1}" ${myWinScriptPath}\Windbg\script\test\mexCmds.txt ;
 }
 
 .echo

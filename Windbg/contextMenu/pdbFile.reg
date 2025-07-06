@@ -19,34 +19,34 @@ Windows Registry Editor Version 5.00
 @="read srcsrv info (pdbstr.exe)"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\01_readPdb\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  readPdb  \"%V\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  readPdb  \"%V\""
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\02_writePdb]
 @="write srcsrv info (pdbstr.exe)"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\02_writePdb\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  writePdb \"%V\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  writePdb \"%V\""
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\03_rawInfo]
 @="read raw indexed source file list (srctool.exe)"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\03_rawInfo\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  pdbInfo \"%V\"  raw"
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  pdbInfo \"%V\"  raw"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\04_extractSrc]
 @="extract src file"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\04_extractSrc\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  pdbInfo \"%V\" src"
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  pdbInfo \"%V\" src"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\05_readGitStream]
 @="read git source index info"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\05_readGitStream\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  pdbInfo \"%V\"  gitStream"
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  pdbInfo \"%V\"  gitStream"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\06_dbhTool]
 @="investigate pdb file by dbh.exe"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\pdbFileNode\shell\06_dbhTool\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dbhCheck \"%V\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  dbhCheck \"%V\""

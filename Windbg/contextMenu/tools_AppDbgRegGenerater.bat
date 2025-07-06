@@ -95,23 +95,23 @@ goto :eof
 :DebugAppLaunch.Generate.configPath
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 rem config WinScript path
-set "WinScriptPath=%~f0"
-set WinScriptPath=%WinScriptPath:\Windbg\=&rem;%
-where tools_userInput.bat 1>nul 2>nul || set "path=%WinScriptPath%\common;%path%"
-call tools_message.bat enableDebugMsg "%~0" "WinScriptPath=%WinScriptPath%"
+set "myWinScriptPath=%~f0"
+set myWinScriptPath=%myWinScriptPath:\Windbg\=&rem;%
+where tools_userInput.bat 1>nul 2>nul || set "path=%myWinScriptPath%\common;%path%"
+call tools_message.bat enableDebugMsg "%~0" "myWinScriptPath=%myWinScriptPath%"
 rem config windbg.exe path
 call :DebugAppLaunch.Generate.configPath.windbg %*
 call tools_message.bat enableDebugMsg "%~0" "windbgPath=%windbgPath%"
 call tools_reg.bat makeRegPath "%windbgPath%"  windbgPath
 rem config theme file path
 if defined windbgThemePath%~n1 call set "windbgThemePath=%%windbgThemePath%~n1%%"
-if not defined windbgThemePath set "windbgThemePath=%WinScriptPath%\Windbg\setup\layout_theme\dark_theme.wew"
+if not defined windbgThemePath set "windbgThemePath=%myWinScriptPath%\Windbg\setup\layout_theme\dark_theme.wew"
 call tools_error.bat checkFileExist "%windbgThemePath%" "%~f0" configPath_mark1
 call tools_message.bat enableDebugMsg "%~0" "windbgThemePath=%windbgThemePath%"
 call tools_reg.bat makeRegPath "%windbgThemePath%"  windbgThemePath
 rem config start file path
 if defined windbgScriptPath_%~n1 call set "windbgScriptPath=%%windbgScriptPath_%~n1%%"
-if not defined windbgScriptPath set "windbgScriptPath=%WinScriptPath%\Windbg\script\startCmds.dbg"
+if not defined windbgScriptPath set "windbgScriptPath=%myWinScriptPath%\Windbg\script\startCmds.dbg"
 call tools_error.bat checkFileExist "%windbgScriptPath%" "%~f0" configPath_mark2
 call tools_message.bat enableDebugMsg "%~0" "windbgScriptPath=%windbgScriptPath%"
 call tools_reg.bat makeRegPath "%windbgScriptPath%"  windbgScriptPath

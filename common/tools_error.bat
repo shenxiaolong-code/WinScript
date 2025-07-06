@@ -25,6 +25,15 @@ goto :eof
 @echo [%~nx0] Run test case [%0 %*]
 
 echo.
+echo test call :setLastErrorText "test '%~f0'"
+call :setLastErrorText "test '%~f0"
+
+echo.
+echo test call :getLastErrorText tmpLastErr
+call :getLastErrorText tmpLastErr
+if not defined tmpLastErr call tools_message.bat errorMsg "Fails to test  DOS API getLastErrorText."
+
+echo.
 echo test call :checkFileExist "%~f0"
 call :checkFileExist "%~f0"
 
@@ -60,11 +69,45 @@ echo test call :showLineInfo "%~f0" myUnique
 call :showLineInfo "%~f0" myUnique
 
 echo.
-echo test call :checkEnvVarDefine WinScriptPath "%~f0" WinScriptPathmark
-call :checkEnvVarDefine WinScriptPath "%~f0" WinScriptPathmark
+echo test call :checkEnvVarDefine myWinScriptPath "%~f0" myWinScriptPathmark
+call :checkEnvVarDefine myWinScriptPath "%~f0" myWinScriptPathmark
+
+echo.
+echo test call :checkLabel checkLabel "%~f0"
+call :checkLabel checkLabel "%~f0" bLabelExist 
+if      defined bLabelExist echo label "checkLabel" exists
+if not  defined bLabelExist echo label "checkLabel" doexn't exists
+echo test call :checkLabel checkLabel000 "%~f0"
+call :checkLabel checkLabel000 "%~f0" bLabelExist
+if      defined bLabelExist echo label "checkLabel000" exists
+if not  defined bLabelExist echo label "checkLabel000" doexn't exists
 
 goto :eof
 
+::[DOS_API:setLastErrorText] set last error and popup possible error text. it is used for the scenario which allown fails without block next action.
+::                           it is used to clear last error text also via empty parameter. e.g. call :setLastErrorText ""
+::call e.g  : call :setLastErrorText <errorText>
+::            call :setLastErrorText "WOW, error becasue of invalid path."
+:setLastErrorText
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set "_lastErrorText2=%_lastErrorText%"
+set "_lastErrorText=%~1"
+if defined _lastErrorText if defined _Debug call tools_message.bat errorMsg "%_lastErrorText%"
+goto :eof
+
+::[DOS_API:getLastErrorText] get last error text message. after this API is invoked, the error state is cleared.
+::call e.g  : call :getLastErrorText <errorTextVar>
+::            call :getLastErrorText tmpLastErr
+::			  set "tmpLastErr=WOW, error becasue of invalid path."
+:getLastErrorText
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if defined _Debug if not defined _lastErrorText call tools_message.bat warningMsg "no last error is found."
+set "%~1=%_lastErrorText%"
+set "_lastErrorText="
+:: easy use : call :getLastErrorText err2Return && goto :eof 
+if 		defined %~1 	exit /b 1
+if not 	defined %~1 	exit /b 0
+goto :eof
 
 ::[DOS_API:checkCallerInfo] show caller information, first parameter is mini expected parameter number. last two parameters is possible file and line No info.
 ::call e.g  : call :checkCallerInfo totalParamNum  Variadic "%~f0" "uniqueMark"
@@ -98,6 +141,24 @@ call :checkFileExist "%~f1"
 call tools_txtFile.bat ShowLineNo "%~f1" "%~2"
 goto :eof
 
+::[DOS_API:checkLabel] check whether the label exists in specified batch files.
+::call e.g  : call :checkLabel labelNameWithoutPrefix  filePath bRet
+::          : call :checkLabel "myLable"  "%~f0" bRet
+::          : call :checkLabel "myLable"  "C:\work\OneDrive\work_skills\svnRepo\shenxiaolong\core\WinScript\common\tools_error.bat" bRet
+::          : set bRet=1
+:checkLabel
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set %~3=
+set "_tempLabelName=%~1"
+if not defined _tempLabelName goto :eof
+if defined _Debug for /f "usebackq tokens=*" %%i in  ( ` findstr /i /r /c:"^[ ]*:%_tempLabelName%[ ]*$" "%~f2" ` ) do echo found: "%%i"
+for /f "usebackq tokens=*" %%i in  ( ` findstr /i /r /c:"^[ ]*:%_tempLabelName%[ ]*$" "%~f2" ` ) do if not defined %~3 set %~3=1
+:: echo findstr /i /r /c:"^[ ]*:%_tempLabelName%$" "%~f2"
+:: findstr /i /r /c:"^[ ]*:%_tempLabelName%[ ]*$" "%~f2" >nul 2>nul && exit /b 0
+:: it is NOT reliable to check %errorLevel% by : findstr /i /r /c:"^[ ]*:%_tempLabelName%[ ]*$" "%~f2" >nul 2>nul & exit /b %errorLevel%
+::                                               call tools_error.bat checkLabel "myLable"  "%~f0" || goto :noLabelError
+::                                               call tools_error.bat checkLabel "myLable"  "%~f0" && call :myLable
+goto :eof
 
 ::[DOS_API:checkSupportedCmd] check whether the cmd is in supported cmd set.
 ::call e.g  : call :checkSupportedCmd curCmd  cmdSet
@@ -208,7 +269,7 @@ goto :eof
 if defined NotAdmin goto :eof
 net session 1>nul 2>nul
 if not %errorLevel%==0 (
-call colorTxt.bat 0b "MUST run this script with administrator privilege"
+call colorTxt.bat cyan_L "MUST run this script with administrator privilege"
 echo.
 ::call tools_message.bat errorMsg "MUST run this script with administrator privilege"
 call :runAsAdmin %*
@@ -217,7 +278,7 @@ goto :eof
 
 :runAsAdmin
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call colorTxt.bat 0c "re-run command with administrator privilege automatically:" & echo.
+call colorTxt.bat red_L "re-run command with administrator privilege automatically:" & echo.
 echo %*
 call tools_string.bat toLowerVar "%~x1" _tmpLowerExt
 call :checkSupportedCmd "%_tmpLowerExt%" ";.bat;.cmd;.exe;.com;" "%~f0" "runAsAdminMark"
@@ -234,7 +295,7 @@ goto :eof
 :runAsAdmin2
 rem use powershell to get administrator privilege
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call colorTxt.bat 0c "re-run command with administrator privilege automatically:" & echo.
+call colorTxt.bat red_L "re-run command with administrator privilege automatically:" & echo.
 echo %*
 powershell start -verb runas %*
 exit
@@ -278,7 +339,7 @@ goto :eof
 
 ::[DOS_API:checkEnvVarDefine] check whether environment is defined
 ::call e.g  : call :checkEnvVarDefine envVar
-::e.g.        call :checkEnvVarDefine WinScriptPath
+::e.g.        call :checkEnvVarDefine myWinScriptPath
 :checkEnvVarDefine
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call :checkEmptyParam %*

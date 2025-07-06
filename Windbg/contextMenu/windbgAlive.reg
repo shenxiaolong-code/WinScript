@@ -22,65 +22,65 @@ Windows Registry Editor Version 5.00
 @="debug running app by app name"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\01_dbgAppName\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dbgAppName \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  dbgAppName \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\02_dbgNewInstance]
 @="debug new instance"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\02_dbgNewInstance\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dbgNewInstance \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  dbgNewInstance \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\03_genDump]
 @="generate dump file (.dmp)"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\03_genDump\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  genDump \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  genDump \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\04_collectSymManifest]
 @="collect symbol list"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\exefile\shell\04_collectSymManifest\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\collectOfflineSymbols\\tools\\tools_collectOfflineSymbols.bat  collectSymbolList \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\collectOfflineSymbols\\tools\\tools_collectOfflineSymbols.bat  collectSymbolList \"%1\""
 
 ; -------------------------Directory---------------------------------
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\00_windbgEnv]
 @="open windbg command environment"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\00_windbgEnv\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  loadEnvWindbg \"%V\" "
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  loadEnvWindbg \"%V\" "
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\001_vsEnv]
 @="open visul studio command environment"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\001_vsEnv\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_vs.bat  loadEnvVsMenu \"%V\" "
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_vs.bat  loadEnvVsMenu \"%V\" "
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\002_vsEnv]
 @="generate .sln file by CMake - CMakeLists.txt"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\002_vsEnv\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_vs.bat  CMakeGen \"%V\" "
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_vs.bat  CMakeGen \"%V\" "
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\01_dbgPid_UI]
 @="debug running app by PID"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\01_dbgPid_UI\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dbgPid"
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  dbgPid"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\02_dbgAppName_UI]
 @="debug running app by app name"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\02_dbgAppName_UI\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dbgAppName"
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  dbgAppName"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\03_dbgNewInstance_UI]
 @="debug new instance from command line"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\03_dbgNewInstance_UI\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dbgNewInstance"
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  dbgNewInstance"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\04_reduceCache]
 @="reduce symbol cache"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\Directory\shell\04_reduceCache\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\setup\\reduceSymCache.bat "
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\setup\\reduceSymCache.bat "

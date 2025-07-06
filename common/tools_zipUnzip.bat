@@ -69,7 +69,8 @@ goto :eof
 
 :unzip.gz
 @where "%~nx0" || set "path=%~dp0;%path%"
-tar.exe -C "%_tmpOutputDir%" -xzf "%~fs1"
+:: tar.exe -C "%_tmpOutputDir%" -xzf "%~fs1"
+call %myWinScriptPath%\common\bin\7z.exe e "%~fs1" -o"%_tmpOutputDir%"
 goto :eof
 
 :unzip.cab

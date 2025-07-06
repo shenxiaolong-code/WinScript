@@ -4,6 +4,7 @@
 @if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
+where "tools_message.bat" 1>nul 2>nul || set "path=%~dp0..;%path%"
 
 rem convert file list to html format , and generate one html file
 rem uage : txt2html.bat inputlist output_file_name
@@ -53,7 +54,11 @@ goto :eof
 :processListFile.oneFile
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call tools_message.bat enableDebugMsg "%~0" "^<A href='%~fs1'^>%~nx1^</A^>^&nbsp;^&nbsp;^&nbsp;^&nbsp;^&nbsp;^&nbsp;^&nbsp;^&nbsp; ^>^> '%outputhtml%'"
-@echo ^<A href="%~fs1"^>%~nx1^</A^>^&nbsp;^&nbsp;^&nbsp;^&nbsp;^&nbsp;^&nbsp;^&nbsp;^&nbsp; >> "%outputhtml%"
+:: @echo ^<A href="%~fs1"^>%~f1^</A^>^&nbsp;^&nbsp;^&nbsp;^&nbsp;^&nbsp;^&nbsp;^&nbsp;^&nbsp; >> "%outputhtml%"
+set "linkTxt=%~f1"
+:: set "linkTxt=%linkTxt:-30%"
+:: set "linkTxt=%%linkTxt:C:/work/nviddia/nv_repo/=%%"
+@echo ^<A href="%~fs1"^>%linkTxt%^</A^>^<br^> >> "%outputhtml%"
 goto :eof
 
 :showResult

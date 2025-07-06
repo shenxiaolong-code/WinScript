@@ -1,4 +1,4 @@
-@where tools_windbg.bat 1>nul 2>nul || set "path=%WinScriptPath%\Windbg;%path%"
+@where tools_windbg.bat 1>nul 2>nul || set "path=%myWinScriptPath%\Windbg;%path%"
 
 echo.
 echo config customized source code path for special application ....

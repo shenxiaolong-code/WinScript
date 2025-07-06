@@ -12,8 +12,9 @@ rem http://lesca.me/archives/a-quick-introduction-to-winpe-imagex-and-dism.html
 ::set _Stack=%~nx0
 @if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
+where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
 
-set toolDir=%~dp0
+set toolDir=%myWinScriptPath%\common
 if not defined newVhd_driveLetter   set newVhd_driveLetter=G
 if not defined newVhd_vhdFile       set newVhd_vhdFile=WinBootDisk.vhd
 

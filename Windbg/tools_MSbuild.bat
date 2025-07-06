@@ -54,7 +54,7 @@ goto :eof
 
 :build.file.exist
 if not exist "%~1" (
-call colorTxt.bat 0c "can not find file [%~1]."
+call colorTxt.bat red_L "can not find file [%~1]."
 echo.
 pause
 exit /b 1
@@ -93,9 +93,9 @@ goto :eof
 if not defined defaultMsBuildPath call :MSBuild.setPath.default     defaultMsBuildPath
 where MSBuild.exe 1>nul 2>nul || set "path=%defaultMsBuildPath%;%path%"
 where MSBuild.exe 1>nul 2>nul || (
-call colorTxt.bat 0c "can not find MSBuild.exe."
+call colorTxt.bat red_L "can not find MSBuild.exe."
 echo.
-call colorTxt.bat 0b "%defaultMsBuildPath% is invalid."
+call colorTxt.bat cyan_L "%defaultMsBuildPath% is invalid."
 echo.
 pause
 )
@@ -144,7 +144,7 @@ call :MSBuild.options.dump
 echo.
 title MSBuild.exe "%~f1" /target:%target% /maxcpucount:%maxcpucount% /property:Configuration=%Configuration% /consoleloggerparameters:%consoleloggerparameters% /verbosity:%verbosity%
 echo.
-call colorTxt.bat 0b "building..."
+call colorTxt.bat cyan_L "building..."
 echo .
 echo MSBuild.exe "%~f1" /target:%target% /maxcpucount:%maxcpucount% /property:Configuration=%Configuration% /verbosity:%verbosity%
 MSBuild.exe "%~f1" /target:%target% /maxcpucount:%maxcpucount% /property:Configuration=%Configuration% /verbosity:%verbosity%
@@ -210,7 +210,7 @@ where devenv.com
 
 @title devenv.com %~dpnx1 /%target% "%Configuration%|%platform%"
 @set show=devenv.com %~dpnx1 /%target% \"%Configuration%|%platform%\"
-@call colorTxt.bat 0d "devenv.com %~dpnx1"
+@call colorTxt.bat purple_L "devenv.com %~dpnx1"
 @echo.
 @echo build option : %target% "%Configuration%|%platform%"
 @echo %~dpnx1
@@ -227,9 +227,9 @@ goto :eof
 if not defined defaultVsBuildPath set defaultVsBuildPath=%VS90COMNTOOLS%..\IDE
 where devenv.com 1>nul 2>nul || set path=%path%;%defaultVsBuildPath%;
 where devenv.com 1>nul 2>nul || (
-call colorTxt.bat 0c "can not find devenv.com."
+call colorTxt.bat red_L "can not find devenv.com."
 echo.
-call colorTxt.bat 0b "%defaultVsBuildPath% is invalid."
+call colorTxt.bat cyan_L "%defaultVsBuildPath% is invalid."
 echo.
 pause
 )

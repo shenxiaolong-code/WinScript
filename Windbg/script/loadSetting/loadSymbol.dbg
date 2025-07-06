@@ -3,7 +3,7 @@
 
 .echo
 .echo loading MS symbol ...
-$$>a<${WinScriptPath}\windbg\script\loadSetting\loadSymbol_MS.dbg
+$$>a<${myWinScriptPath}\windbg\script\loadSetting\loadSymbol_MS.dbg
 
 
 

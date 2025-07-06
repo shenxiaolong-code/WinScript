@@ -2,7 +2,7 @@
 .echo
 .echo
 
-.foreach /ps 10 ( val { $$>a<${WinScriptPath}\windbg\script\cmds\common.dbg curFuncName ; }) { ; aS ${/v:curFN} ${val}; } ;
+.foreach /ps 10 ( val { $$>a<${myWinScriptPath}\windbg\script\cmds\common.dbg curFuncName ; }) { ; aS ${/v:curFN} ${val}; } ;
 
 .block {
 .echo uf ${curFN};

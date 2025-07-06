@@ -14,7 +14,7 @@ goto :eof
 :gitRepo
 if not  exist "%~f1" goto :END
 set NotAdmin=1
-call %WinScriptPath%\Windbg\tools_windbg.bat pdbInfo "%~f1" gitStream
+call %myWinScriptPath%\Windbg\tools_windbg.bat pdbInfo "%~f1" gitStream
 set NotAdmin=
 goto :eof
 

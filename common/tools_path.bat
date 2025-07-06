@@ -39,7 +39,7 @@ echo test call :ToNormalPath TestVar
 set "TestVar=C:\Program Files (x86)\Windows Kits\10\Debuggers\x86\sym\..\src\..\.."
 echo before : TestVar=%TestVar%
 call :ToNormalPath TestVar
-echo after : TestVar=%TestVar%
+echo after  : TestVar=%TestVar%
 if not {"%TestVar%"}=={"C:\Program Files (x86)\Windows Kits\10\Debuggers"} call tools_message.bat warningMsg "test ToNormalPath fails" "~f0" ToNormalPathMark1
 
 echo.
@@ -53,9 +53,9 @@ call :FindAppPathInEnv cmd.exe _cmdPath ".."
 echo _cmdPath=%_cmdPath%
 
 echo.
-echo test call :FindAppPathinDisk "stig.exe" _StigPath ".."
-call :FindAppPathinDisk "stig.exe" _StigPath ".."
-echo _StigPath=%_StigPath%
+echo test call :FindAppPathinDisk "Everything.exe" _EverythingPath ".."
+call :FindAppPathinDisk "Everything.exe" _EverythingPath ".."
+echo _EverythingPath=%_EverythingPath%
 
 echo.
 echo test call :FindAppPathByExt ".txt" _txtFile
@@ -261,8 +261,20 @@ if {"%~1"}=={""} goto :eof
 call set "_tmpToShortPathVal=%%%~1%%"
 if {"%_tmpToShortPathVal%"}=={""} goto :eof
 :: for /f "tokens=*"  %i in ( "%VS140COMNTOOLS%..\.." ) do echo "%~fsi"
-for /f %%i in ( "%_tmpToShortPathVal%" ) do set "%~1=%%~fsi"
+for /f "tokens=*" %%i in ( "%_tmpToShortPathVal%" ) do set "%~1=%%~fsi"
 rem for /f %%i in ( "D:\work\shenxiaolong\core\WinScript\common\tools_path.bat " ) do set "%~1=%%~fsi"
+goto :eof
+
+::[DOS_API:ShowShortPath] show short path of one possible long path to 
+::call e.g   : call :ShowShortPath "C:\Program Files (x86)\Windows Kits\10\Debuggers\windbg.exe"
+::result e.g : C:\PROGRA~1\DEBUGG~1\windbg.exe
+::Note       : Not all path has short path. but path of x86 folder always has short path.
+:ShowShortPath
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if {"%~1"}=={""} goto :eof
+call set "_tmpShowShortPathVal=%~1"
+if {"%_tmpShowShortPathVal%"}=={""} goto :eof
+for /f "tokens=*" %%i in ( "%_tmpShowShortPathVal%" ) do echo "%%~fsi"
 goto :eof
 
 
@@ -273,10 +285,20 @@ goto :eof
 :ToNormalPath
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if {"%~1"}=={""} goto :eof
-::the real path might not exist, so can't use cd /d "%~f1" & set %~1=%cd%
 call set "_tmpToNormalPath=%%%~1%%"
-if      exist "%_tmpToNormalPath%" call :ToNormalPath.PathExist %*
-if not  exist "%_tmpToNormalPath%" call :ToNormalPath.PathNotExist %*
+for %%I in ("%_tmpToNormalPath%") do set "_tmpNewPath=%%~fI"
+::the real path might not exist, so can't use cd /d "%~f1" & set %~1=%cd%
+call set "%~1=%_tmpNewPath%"
+goto :eof
+
+::[DOS_API:removeEscapeCharInPath] remove the escape/special chars in a path
+::call e.g   : call :removeEscapeCharInPath "C:\temp&fold\abd*ddd.txt" TestVar
+::result e.g : set TestVar=C:\temp_fold\abd_ddd.txt
+:removeEscapeCharInPath
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+for /f "delims=()[]{}^=;!'+,`~(&()* tokens=1*" %%a  in ("%~1") do if {"%%~b"}=={""} set "%~2=%%~a" && goto :eof
+set %~2=
+for /f "delims=()[]{}^=;!'+,`~(&()* tokens=1,2*" %%a  in ("%~1") do call :removeEscapeCharInPath.parse %~2 "%%~a" "%%~b" "%%~c"
 goto :eof
 
 ::[DOS_API:getFolderPath]get dir by one path (folder or file)
@@ -435,13 +457,14 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if {%2}=={}  call tools_message.bat popMsg "parameter(s) is(are) empty"
 if not exist "%~2" (
-call colorTxt.bat 0b "source path %~2 is not existing."
+call colorTxt.bat cyan_L "source path %~2 is not existing."
 pause
 goto :eof
 )
 
 if exist "%~1" (
-call colorTxt.bat 0b "target %~1 is existing, please delete it and try again"
+call colorTxt.bat cyan_L "target %~1 is existing, please delete it and try again"
+echo.
 pause
 goto :eof
 )
@@ -455,6 +478,12 @@ pause
 goto :eof
 
 :: *************************************************** inner implement**************************************************************************
+:removeEscapeCharInPath.parse
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if     {"%~4"}=={""}   set "%~1=%~2_%~3" && goto :eof
+if not {"%~4"}=={""}   for /f "delims=()[]{}^=;!'+,`~(&()* tokens=1*" %%a  in ("%~4") do call :removeEscapeCharInPath.parse %~1 "%~2_%~3" "%%~a" "%%~b"
+goto :eof
+
 :getFolderPath.exist
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if {"%~2"}=={""} call tools_message.bat errorMsg "parameter is not enough."
@@ -469,27 +498,6 @@ if {"%~2"}=={""} call tools_message.bat errorMsg "parameter is not enough."
 set "_tmpNotExistPath=%~1"
 if      {"%_tmpNotExistPath:~-1%"}=={"\"} set "%~2=%~1"
 if not  {"%_tmpNotExistPath:~-1%"}=={"\"} set "%~2=%~dp1"
-goto :eof
-
-:ToNormalPath.PathExist
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-:: pushd/popd might has different partition issue and access permission issue.
-for /f "usebackq tokens=2*" %%i in ( ` dir "%_tmpToNormalPath%"  ^| find /i "Directory of"  `  ) do set "%~1=%%j"
-goto :eof
-
-:ToNormalPath.PathNotExist
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if {"%~1"}=={""} goto :eof
-::the real path might not exist, so can't use cd /d "%~f1" & set %~1=%cd%
-call set "_tmpNewPath=%_tmpToNormalPath:\..=" & call :ToNormalPath.PathNotExist.onePath "%"
-call set "%~1=%_tmpNewPath%"
-goto :eof
-
-:ToNormalPath.PathNotExist.onePath
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if {"%~1"}=={""} goto :eof
-for /f %%i in ( "%_tmpNewPath%" ) do set "_tmpNewPath=%~dpi"
-set "_tmpNewPath=%_tmpPath:~0,-1%%~1"
 goto :eof
 
 :FindAppPathinDisk.parseSearchLine

@@ -23,40 +23,40 @@ Windows Registry Editor Version 5.00
 @="view function"
 
 [HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\01_viewFunction\command]
-@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat viewFunction \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\common\\tools_binFile.bat viewFunction \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\02_viewDependency]
 @="view dependency"
 
 [HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\02_viewDependency\command]
-@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat viewDependency \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\common\\tools_binFile.bat viewDependency \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\03_peview]
 @="PE viewer"
 
 [HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\03_peview\command]
-@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat peView \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\common\\tools_binFile.bat peView \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\04_dumpBin]
 @="dumpbin"
 
 [HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\04_dumpBin\command]
-@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat dumpBin \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\common\\tools_binFile.bat dumpBin \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\05_listProcess]
 @="list refered processes"
 
 [HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\05_listProcess\command]
-@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat listProcess \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\common\\tools_binFile.bat listProcess \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\06_hexEdit]
 @="HEX editor"
 
 [HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\06_hexEdit\command]
-@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat hexEdit \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\common\\tools_binFile.bat hexEdit \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\07_downloadPdb]
 @="download Pdb file by symchk.exe"
 
 [HKEY_CLASSES_ROOT\._myMenus\binTools\binFileNode\shell\07_downloadPdb\command]
-@="cmd.exe /c %%WinScriptPath%%\\common\\tools_binFile.bat downloadPdb \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\common\\tools_binFile.bat downloadPdb \"%1\""

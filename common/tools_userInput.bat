@@ -1,8 +1,8 @@
 ::Author    : Shen Xiaolong((xlshen@126.com))
 ::Copyright : free use,modify,spread, but MUST include this original two line information(Author and Copyright).
 
-::@set _Echo=1
-::set _Stack=%~nx0
+:: @set _Echo=1
+:: set _Stack=%~nx0
 @if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo. & @echo [+++++ %~nx0] commandLine: %0 %*
 where "%~nx0" 1>nul 2>nul || set "path=%~dp0;%path%"
@@ -158,20 +158,20 @@ call set %~2=%%_tmpChoiceSet:~%_tmpSelIdx%,1%%
 goto :eof
 
 
-::[DOS_API:waitSelectEx]get user input char in choice command,used to limit user input range to avoid invald data
-::usage         : call tools_userInput.bat waitSelectEx "choiceText" selChar "promptText" defaultSelect timeout
+::[DOS_API:waitSelectWithTimeout]get user input char in choice command,used to limit user input range to avoid invald data
+::usage         : call tools_userInput.bat waitSelectWithTimeout "choiceText" selChar "promptText" defaultSelect timeout
 ::choiceText    : option set, devided by char ;
 ::selChar       : output user select char, the select option text saved in variabe choiceArray[%selChar%]
-::example       : call tools_userInput.bat waitSelectEx "choice1;choice2;choiceX;choiceY;choiceZ" selChar "please make your selected:" 0 6
-::                call tools_userInput.bat waitSelectEx "choice1;choice2;choiceX;choiceY;choiceZ" selChar
+::example       : call tools_userInput.bat waitSelectWithTimeout "choice1;choice2;choiceX;choiceY;choiceZ" selChar "please make your selected:" 0 6
+::                call tools_userInput.bat waitSelectWithTimeout "choice1;choice2;choiceX;choiceY;choiceZ" selChar
 ::                user input 2 in console window
 ::result e.g    : set selChar=2
-:waitSelectEx
+:waitSelectWithTimeout
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call :waitSelectEx.reset
+call :waitSelectWithTimeout.reset
 set "_tmpChoiceListText=%~1"
-call :waitSelectEx.addItem "%_tmpChoiceListText:;=" & call :waitSelectEx.addItem "%"
-for /L %%i in (0 1 %_tmpChoiceN%)  do call :waitSelectEx.showItem %%i
+call :waitSelectWithTimeout.addItem "%_tmpChoiceListText:;=" & call :waitSelectWithTimeout.addItem "%"
+for /L %%i in (0 1 %_tmpChoiceN%)  do call :waitSelectWithTimeout.showItem %%i
 if not {"%~3"}=={""} set "_tmpChoiceOpt=/M "%~3""
 if not {"%~4"}=={""} set "_tmpChoiceOpt=/D %~4 /T 30 /M "%~3,%~4 will be selected automatically after 30 seconds:""
 if not {"%~5"}=={""} set "_tmpChoiceOpt=/D %~4 /T %~5 /M "%~3,%~4 will be selected automatically after %~5 seconds:""
@@ -186,7 +186,23 @@ goto :eof
 ::example       : call readClipboard outVar
 :readClipboard
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-for /f "eol=; tokens=*" %%i in ('powershell Get-Clipboard') do echo set "%~1=%%i"
+set "_tmpReadClipboard=%~1"
+for /f "eol=; tokens=*" %%i in ('powershell Get-Clipboard') do call :readClipboard.trim %%i
+goto :eof
+
+::[DOS_API:processClipboard] read clipboard data and verify / show some info
+::usage     : call :processClipboard <outVar>
+::e.g.      : call :processClipboard tmpParam
+::            call set tmpParam="C:\myCaache\srdcws1087"   "findFile"
+:processClipboard
+:: call :task.processClipboard <subCmdName> [optParameter]
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+@where tools_userInput.bat 1>nul 2>nul || @set "path=%myWinScriptPath%\common;%path%"
+call :readClipboard _tmpClipboardData
+if not  defined _tmpClipboardData   call :processClipboard.noData
+set _tmpClipboardDataShow=%_tmpClipboardData:"='%
+if      defined _tmpClipboardData   call colorTxt.bat "clipboard data : {0d} %_tmpClipboardDataShow% {\n}{#}"
+set %~1=%_tmpClipboardData%
 goto :eof
 
 ::[DOS_API:writeClipboard] write string to system clip board
@@ -194,7 +210,7 @@ goto :eof
 ::example       : call writeClipboard inVar
 :writeClipboard
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-echo %* | clip
+echo %~1 | clip
 rem if exist special chars
 rem powershell Write-Output 'a^|b^|c' | clip
 goto :eof
@@ -226,6 +242,12 @@ call :setFileDirectory2Var.execute %~1 %~3 %filePath%
 goto :eof
 
 ::******************************implement  section**************************************************************************
+:readClipboard.trim
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if      {"%~2"}=={""} set "%_tmpReadClipboard%=%~1"
+if not  {"%~2"}=={""} set %_tmpReadClipboard%=%*
+goto :eof
+
 :waitString.loop
 if defined waitStringPrompt     echo %waitStringPrompt%
 if defined waitStringPrompt2    echo %waitStringPrompt2%
@@ -240,10 +262,19 @@ goto :waitString.loop %~1
 )
 goto :eof
 
+:processClipboard.noData
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if 		defined _noData_OK	set "noDataMsg=no data is in clipboard , and using default setting."
+if not 	defined _noData_OK	set "noDataMsg=no data is in clipboard , error and press any key to exit."
+call colorTxt.bat  "{02}%noDataMsg%{\n}{#}"
+if not 	defined _noData_OK 	pause > nul
+if not 	defined _noData_OK 	exit /b 1
+goto :eof
+
 :waitConfirm.confirm
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call set _tmpInput=%%%~2%%
-call colorTxt.bat 0d "your input is '%_tmpInput%'"
+call colorTxt.bat purple_L "your input is '%_tmpInput%'"
 echo.
 if not defined waitStringPromptBakup set "waitStringPromptBakup=%waitStringPrompt%"
 set waitStringPrompt=press any key to confirm current input. or input N/n to re-input.
@@ -282,7 +313,7 @@ call tools_userInput.bat waitPathFileSpec "jabber.natvis" filePath
 set "path=%filePath%;%path%"
 goto :eof
 
-:waitSelectEx.addItem
+:waitSelectWithTimeout.addItem
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if not defined _tmpChoiceN set _tmpChoiceN=-1
 set /a _tmpChoiceN+=1
@@ -290,7 +321,7 @@ set "_tmpChoiceArray[%_tmpChoiceN%]=%~1"
 set _tmpChoiceListNum=%_tmpChoiceListNum%%_tmpChoiceN%
 goto :eof
 
-:waitSelectEx.reset
+:waitSelectWithTimeout.reset
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if defined _tmpChoiceN for /L %%i in (0 1 %_tmpChoiceN%)  do call set _tmpChoiceArray[%%i]=
 set _tmpChoiceListNum=
@@ -298,7 +329,7 @@ set _tmpChoiceOpt=
 set _tmpChoiceN=
 goto :eof
 
-:waitSelectEx.showItem
+:waitSelectWithTimeout.showItem
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call echo %~1.      %%_tmpChoiceArray[%~1]%%
 goto :eof

@@ -44,7 +44,7 @@ goto :eof
 :viewFunction
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call tools_error.bat checkPathExist "%~fs1" "%~fs0" viewFunction_mark
-call :implCmd "%ToolRootPath%\PC_tools\devTools\DLL Export Viewer\dllexp.exe" "%~fs1"
+call :implCmd "%ToolRootPath%\devTools\DLL Export Viewer\dllexp.exe" "%~fs1"
 goto :eof
 
 ::[DOS_API:viewDependency] 
@@ -54,7 +54,7 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 
 call tools_error.bat checkPathExist "%~fs1" "%~fs0" viewDependency_mark
-call :implCmd "%ToolRootPath%\PC_tools\devTools\Dependency_win10_x86\DependenciesGui.exe" "%~fs1"
+call :implCmd "%ToolRootPath%\devTools\Dependency_win10_x86\DependenciesGui.exe" "%~fs1"
 goto :eof
 
 ::[DOS_API:peView] 
@@ -63,8 +63,8 @@ goto :eof
 :peView
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call tools_error.bat checkPathExist "%~fs1" "%~fs0" peView_mark
-call :implCmd "%ToolRootPath%\PC_tools\devTools\PEview\PEview.exe" "%~fs1"
-call :implCmd "%ToolRootPath%\PC_tools\devTools\process_tools\processhacker_239\x64\peview.exe" "%~fs1"
+call :implCmd "%ToolRootPath%\devTools\PEview\PEview.exe" "%~fs1"
+call :implCmd "%ToolRootPath%\devTools\process_tools\processhacker_239\x64\peview.exe" "%~fs1"
 goto :eof
 
 ::[DOS_API:listProcess] list all running process who include this module.
@@ -96,7 +96,7 @@ goto :eof
 :hexEdit
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call tools_error.bat checkPathExist "%~fs1" "%~fs0" hexEdit_mark
-call :implCmd "%ToolRootPath%\PC_tools\HexEditor\XVI32.exe" "%~fs1"
+call :implCmd "%ToolRootPath%\HexEditor\XVI32.exe" "%~fs1"
 goto :eof
 
 ::[DOS_API:downloadPdb] 
@@ -110,10 +110,8 @@ goto :eof
 
 :setToolRootPath
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call set "_tmpRoot=%~fs0"
-set ToolRootPath=%_tmpRoot:\core=&rem.%
-::echo ToolRootPath=%ToolRootPath%
-call tools_error.bat checkPathExist "%ToolRootPath%\PC_tools" "%~fs0" setToolRootPath_mark
+call tools_error.bat checkEnvVarDefine myPcToolsPath "%~f0" myWinScriptPathmark
+set ToolRootPath=%myPcToolsPath%
 goto :eof
 
 :implCmd

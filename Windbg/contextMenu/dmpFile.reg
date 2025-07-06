@@ -19,22 +19,22 @@ Windows Registry Editor Version 5.00
 @="analysis dump file with windbg"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\01_analysis\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  analysisDmp \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  analysisDmp \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\02_analysisByVS]
 @="analysis dump file with visual studio"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\02_analysisByVS\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_vs.bat  analysisDmp \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_vs.bat  analysisDmp \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\03_dmpCheck]
 @="check dump file availability"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\03_dmpCheck\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_windbg.bat  dumpCheck \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_windbg.bat  dumpCheck \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\04_collectSymManifest]
 @="collect symbol list"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\dmpFileNode\shell\04_collectSymManifest\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\collectOfflineSymbols\\tools\\tools_collectOfflineSymbols.bat  collectSymbolList \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\collectOfflineSymbols\\tools\\tools_collectOfflineSymbols.bat  collectSymbolList \"%1\""

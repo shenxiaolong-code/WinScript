@@ -46,8 +46,8 @@ $$ .reload
 .echo set processor mode (auto mode)
 .effmach .
 
-.if(${/d:dbgLive}) { $$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions_dbgLive.dbg; };
-.if(${/d:dbgDmp})  { $$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions_dmp.dbg; };
+.if(${/d:dbgLive}) { $$>a<${myWinScriptPath}\windbg\script\loadSetting\loadOptions_dbgLive.dbg; };
+.if(${/d:dbgDmp})  { $$>a<${myWinScriptPath}\windbg\script\loadSetting\loadOptions_dmp.dbg; };
 
 .echo
 .echo enable inline function debuging [.inline 1]

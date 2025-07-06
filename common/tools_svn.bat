@@ -247,8 +247,11 @@ goto :eof
 call tools_error.bat checkParamCount 2 %*
 call tools_error.bat checkPathExist "%~1"
 call tools_message.bat enableDebugMsg "%~0" "inputPath : %~f1"
-for /f "usebackq tokens=*" %%i in ( ` svn info "%~f1" --show-item wc-root ` ) do set _tmpLocalPath=%%i
-set %~2=%_tmpLocalPath:/=\%
+
+svn info "%~f1" --show-item wc-root 1>nul 2>nul || call tools_error.bat setLastErrorText "%~1' is not a available svn repo"
+call tools_error.bat getLastErrorText err2Return && goto :eof
+for /f "usebackq tokens=*" %%i in ( ` svn info "%~f1" --show-item wc-root ` ) do set "_tmpLocalPath=%%i"
+set "%~2=%_tmpLocalPath:/=\%"
 call tools_message.bat enableDebugMsg "%~0" "output result : set %~2=%%%~2%%"
 goto :eof
 
@@ -399,7 +402,7 @@ goto :eof
 :BackupSrc.createRestoreScript
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 ::different PC use different script absolute path
-echo %%WinScriptPath%%\common\%~nx0 svnRestoreSrc "%%~dp0.%bk_dstDataFolder%" "%bk_SrcPath%" > "%bk_dstPath%\restoreSrc.bat"
+echo %%myWinScriptPath%%\common\%~nx0 svnRestoreSrc "%%~dp0.%bk_dstDataFolder%" "%bk_SrcPath%" > "%bk_dstPath%\restoreSrc.bat"
 echo "%bk_dstPath%\restoreSrc.bat" is created.
 echo.
 goto :eof
@@ -481,7 +484,7 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 set _Debug=1
 if not exist "%~f2" (
-call colorTxt.bat 0b "%~f2 is not svn path."
+call colorTxt.bat cyan_L "%~f2 is not svn path."
 echo.
 pause
 goto :End
@@ -490,7 +493,7 @@ set "rs_srcPath=%~f1"
 if {%rs_srcPath:~-1%}=={\} set "rs_srcPath=%rs_srcPath:~0,-1%"
 
 if not exist "%~f1" (
-call colorTxt.bat 0b "%~f1 is not svn path."
+call colorTxt.bat cyan_L "%~f1 is not svn path."
 echo.
 pause
 goto :End

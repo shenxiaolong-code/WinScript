@@ -1,6 +1,6 @@
 @if {"%_Echo%"}=={"1"} ( @echo on ) else ( @echo off )
 echo %0 %*
-set toolDir=%~dp0
+set toolDir=%myWinScriptPath%\common
 
 :InputVhdFile
 echo.

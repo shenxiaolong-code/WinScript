@@ -16,44 +16,44 @@ $$>a<${$arg0}\..\loadSetting\reset.dbg
 $$>a<${$arg0}\..\loadSetting\init.dbg
 
 .echo
-.echo set path environment variable "${/v:WinScriptPath}" for common debug purpuse.
-$$>a<${$arg0}\..\loadSetting\setPath2Var.dbg "${/v:WinScriptPath}" "${$arg0}\..\..\.."
+.echo set path environment variable "${/v:myWinScriptPath}" for common debug purpuse.
+$$>a<${$arg0}\..\loadSetting\setPath2Var.dbg "${/v:myWinScriptPath}" "${$arg0}\..\..\.."
 
 $$ Set run script when debugger startup;
 .block {
 .echo
-.echo WinScriptPath=${WinScriptPath}
+.echo myWinScriptPath=${myWinScriptPath}
 
 .echo
-$$>a<${WinScriptPath}\windbg\script\loadSetting\loadExtension.dbg
+$$>a<${myWinScriptPath}\windbg\script\loadSetting\loadExtension.dbg
 
 .echo
-$$>a<${WinScriptPath}\windbg\script\loadSetting\loadAlais.dbg
+$$>a<${myWinScriptPath}\windbg\script\loadSetting\loadAlais.dbg
 
 .echo
-$$>a<${WinScriptPath}\windbg\script\loadSetting\loadNatvis.dbg
+$$>a<${myWinScriptPath}\windbg\script\loadSetting\loadNatvis.dbg
 
 .echo
 .echo set symbol before set option, because some option depends on symbol search.
-$$>a<${WinScriptPath}\windbg\script\loadSetting\loadSymbol.dbg
+$$>a<${myWinScriptPath}\windbg\script\loadSetting\loadSymbol.dbg
 
 .echo
-$$>a<${WinScriptPath}\windbg\script\loadSetting\LoadSrc.dbg
+$$>a<${myWinScriptPath}\windbg\script\loadSetting\LoadSrc.dbg
 
 .echo
-$$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions.dbg
+$$>a<${myWinScriptPath}\windbg\script\loadSetting\loadOptions.dbg
 
 .echo
-$$>a<${WinScriptPath}\windbg\script\loadSetting\loadOptions_noisy.dbg off
+$$>a<${myWinScriptPath}\windbg\script\loadSetting\loadOptions_noisy.dbg off
 
 .if($scmp("${/f:$CurrentDumpFile}","")==0) {
 .echo
 .echo config windbg option for dump analysis mode.
-$$>a<${WinScriptPath}\Windbg\script\loadSetting\loadOptions_dbgLive.dbg
+$$>a<${myWinScriptPath}\Windbg\script\loadSetting\loadOptions_dbgLive.dbg
 } .else { 
 .echo
 .echo config windbg option for dump analysis mode.
-$$>a<${WinScriptPath}\Windbg\script\loadSetting\loadOptions_dmp.dbg
+$$>a<${myWinScriptPath}\Windbg\script\loadSetting\loadOptions_dmp.dbg
 };
 
 .block {
@@ -69,7 +69,7 @@ $$>a<${startCmds_user}
 }
 
 .echo
-$$>a<${WinScriptPath}\windbg\script\loadSetting\loadInfo.dbg
+$$>a<${myWinScriptPath}\windbg\script\loadSetting\loadInfo.dbg
 
 .if(${/d:endCmds_user}) {
 .echo
@@ -81,7 +81,7 @@ $$>a<${endCmds_user}
 .if($scmp("${/f:$CurrentDumpFile}","")!=0) {
 .echo
 .echo analysising exception in ${$CurrentDumpFile};
-$$>a<${WinScriptPath}\windbg\script\cmds\checkException.dbg;
+$$>a<${myWinScriptPath}\windbg\script\cmds\checkException.dbg;
 };
 
 .echo

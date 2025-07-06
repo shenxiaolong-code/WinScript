@@ -131,9 +131,11 @@ call tools_error.bat checkPathExist "%~1" "%~f0" gitLocalRootPathMark
 call tools_message.bat enableDebugMsg "%~0" "inputPath : %~f1"
 call tools_path.bat getFolderPath "%~1" _tmp_gitStdFolder
 :: _tmp_gitStdFolder style : "c:\myrepo\gitFolder"
-git -C "%_tmp_gitStdFolder%" config --get remote.origin.url 1>nul 2>nul || call tools_message.bat errorMsg "'%~1' is not a available git repo"
+set "lastErrorText="
+git -C "%_tmp_gitStdFolder%" config --get remote.origin.url 1>nul 2>nul || call tools_error.bat setLastErrorText "%~1' is not a available git repo"
+call tools_error.bat getLastErrorText err2Return && goto :eof
 for /f "usebackq tokens=*" %%i in ( ` git -C "%_tmp_gitStdFolder%" rev-parse --show-toplevel ` ) do set _tmpLocalPath=%%i
-if defined _tmpLocalPath set %~2=%_tmpLocalPath:/=\%
+if defined _tmpLocalPath set "%~2=%_tmpLocalPath:/=\%"
 call tools_message.bat enableDebugMsg "%~0" "output result : set %~2=%%%~2%%"
 goto :eof
 
@@ -284,10 +286,9 @@ goto :eof
 call tools_path.bat getFolderPath "%~f1" _tmpDir
 cd /d "%_tmpDir%"
 call set "gitCommitID=%~2"
-if {"%gitCommitID%"}=={""} call :svnVer.waitInput
-set waitStringPrompt=please input query commit ID.
-call tools_userInput.bat waitConfirm waitString gitCommitID
-gitk %gitCommitID%
+if {"%gitCommitID%"}=={""} call :gitCommitId.waitInput  gitCommitID
+:: start gitk %gitCommitID%
+start TortoiseGitProc.exe /command:log /path:"%cd%" /rev:%gitCommitID%
 goto :eof
 
 ::[DOS_API:gitVerCmd] show log with specified commit id
@@ -298,9 +299,7 @@ goto :eof
 call tools_path.bat getFolderPath "%~f1" _tmpDir
 cd /d "%_tmpDir%"
 call set "gitCommitID=%~2"
-if {"%gitCommitID%"}=={""} call :svnVer.waitInput
-set waitStringPrompt=please input query commit ID.
-call tools_userInput.bat waitConfirm waitString gitCommitID
+if {"%gitCommitID%"}=={""} call :gitCommitId.waitInput  gitCommitID
 git show "%gitCommitID%" --no-patch
 goto :eof
 
@@ -416,7 +415,7 @@ call :gitLocalRootPath "%bk_SrcPath%" _curGitRoot
 call set "innerPath=%%bk_SrcPath:%_curGitRoot%=%%"
 (
 echo if not defined repo set "repo=%_curGitRoot%"
-echo %%WinScriptPath%%\common\%~nx0 gitRestoreSrc "%%~dp0%bk_dstDataFolder%" "%%repo%%%innerPath%"
+echo %%myWinScriptPath%%\common\%~nx0 gitRestoreSrc "%%~dp0%bk_dstDataFolder%" "%%repo%%%innerPath%"
 ) > "%bk_dstPath%\restoreSrc.bat"
 echo "%bk_dstPath%\restoreSrc.bat" is created.
 echo.
@@ -508,7 +507,7 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 set _Debug=1
 if not exist "%~f2" (
-call colorTxt.bat 0b "%~f2 is not git path."
+call colorTxt.bat cyan_L "%~f2 is not git path."
 echo.
 pause
 goto :End
@@ -517,7 +516,7 @@ set rs_srcPath=%~f1
 if {%rs_srcPath:~-1%}=={\} set rs_srcPath=%rs_srcPath:~0,-1%
 
 if not exist "%~f1" (
-call colorTxt.bat 0b "%~f1 is not git path."
+call colorTxt.bat cyan_L "%~f1 is not git path."
 echo.
 pause
 goto :End
@@ -818,6 +817,12 @@ set/p=[Fails] <nul
 pause
 )
 echo %rs_srcFile:~-100%
+goto :eof
+
+:gitCommitId.waitInput
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set waitStringPrompt=please input query git commit ID.
+call tools_userInput.bat waitConfirm waitString %~1
 goto :eof
 
 :: *********************************************private support tool *******************************************************************

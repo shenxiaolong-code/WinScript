@@ -9,7 +9,7 @@
 	{
 		.echo ${$arg0} ${$arg1}
 		.foreach /ps 99 ( dummy { .shell -ci "ln ${$arg1}" find /i "memory" | clip } ) {;};
-		.foreach /ps 99 ( vsval { .shell -ci "*" cmd.exe /c ${WinScriptPath}\Windbg\script\cmds\common.bat queryVSVer } ) {;aS ${/v:vsVer} ${vsval}};
+		.foreach /ps 99 ( vsval { .shell -ci "*" cmd.exe /c ${myWinScriptPath}\Windbg\script\cmds\common.bat queryVSVer } ) {;aS ${/v:vsVer} ${vsval}};
 	}
 }
 

@@ -1,7 +1,7 @@
 .echo +++++++ loading ${$arg0}
 $$ if wrong path is put on the front of extpath, debugger will load the wrong dll which is found firstly, it might cause windbg crash and exit sliently
 $$ extpath can be set by environment variable _NT_DEBUGGER_EXTENSION_PATH. if .load extDLL cause windbg exit slient, please check _NT_DEBUGGER_EXTENSION_PATH and .extpath
-.extpath+ "${WinScriptPath}\windbg\debugext\${targetMode}";
+.extpath+ "${myWinScriptPath}\windbg\debugext\${targetMode}";
 .echo
 
 aS ${/v:.ext}     $$>a<${$arg0} ;

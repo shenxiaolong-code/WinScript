@@ -395,8 +395,8 @@ goto :eof
 ::*****************************************************************************************************************************
 :setPath
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-for /f "usebackq tokens=2,*" %%a in ( ` dir "%~dp0.." ^| find /i "Directory of" ` ) do set "WinScriptPath=%%b"
-where tools_path.bat 1>nul 2>nul || set path=%path%;%~dp1;%WinScriptPath%\common;
+for /f "usebackq tokens=2,*" %%a in ( ` dir "%~dp0.." ^| find /i "Directory of" ` ) do set "myWinScriptPath=%%b"
+where tools_path.bat 1>nul 2>nul || set path=%path%;%~dp1;%myWinScriptPath%\common;
 goto :eof
 
 

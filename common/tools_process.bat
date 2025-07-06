@@ -74,7 +74,7 @@ goto :eof
 ::          : call :getPID 1254 outVar
 :getPID
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call colortxt.bat 0a "getPID is out-dated API, please use new API 'getFirstPID' ."
+call colorTxt.bat green_L "getPID is out-dated API, please use new API 'getFirstPID' ."
 echo.
 call :getFirstPID %*
 goto :eof
@@ -93,7 +93,7 @@ goto :eof
 ::call e.g. : call :getPIDByName "notepad.exe"
 :getPIDByName
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-call colortxt.bat 0a "getPIDByName is out-dated API, please use new API 'getFirstPID' ."
+call colorTxt.bat green_L "getPIDByName is out-dated API, please use new API 'getFirstPID' ."
 echo.
 call :getFirstPID %*
 goto :eof
@@ -128,6 +128,8 @@ call tools_error.bat checkParamCount 2 %*
 call :isProcessExist "%~1" _tmpPidExist
 if not {"%_tmpPidExist%"}=={"1"} call tools_message.bat errorMsg "process '%~1' is NOT exist".
 set %~2=
+:: wmic  process WHERE ( Handle="1123" ) get commandline
+:: wmic  process WHERE ( Name="Code.exe" ) get commandline
 for /f "usebackq tokens=*" %%a in ( `wmic  process WHERE ^( Handle^="%~1" ^) get commandline ^| more +1 ` ) do if not defined %~2 call set %~2=%%a
 goto :eof
 
@@ -142,6 +144,47 @@ call :isProcessExist "%~1" _tmpPidExist
 if not {"%_tmpPidExist%"}=={"1"} call tools_message.bat errorMsg "process '%~1' is NOT exist".
 set %~2=
 for /f "usebackq tokens=*" %%a in ( `wmic  process WHERE ^( Handle^="%~1" ^) get ExecutablePath ^| find /v "ExecutablePath" ` ) do if not defined %~2 call set %~2=%%~sa
+goto :eof
+
+::[DOS_API:uninstallApp]uninstall a application. the application name can be queried in Appwiz.cpl.
+::usage      : call :uninstallApp <appProductName>
+::call e.g   : call :uninstallApp "Cisco Jabber"
+:uninstallApp
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+call tools_error.bat checkParamCount 1 %*
+:: msiinv is faster
+call :uninstallApp.msiinv %*
+if not defined _productCode call :uninstallApp.wmic %*
+goto :eof
+
+:uninstallApp.wmic
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+:: https://medium.com/@andrew.perfiliev/how-to-uninstall-program-using-cmd-60911c0eee80
+call wmic product where name="%~1" call uninstall /nointeractive
+goto :eof
+
+:uninstallApp.msiinv
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set _productCode=
+set _tmp_uninstallStr=
+where msiinv.exe 1>nul 2>nul || @set "path=%myPcToolsPath%\installer_reg_fix;%path%"
+for /f "usebackq tokens=3" %%i in ( ` msiinv.exe -p "%~1" ^| find /i "Product code" ` ) do call set _productCode=%%i
+::product info in register : HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\%_productCode%
+::e.g. :
+::HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{ACD11FE6-110C-417A-B87D-56E8DE2680D4}
+::set _tmp_uninstallStr=MsiExec.exe /X{DBB5980F-1D69-4E00-BD12-FE24639BD102}
+if defined _productCode call set _tmp_uninstallStr=MsiExec.exe /X%_productCode%
+if defined _tmp_uninstallStr call %_tmp_uninstallStr%
+goto :eof
+
+::[DOS_API:queryApp] query a application information. the application name can be queried in Appwiz.cpl.
+::usage      : call :queryApp <appProductName>
+::call e.g   : call :queryApp "Cisco Jabber"
+:queryApp
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+:: https://medium.com/@andrew.perfiliev/how-to-uninstall-program-using-cmd-60911c0eee80
+call tools_error.bat checkParamCount 1 %*
+call wmic product where name="%~1" list full
 goto :eof
 
 ::[DOS_API:startProcess]start application, the AppName can be full path name or short name (but it MUST can be found in environment variable "Path")
@@ -227,41 +270,55 @@ goto :eof
 echo.
 echo test call :Help
 call :Help
+
 echo.
 echo test call :getProductID "Webex Teams"  outputProductID
 call :getProductID "Webex Teams"  outputProductID
 echo outputProductID=%outputProductID%
+
+echo.
+echo test call :queryApp "Cisco Jabber"
+call :queryApp "Cisco Jabber"
+
 echo.
 echo test call :startProcess notepad.exe
 call :startProcess notepad.exe
+
 echo.
 echo test call :killProcess notepad.exe
 call :killProcess notepad.exe
+
 echo.
 echo test call :findAppMainPid chrome.exe mPid
 call :findAppMainPid chrome.exe mPid
 echo mPid=%mPid%
+
 echo.
 echo test call :getCurPID myPID
 call :getCurPID myPID
 echo current test console window process ID : %myPID%
+
 echo.
 echo test call :getPIDByName "explorer.exe" explorerPid
 call :getPIDByName "explorer.exe" explorerPid
 echo explorerPid=%explorerPid%
+
 echo.
 echo test call :isProcessExist "explorer.exe"
 call :isProcessExist "explorer.exe"
 if {%errorlevel%}=={1} ( echo explorer.exe exist ) else  echo explorer.exe doesn't exist.
+
 echo.
 echo test call :isProcessExist "notepad.exe"
 call :isProcessExist "notepad.exe"
 if {%errorlevel%}=={1} ( echo notepad.exe exist ) else  echo notepad.exe doesn't exist.
+
 echo.
 call :getPIDByName "explorer.exe" TmpPID
 echo test call :getNameByPID %TmpPID%
 call :getNameByPID %TmpPID% appName
 echo appName=%appName%
+
 echo.
 echo test call :processinfo
 call :processinfo %TmpPID%

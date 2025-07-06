@@ -27,6 +27,12 @@ call :Help
 echo.
 
 
+
+echo.
+echo test call :openTxtFile "%~f0"
+call :openTxtFile "%~f0"
+echo "%~f0" is opened
+
 echo.
 echo test call :GetFileLineAccount "%~f0" LineAccount
 call :GetFileLineAccount "%~f0" LineAccount
@@ -89,6 +95,16 @@ echo %tmpFindLineXOfFile%
 set %~3=%tmpFindLineXOfFile%
 )
 goto :eof
+
+::[DOS_API:DumpHexChar] show the hex char of file, used to check illegel chars
+::usage     : call :DumpHexChar FileFullPat
+::call e.g. : call :DumpHexChar "C:\tmp\myfile.txt"
+:DumpHexChar
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if not exist %~fs1 call %~sdp0.\tools_message.bat popMsg "%~f1 doesn't exist,pls check". & goto :eof
+type "%~fs1" | format-hex
+goto :eof
+
 
 ::[DOS_API:searchAndReplace] in txt file. search specified string and replace it with new string
 ::                      if third parameter is empty, only erase second string from the file. regulare is supported
@@ -225,9 +241,9 @@ set _tmplineNo2=%%i
 set _tmplineTxt2=%%j
 )
 
-call colorTxt.bat 0b "%~f1"
+call colorTxt.bat cyan_L "%~f1"
 echo.
-call colorTxt.bat 0b "lineNo : %_tmplineNo2%"
+call colorTxt.bat cyan_L "lineNo : %_tmplineNo2%"
 echo.
 findstr /B /R /C:"call  *%~nx0  *ShowCurLineNo  *\"%%~f0\"  *%2" "%~s1"
 echo.
@@ -246,9 +262,9 @@ set _tmplineNo2=%%i
 set _tmplineTxt2=%%j
 )
 
-call colorTxt.bat 0b "%~f1"
+call colorTxt.bat cyan_L "%~f1"
 echo.
-call colorTxt.bat 0b "lineNo : %_tmplineNo2%"
+call colorTxt.bat cyan_L "lineNo : %_tmplineNo2%"
 echo.
 echo line Text : %_tmplineTxt2%
 echo.

@@ -596,8 +596,8 @@ goto :eof
 ::*****************************************************************************************************************************
 :setPath
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-for /f "usebackq tokens=2,*" %%a in ( ` dir "%~dp0.." ^| find /i "Directory of" ` ) do set "WinScriptPath=%%b"
-where tools_path.bat 1>nul 2>nul || set path=%path%;%~dp1;%WinScriptPath%\common;
+for /f "usebackq tokens=2,*" %%a in ( ` dir "%~dp0.." ^| find /i "Directory of" ` ) do set "myWinScriptPath=%%b"
+where tools_path.bat 1>nul 2>nul || set path=%path%;%~dp1;%myWinScriptPath%\common;
 if not defined windbgPath call tools_appInstallPath.bat FindPathWindbg windbgPath
 rem don't set default value, wait for dynamic recongnize it.
 ::if not defined windbgMode set windbgMode=x86
@@ -684,10 +684,10 @@ if {%bEnableLog%}=={1}       set param_logFile=-logo "%logFile%"
 
 set param_NoSaveWorkspace=-Q
 
-set testedThemeFile=%WinScriptPath%\Windbg\setup\layout_theme\dark_theme.wew
+set testedThemeFile=%myWinScriptPath%\Windbg\setup\layout_theme\dark_theme.wew
 if not defined themeFile    if exist "%testedThemeFile%"  set themeFile=%testedThemeFile%
 if defined themeFile set param_themeFile=-WF "%themeFile%"
-set dbgOption=%* %param_NoSaveWorkspace% %param_NoBreakInThread% %param_NoInitBp% %param_NoExitBp% %param_themeFile% %param_logFile% -c "$$>a<%WinScriptPath%\Windbg\script\startCmds.dbg;"
+set dbgOption=%* %param_NoSaveWorkspace% %param_NoBreakInThread% %param_NoInitBp% %param_NoExitBp% %param_themeFile% %param_logFile% -c "$$>a<%myWinScriptPath%\Windbg\script\startCmds.dbg;"
 echo call tools_message.bat enableDebugMsg "%~0" "dbgOption=%dbgOption:"='%"
 call tools_message.bat enableDebugMsg "%~0" "dbgOption=%dbgOption:"='%"
 goto :eof
@@ -783,7 +783,7 @@ goto :eof
 
 :environmentVariable.setIniFile
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-if not defined SRCSRV_INI_FILE  if exist "%WinScriptPath%\Windbg\setup\symSrv\srcSrv.ini" set SRCSRV_INI_FILE=%WinScriptPath%\Windbg\setup\symSrv\srcSrv.ini
+if not defined SRCSRV_INI_FILE  if exist "%myWinScriptPath%\Windbg\setup\symSrv\srcSrv.ini" set SRCSRV_INI_FILE=%myWinScriptPath%\Windbg\setup\symSrv\srcSrv.ini
 @echo use source server config file : %SRCSRV_INI_FILE%
 goto :eof
 

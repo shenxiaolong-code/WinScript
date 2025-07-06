@@ -31,6 +31,7 @@ if %bRuning% EQU 1 echo drivers "%~1" is runing. & goto End
 call :drivers.getStartMode "%~1" tmpStartMode
 if {"%tmpStartMode%"}=={"Disabled"} call :drivers.setAutoStart "%~1"
 call :startImpl driver "%~1"
+:: pnputil /enable-device "PCI/..."
 goto :eof
 
 ::[DOS_API:drivers.stop] stop one driver and chane driver state to disabled , if %2 is disable, then set driver state to disable, else don't change state.
@@ -52,6 +53,7 @@ if %errorlevel% NEQ 0 echo drivers "%~1" is stopped. & set iRet=2 & goto End
 if {%~2}=={disable} wmic /output:null driver where ( name ="%~1" ^) call change StartMode = "disabled"
 
 call :stopImpl driver "%~1"
+:: pnputil /disable-device "PCI/..."
 goto End
 
 ::[DOS_API:drivers.processListFile] batch start or stop many driver in one list file.
@@ -68,7 +70,9 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 set "_tmpServiceFile=%~1"
 if not defined _tmpServiceFile set "_tmpServiceFile=%temp%\alldrivers.txt"
-wmic sysdriver get name,startmode,state > "%_tmpServiceFile%"
+:: wmic sysdriver get name,startmode,state > "%_tmpServiceFile%"
+echo wmic sysdriver list full 	> "%_tmpServiceFile%"
+wmic sysdriver list full 		>> "%_tmpServiceFile%"
 type "%_tmpServiceFile%"
 goto :eof
 
@@ -76,7 +80,8 @@ goto :eof
 ::usage  	: call :drivers.show abc
 :drivers.show
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-wmic sysdriver where(name like "%%%~1%%")  get name,startmode,state | more +1
+:: wmic sysdriver where(name like "%%%~1%%")  get name,startmode,state | more +1
+wmic sysdriver where(name like "%%%~1%%") list full
 ::wmic sysdriver where(name like "%%~1%" and startmode!="disabled"  )  get name,startmode,state | more +1
 goto :eof
 
@@ -172,8 +177,9 @@ goto :eof
 ::usage  	: call :services.show abc
 :services.show
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-wmic service where(name like "%%%~1%%")  get name,startmode,state | more +1
+::wmic service where(name like "%%%~1%%")  get name,startmode,state | more +1
 ::wmic service where(name like "%%~1%" and startmode!="disabled"  )  get name,startmode,state | more +1
+wmic service where(name like "%%%~1%%") list full
 goto :eof
 
 ::[DOS_API:services.setAutoStart] set service start mode.
@@ -236,8 +242,8 @@ goto :eof
 :stopImpl
 :: wmic /output:null service where (name="%~1"^) call StopService
 :: wmic service where (name="%~1"^) get name,state,startmode,pathname | more +1
-sc stop "%~2" type=%~1
-sc query "%~2" type=%~1
+sc stop "%~2" type= %~1
+sc query "%~2" type= %~1
 goto :eof
 
 :isExist

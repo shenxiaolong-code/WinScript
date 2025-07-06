@@ -19,34 +19,34 @@ Windows Registry Editor Version 5.00
 @="auto dump when exception - enable"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\flagOption\shell\01_enableExceptDump\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_gflags.bat  setFlag LocalExceptDump \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_gflags.bat  setFlag LocalExceptDump \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\flagOption\shell\02_disableExceptDump]
 @="auto dump when exception - disable"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\flagOption\shell\02_disableExceptDump\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_gflags.bat  setFlag LocalExceptDump \"%1\" cancel"
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_gflags.bat  setFlag LocalExceptDump \"%1\" cancel"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\flagOption\shell\03_enableMonitorLaunch]
 @="monitor app launch - enable"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\flagOption\shell\03_enableMonitorLaunch\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_gflags.bat  setFlag DebugAppLaunch \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_gflags.bat  setFlag DebugAppLaunch \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\flagOption\shell\04_disableMonitorLaunch]
 @="monitor app launch - disable"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\flagOption\shell\04_disableMonitorLaunch\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_gflags.bat  setFlag DebugAppLaunch \"%1\" cancel"
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_gflags.bat  setFlag DebugAppLaunch \"%1\" cancel"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\flagOption\shell\05_enableMonitorExit]
 @="monitor app exit - enable"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\flagOption\shell\05_enableMonitorExit\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_gflags.bat  setFlag MonitorAppExit \"%1\""
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_gflags.bat  setFlag MonitorAppExit \"%1\""
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\flagOption\shell\06_disableMonitorExit]
 @="monitor app exit - disable"
 
 [HKEY_CLASSES_ROOT\._myMenus\windbg\flagOption\shell\06_disableMonitorExit\command]
-@="cmd.exe /c %%WinScriptPath%%\\Windbg\\tools_gflags.bat  setFlag MonitorAppExit \"%1\" cancel"
+@="cmd.exe /c %%myWinScriptPath%%\\Windbg\\tools_gflags.bat  setFlag MonitorAppExit \"%1\" cancel"

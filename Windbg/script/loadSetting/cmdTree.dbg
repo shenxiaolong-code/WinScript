@@ -17,7 +17,7 @@ body
  {"collect symbols"}
   {"create new dump file(.dump)"} {".echo .dump /mapwd D:\work\dump_1.dmp ;"}
   {"create new dump file from dmp analysis session (.dumpcab)"} {".echo .dumpcab -a c:\UserDumps\notepad.cab ;"}
-  {"collect all loaded symbols"} {"$$>a<${WinScriptPath}\windbg\script\cmds\collectOfflineSymbolsAll.dbg"}
+  {"collect all loaded symbols"} {"$$>a<${myWinScriptPath}\windbg\script\cmds\collectOfflineSymbolsAll.dbg"}
  {"remote debug"}
   {"Create server on port 9999"} {".server tcp:port=9999"}
   {"Show remote connections"} {".clients"}
@@ -152,8 +152,8 @@ body
   {"reload current module without verify symbol"} {".foreach /pS 3 /ps 10 (val { .shell -ci "lmn a  @$scopeip" find "." }) { .reload /i ${val};}"}
   {"unload current module"} {".foreach /pS 3 /ps 10 (val { .shell -ci "lmn a  @$scopeip" find "." }) { ;aS ${/v:curMod} ${val} ;.reload /u ${val};}"}
   {"load current module without symbol which is unloaded just now"} {".if(0!=${/d:curMod}){ .reload ${curMod} } .else { .echo no unloaded modue is recorded.; } "}
-  {"goto module"} {" .shell -ci "lmv a @$scopeip;" (find /i "Loaded symbol image file:")>2 & (set /p batVar=)<2 & cmd.exe /c ${WinScriptPath}\windbg\script\cmds\common.bat gotoFileFromVar "*Loaded symbol image file: " "}
-  {"goto symbol"} {" .shell -ci "!chksym @$scopeip;" (find /i "Loaded pdb is ")>2 & (set /p batVar=)<2 & cmd.exe /c ${WinScriptPath}\windbg\script\cmds\common.bat gotoFileFromVar "*Loaded pdb is " "}
+  {"goto module"} {" .shell -ci "lmv a @$scopeip;" (find /i "Loaded symbol image file:")>2 & (set /p batVar=)<2 & cmd.exe /c ${myWinScriptPath}\windbg\script\cmds\common.bat gotoFileFromVar "*Loaded symbol image file: " "}
+  {"goto symbol"} {" .shell -ci "!chksym @$scopeip;" (find /i "Loaded pdb is ")>2 & (set /p batVar=)<2 & cmd.exe /c ${myWinScriptPath}\windbg\script\cmds\common.bat gotoFileFromVar "*Loaded pdb is " "}
   {"goto target"} {" .shell -ci "*" explorer.exe /select, "${targetFullPath}""}
  {"current modue info"}
   {"module basic info (lmv)"} {"lmv a @$scopeip;"}
@@ -207,7 +207,7 @@ body
   {"last error in all threads"} {"!gle -all"}
   {"explain error code example"} {"!error 0x1"}
  {"check crash"} {"-------------------------------"}
-  {"script analysis exception"} {"$$>a<${WinScriptPath}\windbg\script\cmds\checkException.dbg"}
+  {"script analysis exception"} {"$$>a<${myWinScriptPath}\windbg\script\cmds\checkException.dbg"}
   {"detect moduel corruption"} {".echo !chkimg -lo 50 -d !ntdll -v"}
   {"analysis crashed thread by mex"} {"!mex.us -crash"}
   {"!analyze"} {"!ext.analyze -v"}
@@ -266,7 +266,7 @@ body
    {"Sorted pool consumption (nonpaged)"} {"!poolused 3"}
  {"check deadlock"}
   {"show all locks(!locks -v)"}{"!locks -v"}
-  {"show single lock info auto"}{"$$>a<${WinScriptPath}\windbg\script\cmds\checkDeadLock.dbg"}
+  {"show single lock info auto"}{"$$>a<${myWinScriptPath}\windbg\script\cmds\checkDeadLock.dbg"}
   {"show single lock info manual"}{".echo !cs -o lockAddr"}
  {"kernel mode only"}
   {".bugcheck"} {".bugcheck"}
@@ -284,7 +284,7 @@ body
    {"list source code (lsa)"}{".echo lsa addr"}
  {"search string in specifed place"} {"-------------------------------"}
   {"string in current thread stack"} {"!mex.dumpstackstrings"}
-  {"string in current module"} {"$$>a<${WinScriptPath}\windbg\script\cmds\dump\dumpAllStringInCurModule.dbg"}
+  {"string in current module"} {"$$>a<${myWinScriptPath}\windbg\script\cmds\dump\dumpAllStringInCurModule.dbg"}
  {"search string example"} {"-------------------------------"}
   {"any human readable string"}
    {"any ASCII string"} {".echo s -sa 0x10000 L?512"}
@@ -304,13 +304,13 @@ body
  {"-------------------------------"}
 
 {"data display formats"}
- {"list all data d* format"}            {"$$>a<${WinScriptPath}\windbg\script\cmds\listDataFormat.dbg;"}
- {"list all stack k* formats"}          {"$$>a<${WinScriptPath}\windbg\script\cmds\listStackFormat.dbg;"}
- {"list all variable display formats"}  {"$$>a<${WinScriptPath}\windbg\script\cmds\listVariableFormat.dbg;"}
- {"list raw thread stack symbols"}      {"$$>a<${WinScriptPath}\windbg\script\cmds\listStackSymbol.dbg;"}
+ {"list all data d* format"}            {"$$>a<${myWinScriptPath}\windbg\script\cmds\listDataFormat.dbg;"}
+ {"list all stack k* formats"}          {"$$>a<${myWinScriptPath}\windbg\script\cmds\listStackFormat.dbg;"}
+ {"list all variable display formats"}  {"$$>a<${myWinScriptPath}\windbg\script\cmds\listVariableFormat.dbg;"}
+ {"list raw thread stack symbols"}      {"$$>a<${myWinScriptPath}\windbg\script\cmds\listStackSymbol.dbg;"}
 
 {"Automatic Pseudo-Registers -- refered by @$"}{".hh pseudo-registers"}
- {"list all available Pseudo-Registers value"}  {"$$>a<${WinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg;"}
+ {"list all available Pseudo-Registers value"}  {"$$>a<${myWinScriptPath}\windbg\script\cmds\listAllPseudoRegisters.dbg;"}
  {"last expression value           : @$exp"} {"dx @$exp ;"}
  {"last function return address    : @$ra"} {"dx @$ra ;ln @$ra ;"}
  {"last function return value      : @$callret"} {"dx @$callret;"}

@@ -10,7 +10,7 @@ if not exist "%sPath%" (
 @echo.
 goto :Input
 )
-call "%~dp0takeown.bat" "%sPath%"
+call "%~dp0takeowner.bat" "%sPath%"
 
 pause
 goto :Input

@@ -5,7 +5,7 @@
 .if (0==${/d:$arg1} & 1==${/d:dbgDmp}) {
 $$     **************** collect symbol manifest file  for dump analysis session ****************
 .foreach /s ( val "once" ) {
-.shell -ci "*" cmd.exe /c ${WinScriptPath}\Windbg\collectOfflineSymbols\tools\tools_collectOfflineSymbols.bat collectSymbolList "${dumpFolderPath}\${dumpModuleName}.dmp" "${/f:manifestFilter}"
+.shell -ci "*" cmd.exe /c ${myWinScriptPath}\Windbg\collectOfflineSymbols\tools\tools_collectOfflineSymbols.bat collectSymbolList "${dumpFolderPath}\${dumpModuleName}.dmp" "${/f:manifestFilter}"
 }
 ad ${/v:manifestFilter} ;
 }
@@ -21,7 +21,7 @@ aS ${/v:tmpDmpFile} ${symFolder}\miniDump_${exeModuleName}.dmp;
 .block {
 .echo generate ${tmpDmpFile}
 .dump ${tmpDmpFile}
-.foreach /s ( val "once" ) { .shell -ci "*" cmd.exe /c ${WinScriptPath}\Windbg\collectOfflineSymbols\tools\tools_collectOfflineSymbols.bat collectSymbolList "${tmpDmpFile}" "${/f:manifestFilter}"}
+.foreach /s ( val "once" ) { .shell -ci "*" cmd.exe /c ${myWinScriptPath}\Windbg\collectOfflineSymbols\tools\tools_collectOfflineSymbols.bat collectSymbolList "${tmpDmpFile}" "${/f:manifestFilter}"}
 ad ${/v:manifestFilter} ;
 }
 ad ${/v:tmpDmpFile};
@@ -44,7 +44,7 @@ $$ set line=%dllName%,%Timestamp%%SizeOfImage%,%age%
 .foreach /pS 1 /ps 99 ( val { .shell -ci ".formats ${md_age}" find /i "Decimal:" } )  {
 .echo manifest information : ${md_name},${md_Timestamp},${md_SizeOfImage},${val}
 .echo
-.shell -ci "*" cmd.exe /c ${WinScriptPath}\Windbg\collectOfflineSymbols\tools\tools_collectOfflineSymbols.bat collectSymbolOneModule "${md_name}" ${md_Timestamp}  ${md_SizeOfImage} ${val}
+.shell -ci "*" cmd.exe /c ${myWinScriptPath}\Windbg\collectOfflineSymbols\tools\tools_collectOfflineSymbols.bat collectSymbolOneModule "${md_name}" ${md_Timestamp}  ${md_SizeOfImage} ${val}
 } }
 ad ${/v:md_name} ;
 ad ${/v:md_Timestamp} ;

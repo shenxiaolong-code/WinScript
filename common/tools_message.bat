@@ -15,6 +15,7 @@ call :%~1 %2 %3 %4 %5 %6 %7 %8 %9
 goto :End
 
 ::******************************DOS API section**************************************************************************
+:: use 'call "%~dp0bin\cecho.exe"' instead of 'call colorTxt.bat' because the color might be not set. 
 
 ::[DOS_API:warningMsg] show warning message and continue script session after press any key
 ::call e.g  : call :warningMsg "hello, I am warning msg"
@@ -22,9 +23,9 @@ goto :End
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if not {"%~1"}=={""} (
 call tools_error.bat checkCallerInfo 1 %*
-call colorTxt.bat 0b "[warning]%~1"
+call "%~dp0bin\cecho.exe" {0e}[ warning ]{01} %~1 {#}
 ) else (
-call colorTxt.bat 0c "[warning]empty warning message"
+call "%~dp0bin\cecho.exe" {0e}[ warning ]{01} empty warning message {#}
 )
 echo.
 echo press any key to continue current script session.
@@ -43,10 +44,12 @@ call :warningMsg "errorMsg shouldn't be empty."
 ) else (
 call tools_error.bat checkCallerInfo 1 %*
 echo.
-call colorTxt.bat 0b "[error]%~1"
+call "%~dp0bin\cecho.exe" {04}[ Error ]{0e} %~1 {#}
+if defined errorMsg_comment_msg1    echo %errorMsg_comment_msg1%
 )
 echo.
 if not defined customized_exitHandler (
+echo.
 echo press any key to exit current script session -- or Press Ctrl_C to terminate current job when debuging ...
 pause > nul
 )
@@ -60,9 +63,7 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call tools_error.bat checkCallerInfo 1 %*
 echo.
-call colorTxt.bat 0b "Need Action:"
-echo.
-call colorTxt.bat 0d "%~1"
+call "%~dp0bin\cecho.exe" {0b}Need Action:{0d}{\n}%~1{#}
 echo.
 echo.
 echo press any key to continue ...
@@ -76,9 +77,7 @@ goto :eof
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call tools_error.bat checkCallerInfo 1 %*
 echo.
-call colorTxt.bat 0b "Notification:"
-echo.
-call colorTxt.bat 0a "%~1"
+call "%~dp0bin\cecho.exe" {0b}Notification:{\n}{0a}%~1{#}
 echo.
 goto :eof
 
@@ -88,7 +87,7 @@ goto :eof
 :outOfDateAPIMsg
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 call :checkParamCount 2 %*
-call colorTxt.bat 0d "%~1 is out-of-date dos API, suggest use new API : %~2"
+call "%~dp0bin\cecho.exe" {0e}%~1{04} is out-of-date dos API, suggest use new API :{02} %~2{#}{\n}
 echo.
 pause
 goto :eof
@@ -106,7 +105,7 @@ if {"%_tmpLable:~0,1%"}=={":"} call set "_tmpLable=%_tmpLable:~1%"
 call tools_error.bat checkCallerInfo 1 %*
 if defined %_tmpLable%_NoPause goto :eof
 if defined noPauseGlobal if not defined %_tmpLable%_pause goto :eof
-call colorTxt.bat "{02}Define variable {0d}%_tmpLable%_NoPause{02} or {04}noPauseGlobal {02}to disable this pause.{\n}Define variable {04}noPauseGlobal {02}and {0c}%_tmpLable%_pause {02}to only enable this pause  {\n}{06}Press any key to continue ...{\n}{#}"
+call "%~dp0bin\cecho.exe" {02}Define variable {0d}%_tmpLable%_NoPause{02} or {04}noPauseGlobal {02}to disable this pause.{\n}Define variable {04}noPauseGlobal {02}and {0c}%_tmpLable%_pause {02}to only enable this pause  {\n}{06}Press any key to continue ...{\n}{#}
 pause 1>nul
 goto :eof
 
@@ -123,8 +122,8 @@ if {"%_tmpLable:~0,1%"}=={":"} call set "_tmpLable=%_tmpLable:~1%"
 call tools_error.bat checkCallerInfo 2 %*
 if defined %_tmpLable%_noSleep goto :eof
 if defined noSleepGlobal if not defined %_tmpLable%_sleep goto :eof
-call colorTxt.bat "{02}Define variable {0d}%_tmpLable%_noSleep{02} or {04}noSleepGlobal {02}to disable this pause.{\n}Define variable {04}noSleepGlobal {02}and {0c}%_tmpLable%_sleep {02}to only enable this sleep  {\n}{06}Press any key to continue ...{\n}{#}"
-if defined sleepMsg call colorTxt.bat {0d}%sleepMsg%{\n}{#}
+call "%~dp0bin\cecho.exe" {02}Define variable {0d}%_tmpLable%_noSleep{02} or {04}noSleepGlobal {02}to disable this pause.{\n}Define variable {04}noSleepGlobal {02}and {0c}%_tmpLable%_sleep {02}to only enable this sleep  {\n}{06}Press any key to continue ...{\n}{#}
+if defined sleepMsg call "%~dp0bin\cecho.exe" {0d}%sleepMsg%{\n}{#}
 if {"%~3"}=={"quiet"}       ping -n %~2 127.0.0.1 >nul
 if not {"%~3"}=={"quiet"}   timeout /T %~2
 goto :eof
@@ -141,7 +140,7 @@ if {"%_tmpLable:~0,1%"}=={":"} call set "_tmpLable=%_tmpLable:~1%"
 :: set | find /i "%_tmpLable%"
 if not defined  %_tmpLable%_debugMsg if not defined _Debug goto :eof
 if defined _Debug if defined %_tmpLable%_noDebugMsg goto :eof
-call colorTxt.bat "{01}Debug info{\n}{06}%~2 %~3 %~4 %~5 %~6 %~7 %~8 %~9{\n}{02}Define variable {0d}%_tmpLable%_noDebugMsg{02} to disable this debug info -- if your opened global debug flag({06}set _Debug=1{02}).{\n}Or define variable {04}%_tmpLable%_debugMsg {02}to only enable this debug info.{#}{\n}"
+call "%~dp0bin\cecho.exe" {01}Debug info{\n}{06}%~2 %~3 %~4 %~5 %~6 %~7 %~8 %~9{\n}{02}Define variable {0d}%_tmpLable%_noDebugMsg{02} to disable this debug info -- if your opened global debug flag({06}set _Debug=1{02}).{\n}Or define variable {04}%_tmpLable%_debugMsg {02}to only enable this debug info.{#}{\n}
 goto :eof
 
 ::[DOS_API:enableDebugCmd] execute specifiled debug cmd
@@ -154,9 +153,25 @@ if {"%_tmpLable:~0,1%"}=={":"} call set "_tmpLable=%_tmpLable:~1%"
 ::call tools_error.bat checkCallerInfo 2 %*
 if not defined  %_tmpLable%_debugMsgCmd if not defined _Debug goto :eof
 if defined _Debug if defined %_tmpLable%_noDebugMsgCmd goto :eof
-call colorTxt.bat "{01}Debug cmd:{06}%~2 %~3 %~4 %~5 %~6 %~7 %~8 %~9{#}{\n}"
+call "%~dp0bin\cecho.exe" {01}Debug cmd:{06}%~2 %~3 %~4 %~5 %~6 %~7 %~8 %~9{#}{\n}
 %2 %3 %4 %5 %6 %7 %8 %9
-call colorTxt.bat "{02}Define variable {0d}%_tmpLable%_noDebugMsgCmd{02} to disable this debug cmd -- if your opened global debug flag.{\n}Or define variable {04}%_tmpLable%_debugMsgCmd {02}to only enable this debug cmd.{\n}{#}"
+call "%~dp0bin\cecho.exe" {02}Define variable {0d}%_tmpLable%_noDebugMsgCmd{02} to disable this debug cmd -- if your opened global debug flag.{\n}Or define variable {04}%_tmpLable%_debugMsgCmd {02}to only enable this debug cmd.{\n}{#}
+goto :eof
+
+::[DOS_API:outputDebugVar] output environment variabe variabe in color
+::call e.g  : call :outputDebugVar varName
+::            call :outputDebugVar varName
+:outputDebugVar
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+if not defined _Debug  goto :eof
+call set "_tmpLable=%~1"
+if {"%_tmpLable:~0,1%"}=={":"} call set "_tmpLable=%_tmpLable:~1%"
+::call tools_message.bat outputDebugVar "%~0" cmdString
+::call tools_error.bat checkCallerInfo 2 %*
+:: set | find /i "%_tmpLable%"
+if not defined  %_tmpLable%_debugMsg if not defined _Debug goto :eof
+if defined _Debug if defined %_tmpLable%_noDebugMsg goto :eof
+call "%~dp0bin\cecho.exe" variable : {0a}%~1{0e} = {0d}%%%~1%%{#}{\n}
 goto :eof
 
 ::[DOS_API:popMsg]popup dialog to show some message
@@ -208,6 +223,15 @@ echo call :errorMsg "errorMsg interface test"
 set customized_exitHandler=
 
 echo.
+echo test call :promptMsg "promptMsg interface test"
+call :promptMsg "promptMsg interface test"
+
+echo.
+echo test call :NotifyMsg "NotifyMsg interface test"
+call :NotifyMsg "NotifyMsg interface test"
+
+echo.
+echo test done!
 goto :eof
 
 ::*******************************************************************************************************************

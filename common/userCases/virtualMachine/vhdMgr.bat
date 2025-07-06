@@ -38,7 +38,7 @@ rem
 rem *********************cfg end*****************************************
 set vhdFile=%~dp1%~nx1
 set vhdName=%~n1
-set toolDir=%~dp0
+set toolDir=%myWinScriptPath%\common
 if not {%~x1}=={.vhd} %toolDir%tools_message.bat popMsg "require .vhd file" & goto :End
 
 set vhdScripFile=%tmp%vhdScrip%random%.txt

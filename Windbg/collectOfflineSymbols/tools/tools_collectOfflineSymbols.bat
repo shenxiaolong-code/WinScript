@@ -21,7 +21,7 @@ goto :End
 ::[DOS_API:Help]Display help information
 :Help
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
-if exist "%WinScriptPath%\common\tools_miscellaneous.bat" call "%WinScriptPath%\common\tools_miscellaneous.bat" DisplayHelp "%~f0"
+if exist "%myWinScriptPath%\common\tools_miscellaneous.bat" call "%myWinScriptPath%\common\tools_miscellaneous.bat" DisplayHelp "%~f0"
 goto :eof
 
 ::[DOS_API:Test]Test DOS API in this script file
@@ -173,7 +173,7 @@ goto :eof
 :collectSymbolList.setDefaultOutFolder
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"}  @echo [      %~nx0] commandLine: %0 %*
 if defined outFolder goto :eof
-call "%WinScriptPath%\common\genNameByTime.bat" dtStr
+call "%myWinScriptPath%\common\genNameByTime.bat" dtStr
 set "outFolder=%~1_%dtStr%"
 goto :eof
 

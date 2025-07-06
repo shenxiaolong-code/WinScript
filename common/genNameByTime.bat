@@ -13,10 +13,11 @@ if {"%~1"}=={""} call tools_error.bat checkEmptyParam
 
 call set %~1=
 ::  for /F "delims=abcdefghijklmnopqrstuvwxyz.ABCDEFGHIJKLMNOPQRSTUVWXYZ  tokens=1"  %%i in ( "%date%_%time%" ) do call :processDT %%i
+:: for /f "delims=" %# in ('powershell get-date -format "{yyyyMMdd_HHmmss}"') do echo set genNameByTimeVar=%#
 if not defined dtFormat set dtFormat=yyyyMMdd_HHmmss
 if not {"%~2"}=={""} set dtFormat=yyyyMMdd
-for /F "usebackq" %%i in ( ` powershell -Command "Get-Date -format %dtFormat%" ` ) do call set genNameByTimeVar=%%i
-if not {"%~1"}=={""}    call set %~1=%genNameByTimeVar%
+for /F "usebackq" %%i in ( ` powershell -Command "Get-Date -format %dtFormat%" ` ) do call set "genNameByTimeVar=%%~i"
+if not {"%~1"}=={""}    call set "%~1=%genNameByTimeVar%"
 call tools_message.bat enableDebugMsg "%~n0" "%~1=%genNameByTimeVar%       [%~nx0]"
 goto :End
 

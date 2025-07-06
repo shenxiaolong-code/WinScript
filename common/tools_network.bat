@@ -20,9 +20,9 @@ goto End
 :download
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 if {"%~2"}=={""} (
-call colorTxt.bat 0c "parameter is not enough. usage example:"
+call colorTxt.bat red_L "parameter is not enough. usage example:"
 echo.
-call colorTxt.bat 0b "call %~f0 download 'http://shanghai-nfs.cisco.com/builds/Trunk/BUILD_TRUNK_JABBERWIN-RELEASE/12667/archive/CiscoJabberSetup.msi' 'D:\CiscoJabberSetup.msi'"
+call colorTxt.bat cyan_L "call %~f0 download 'http://shanghai-nfs.cisco.com/builds/Trunk/BUILD_TRUNK_JABBERWIN-RELEASE/12667/archive/CiscoJabberSetup.msi' 'D:\CiscoJabberSetup.msi'"
 echo.
 call tools_txtFile.bat ShowCurLineNo "%~f0" mark97
 pause
@@ -30,8 +30,19 @@ goto :End
 )
 set "_targetUrl=%~1"
 set "_targetPath=%~2"
+:: if %~2 is only folder, instead of file path
+if {"%~nx2"}=={""} set "_targetPath=%_targetPath%\%~nx1"
 if not defined downloader set downloader=curl
 call :download.%downloader% "%_targetUrl%" "%_targetPath%"
+goto :eof
+
+::[DOS_API:download]download a file from one url
+::call e.g  : call :download  'http://shanghai-nfs.cisco.com/builds/Trunk/BUILD_TRUNK_JABBERWIN-RELEASE/12667/archive/CiscoJabberSetup.msi' 'D:\CiscoJabberSetup.msi'"
+:downloadDefault
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set "_targetPath=%~2"
+if not defined _targetPath set "_targetPath=%cd%\%~nx1"
+call :download "%~1" "%_targetPath%"
 goto :eof
 
 ::[DOS_API:showDNS]show current DNS information in specified interface card
@@ -122,6 +133,15 @@ goto :eof
 netsh interface show interface
 goto :eof
 
+::[DOS_API:who_is_using_network]show all app and PID which is using network(include local/remote IP/port)
+::                 call :who_is_using_network
+::call e.g       : call :who_is_using_network
+:who_is_using_network
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+netstat -o -n -b
+:: linux : netstat -t -l -p  ; ps PID
+goto :eof
+
 ::[DOS_API:setStaticIp]set static IP on specified interface card
 ::                 call :setStaticIp interfaceName ipaddr subnetmask gateway [opt_metric]
 ::call e.g       : call :setStaticIp  "Ethernet"    123.123.123.123    255.255.255.0     123.123.123.1    1
@@ -138,6 +158,18 @@ goto :eof
 netsh interface ip set address name="%~1" dhcp
 goto :eof
 
+::[DOS_API:ip4ToClip] copy current ip4 to clipboard
+::                 call :ip4ToClip [outputVar]
+::call e.g       : call :ip4ToClip myIp4
+:ip4ToClip
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+set _tmpIPv4=
+for /f "usebackq tokens=2 delims=:" %%i in ( ` ipconfig ^| find /i "IPv4 Address" ` ) do if not defined _tmpIPv4 set "_tmpIPv4=%%i"
+if defined _tmpIPv4  set "_tmpIPv4=%_tmpIPv4: =%"
+if defined _tmpIPv4  if not {"%~1"} == {""} call set "%~1=%_tmpIPv4%"
+:: if defined _tmpIPv4  if     {"%~1"} == {""} echo %_tmpIPv4% | clip
+if defined _tmpIPv4  if     {"%~1"} == {""} echo %_tmpIPv4%
+goto :eof
 
 ::******************************inner implement  section**************************************************************************
 
@@ -162,9 +194,20 @@ goto :eof
 :download.curl
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 ::using curl , curl is very fast to download url without download rate and process
+:: curl -u "xiaolongs" https://urm.nvidia.com/artifactory/cuda-gpgpu-31256743.tgz -o cuda-gpgpu-31256743.tgz
+:: curl https://${URM_USER}:${URM_TOKEN}@urm.nvidia.com/artifactory/cuda-gpgpu-31256743.tgz -o cuda-gpgpu-31256743.tgz
 echo download command:
 echo curl "%~1" -o "%~2"
 curl "%~1" -o "%~2"
+goto :eof
+
+:download.wget
+@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
+:: using wget , wget is web REST API download. (http) 
+:: wget https://${URM_USER}:${URM_TOKEN}@urm.nvidia.com/artifactory/cuda_driver-cuda_a-31321809.tgz
+echo download command:
+echo wget "%~1"
+wget "%~1"
 goto :eof
 
 ::******************************help  and test  section**************************************************************
@@ -191,7 +234,7 @@ if exist "%target_path%" del /f/q "%target_path%"
 echo test call :download "%target_url%" "%target_path%"
 call :download "%target_url%" "%target_path%"
 if not exist "%target_path%" (
-call :colorTxt.bat 0c "test case[%~f0:%~0] fails."
+call :colorTxt.bat red_L "test case[%~f0:%~0] fails."
 echo.
 ) else (
 echo test download sucessfully.
@@ -204,7 +247,7 @@ set downloader=bitsadmin
 echo test call :download "%target_url%" "%target_path%"
 call :download "%target_url%" "%target_path%"
 if not exist "%target_path%" (
-call :colorTxt.bat 0c "test case[%~f0:%~0] fails."
+call :colorTxt.bat red_L "test case[%~f0:%~0] fails."
 echo.
 ) else (
 echo test download sucessfully.

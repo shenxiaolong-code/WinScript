@@ -13,7 +13,7 @@ body
 {"unassemble"}
  {"unassemble executed code(forward)"} {"ub @$scopeip;"}
  {"unassemble executing code(backward)"} {"u @$scopeip;"}
- {"unassemble current function"}{"$$>a<${WinScriptPath}\windbg\script\cmds\ufCurFunc.dbg"}
+ {"unassemble current function"}{"$$>a<${myWinScriptPath}\windbg\script\cmds\ufCurFunc.dbg"}
 {"more..."}
  {"Exception code(.exr)"} {".exr -1"}
  {"Exception stacks(.excr)"} {".ecxr"}
@@ -33,7 +33,7 @@ body
 {"global variable in current module"}{".foreach ( val { lm1m a @$scopeip ; }) {.echo x ${val}!*dynamic initializer for*;x ${val}!*dynamic initializer for*;};"}
 {"global variable in function scope(getInstance)"}{".foreach ( val { lm1m a @$scopeip ; }) {.echo x ${val}!*::getInstance;x ${val}!*::getInstance;};"}
 {"more data ..."}
- {"show all string in current module"}                       {"$$>a<${WinScriptPath}\windbg\script\cmds\dump\dumpAllStringInCurModule.dbg"}
+ {"show all string in current module"}                       {"$$>a<${myWinScriptPath}\windbg\script\cmds\dump\dumpAllStringInCurModule.dbg"}
  {"show all string in current thread stack(used range)"}     {"s -sa @@C++(@$teb->NtTib.StackLimit)   @@C++(@$teb->NtTib.StackBase)"}
  {"show all string in current thread stack"}                 {"s -sa @@C++(@$teb->DeallocationStack)  @@C++(@$teb->NtTib.StackBase)"}
  {"show all symbol in current thread stack(used range)"}     {"dds   @@C++(@$teb->NtTib.StackLimit)   @@C++(@$teb->NtTib.StackBase)"}
@@ -48,16 +48,16 @@ body
  {"re-download current module symbol to overwriten and re-load symbol"}{".foreach /pS 3 /ps 10 (val { .shell -ci "lmn a  @$scopeip" find "." }) {.echo .reload /o /f ${val};.reload /o /f ${val};};"} 
  {"load current module without symbol which is unloaded just now"} {".if(0!=${/d:curMod}){ .reload ${curMod} } .else { .echo no unloaded modue is recorded.; } "}
  {"unload current module symbol"} {".foreach /pS 3 /ps 10 (val { .shell -ci "lmn a  @$scopeip" find "." }) { ;aS ${/v:curMod} ${val} ;.reload /u ${val};}"}
-{"collect current module symbol(.txt)"} {"$$>a<${WinScriptPath}\windbg\script\cmds\collectOfflineSymbols.dbg  curOne"}
+{"collect current module symbol(.txt)"} {"$$>a<${myWinScriptPath}\windbg\script\cmds\collectOfflineSymbols.dbg  curOne"}
 {"more symbol collect & backup "}
- {"collect symbols file list(.txt) in current thread"} {"$$>a<${WinScriptPath}\windbg\script\cmds\collectOfflineSymbols.dbg curStack"}
- {"collect all symbols file list manifest(.txt)"} {"$$>a<${WinScriptPath}\windbg\script\cmds\collectOfflineSymbols.dbg"}
+ {"collect symbols file list(.txt) in current thread"} {"$$>a<${myWinScriptPath}\windbg\script\cmds\collectOfflineSymbols.dbg curStack"}
+ {"collect all symbols file list manifest(.txt)"} {"$$>a<${myWinScriptPath}\windbg\script\cmds\collectOfflineSymbols.dbg"}
  {"collect basic MS system symbols file list manifest(.txt)"} {".echo TODO ...;"}
  {"collect all MS system symbols file list manifest(.txt)"} {".echo TODO ...;"}
  {"collect all user symbols file list manifest(.txt)"} {".echo TODO ...;"}
  {"----------------------------------------"} {""}
- {"backup loaded module symbol(.pdb) only"} {"$$>a<${WinScriptPath}\windbg\script\cmds\collectOfflineSymbols.dbg  backupLoaded"}
- {"backup all module symbol(.pdb)"} {"$$>a<${WinScriptPath}\windbg\script\cmds\collectOfflineSymbols.dbg  backupAll"}
+ {"backup loaded module symbol(.pdb) only"} {"$$>a<${myWinScriptPath}\windbg\script\cmds\collectOfflineSymbols.dbg  backupLoaded"}
+ {"backup all module symbol(.pdb)"} {"$$>a<${myWinScriptPath}\windbg\script\cmds\collectOfflineSymbols.dbg  backupAll"}
 {"detect modue and symbol problem"}
  {"detects module possible corruption"}{".foreach ( val { lm1m a @$scopeip ; }) {!chkimg -lo 50 -d !${val} -v ;}"}
  {"detects module symbol problem"}{"lme;.echo;.echo use !lmi to show actual module and check the 'Symbol Type' information ;.echo;"}
@@ -66,15 +66,15 @@ body
  {"module path"}{"lmf a @$scopeip;.shell -ci "lmv a @$scopeip;" find /i "Image path:""} 
  {"module symbol path "}{".foreach ( val { lm1m a @$scopeip ; }) {lma @$scopeip; .shell -ci "!chksym ${val}" find /i "pdb:"  };"}
  {"module PE head info"}{".foreach ( val { lm1m a @$scopeip ; }) {!dh ${val}; !dlls -c ${val} ;}"} 
- {"module all information"}{".foreach ( val { lm1m a @$scopeip ; }) { .shell -ci "!dlls -a -c ${val}" find /v "^*" > "${temp}\${val}.txt" & start ${WinScriptPath}\common\tools_txtFile.bat openTxtFile "${temp}\${val}.txt" };"}
+ {"module all information"}{".foreach ( val { lm1m a @$scopeip ; }) { .shell -ci "!dlls -a -c ${val}" find /v "^*" > "${temp}\${val}.txt" & start ${myWinScriptPath}\common\tools_txtFile.bat openTxtFile "${temp}\${val}.txt" };"}
  {"module all symbol information"}{"lmv a @$scopeip; !lmi @$scopeip;!chksym @$scopeip;"}
 
 {""}
 {"goto target file"} {" .shell -ci "*" explorer.exe /select, "${targetFullPath}""}
 {"goto more ..."}
  {"open windbg log"} {".log ;"}
- {"goto symbol"} {" .shell -ci "!chksym @$scopeip;" (find /i "Loaded pdb is ")>2 & (set /p batVar=)<2 & cmd.exe /c ${WinScriptPath}\windbg\script\cmds\common.bat gotoFileFromVar "*Loaded pdb is " "}
- {"goto module"} {" .shell -ci "lmv a @$scopeip;" (find /i "Loaded symbol image file:")>2 & (set /p batVar=)<2 & cmd.exe /c ${WinScriptPath}\windbg\script\cmds\common.bat gotoFileFromVar "*Loaded symbol image file: " "}
+ {"goto symbol"} {" .shell -ci "!chksym @$scopeip;" (find /i "Loaded pdb is ")>2 & (set /p batVar=)<2 & cmd.exe /c ${myWinScriptPath}\windbg\script\cmds\common.bat gotoFileFromVar "*Loaded pdb is " "}
+ {"goto module"} {" .shell -ci "lmv a @$scopeip;" (find /i "Loaded symbol image file:")>2 & (set /p batVar=)<2 & cmd.exe /c ${myWinScriptPath}\windbg\script\cmds\common.bat gotoFileFromVar "*Loaded symbol image file: " "}
  {"goto target folder"} {".shell -ci "*" cmd.exe /c start . ;"}
  {"goto image file"} {" .shell -ci "*" explorer.exe /select, "${exeFolderPath}\${exeModuleName}.exe""}
 
@@ -83,6 +83,6 @@ body
  {"Trace and watch data of current function(wt)"} {" wt -i ntdll -i ucrtbase -i KERNEL32 -ns -oR = . @$ra "}
  {"pre-defined system breakpoint"}{""}
   {"set breakpoint on main function"}{"? @$exentry;bp @$exentry;"}
-  {"set breakpoint when UI create "} {"$$>a<${WinScriptPath}\windbg\script\cmds\breakpoint\bp_UICreate.dbg"}
-  {"set breakpoint when interaction with system "} {"$$>a<${WinScriptPath}\windbg\script\cmds\breakpoint\bp_sys.dbg"}
-  {"set breakpoint when file and network access "} {"$$>a<${WinScriptPath}\windbg\script\cmds\breakpoint\bp_dataAccess.dbg"}
+  {"set breakpoint when UI create "} {"$$>a<${myWinScriptPath}\windbg\script\cmds\breakpoint\bp_UICreate.dbg"}
+  {"set breakpoint when interaction with system "} {"$$>a<${myWinScriptPath}\windbg\script\cmds\breakpoint\bp_sys.dbg"}
+  {"set breakpoint when file and network access "} {"$$>a<${myWinScriptPath}\windbg\script\cmds\breakpoint\bp_dataAccess.dbg"}

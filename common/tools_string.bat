@@ -133,17 +133,19 @@ echo [after]myFirstLowerCase=%myFirstLowerCase%
 goto :eof
 
 :: ***********************************************get specified string ******************************************************************************
-
 :getUninstallStr
 ::[DOS_API:getUninstallStr] get uninstall string for one registered application
 ::call e.g  : call :getUninstallStr "Cisco Jabber" unStr
 ::result e.g: set unStr=MsiExec.exe /I{0610DFB0-CCEA-6EC0-E3C3-A0160AD7FD98}
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-:: reg query hklm\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{0610DFB0-CCEA-6EC0-E3C3-A0160AD7FD98} /v DisplayName
-set uninstallKey=hklm\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\
-set _appId=
-for /f "usebackq tokens=*" %%a in (` @reg query %uninstallKey% `) do if not defined _appId call :getUninstallStr.tryKey "%~1" %%a
-set %~2=%_tmpUninstallString%
+set %~2=
+set _tmpProductID=
+for /f "usebackq tokens=*" %%a in ( `wmic  product WHERE ^( name^="%~1" ^) get IdentifyingNumber ^| more +1 ` ) do if not defined _tmpProductID set "_tmpProductID=%%~a"
+if not defined _tmpProductID goto :eof
+:: reg query hklm\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\{0610DFB0-CCEA-6EC0-E3C3-A0160AD7FD98} /v UninstallString
+set "_tmpProductKey=hklm\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\%_tmpProductID%"
+for /f "usebackq tokens=1,2,*" %%a in (` reg query "%_tmpProductKey%" /v UninstallString 2^>nul `) do set "%~2=%%~c"
+if defined _Debug if defined %~2 call echo %~2=%%%~2%%
 goto :eof
 
 ::[DOS_API:getBackspaceString]get the back space char, it is used to erase printed string in console window.
@@ -232,7 +234,8 @@ goto :eof
 call tools_error.bat checkParamCount 2 %*
 set %~3=
 call set "_tmpFind1=%~1"
-call set "_tmpFind2=%%_tmpFind1:%~2=&rem.%%"
+:: call set _tmpFind2=%%_tmpFind1:%~2=&rem.%%
+call set _tmpFind2=%%_tmpFind1:%~2=&rem.%%
 set _tmpFind2=%_tmpFind2%
 if {"%_tmpFind2%"}=={"%_tmpFind1%"} goto :eof
 call :stringLength "%_tmpFind2%" %~3
@@ -405,27 +408,6 @@ call set "%~1=%%%~1: =%%"
 goto :eof
 
 :: *************************************************** inner implement**************************************************************************
-
-:getUninstallStr.tryKey
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-for /f "usebackq tokens=1,2,*" %%a in (` @reg query "%~2" /v DisplayName 2^>nul `) do call :getUninstallStr.tryDisplayName "%~1" "%~2" "%%~c"
-goto :eof
-
-:getUninstallStr.tryDisplayName
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-for /f "usebackq tokens=*" %%a in (` @echo "%~3" ^| find /c /i "%~1" `) do if {"%%a"}=={"1"} call :getUninstallStr.processFoundKey "%~2" "%~1"
-goto :eof
-
-:getUninstallStr.processFoundKey
-@if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
-set _appId=%~1
-for /f "usebackq tokens=1,2,*" %%a in (` reg query "%~1" /v UninstallString 2^>nul `) do (
-call tools_message.bat enableDebugMsg "%~0" "%~1"
-call tools_message.bat enableDebugMsg "%~0" "%~2" %%c
-set _tmpUninstallString=%%c
-)
-goto :eof
-
 :stringLength.calculate
 @if defined _Stack @for %%a in ( 1 "%~nx0" "%0" ) do @if {"%%~a"}=={"%_Stack%"} @echo [      %~nx0] commandLine: %0 %*
 set _tmpcalculateS=%_s%
